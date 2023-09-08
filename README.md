@@ -11,6 +11,8 @@
 ```
 
 #
+[![Quality gate](https://sonar.envyz.de/api/project_badges/quality_gate?project=biteguide&token=sqb_c8e7ef9bf11dfc9a266a8ee8ed670a4cd3618fa5)](https://sonar.envyz.de/dashboard?id=biteguide)
+#
 
 # BiteGuide: Entwicklerdokumentation
 
