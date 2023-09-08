@@ -23,8 +23,13 @@
 
 - [Node.js](https://nodejs.org/en/) (Version 18.17.1 LTS)
 - npm (Version 10.0.0)
-- [Ionic Cli](https://ionicframework.com/docs/cli) (Version 7.1.1)
-- [Angular Cli](https://angular.io/cli) (Version 16.2.1)
+- [Ionic Cli](https://ionicframework.com/docs/cli) (Version 7.1.1) includes [Angular Cli](https://angular.io/cli) (Version 16.2.1)
+
+## Installation
+
+1. Installiere Node.js 18.17.1 LTS
+2. npm install -g npm@10.0.0 (falls noch nicht installiert)
+3. npm install -g @ionic/cli@7.1.1
 
 ## Developer Server starten
 
