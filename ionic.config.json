@@ -1,0 +1,7 @@
+{
+  "name": "biteguide",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
