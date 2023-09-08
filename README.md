@@ -1,3 +1,17 @@
+```
+               ,,                                             ,,        ,,
+  `7MM"""Yp,   db   mm                 .g8"""bgd              db      `7MM
+    MM    Yb        MM               .dP'     `M                        MM
+    MM    dP `7MM mmMMmm .gP"Ya      dM'       ``7MM  `7MM  `7MM   ,M""bMM  .gP"Ya
+    MM"""bg.   MM   MM  ,M'   Yb     MM           MM    MM    MM ,AP    MM ,M'   Yb
+    MM    `Y   MM   MM  8M""""""     MM.    `7MMF'MM    MM    MM 8MI    MM 8M""""""
+    MM    ,9   MM   MM  YM.    ,     `Mb.     MM  MM    MM    MM `Mb    MM YM.    ,
+  .JMMmmmd9  .JMML. `Mbmo`Mbmmd'       `"bmmmdPY  `Mbod"YML..JMML.`Wbmd"MML.`Mbmmd'
+
+```
+
+#
+
 # BiteGuide: Entwicklerdokumentation
 
 ## Projekt öffnen
