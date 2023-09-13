@@ -1,13 +1,13 @@
-name: Build
+name: SonarQube
 
 on:
   push:
     branches:
-      - main
+      - deploy
 
 jobs:
   build:
-    name: Build
+    name: Test on SonarQube
     runs-on: ubuntu-latest
     permissions: read-all
     steps:
