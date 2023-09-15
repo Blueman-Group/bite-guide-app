@@ -1,9 +1,9 @@
-name: SonarQube
+name: Sonar Testing
 
 on:
   push:
     branches:
-      - deploy
+      - develop
 
 jobs:
   build:
