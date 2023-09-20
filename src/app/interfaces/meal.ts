@@ -1,5 +1,5 @@
 import { Additive } from './additive';
-import { Allergy } from './allergy';
+import { Allergy } from './allergeen';
 import { Label } from './label';
 
 export interface MealInterface {

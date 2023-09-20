@@ -1,5 +1,5 @@
 import { Additive } from '../interfaces/additive';
-import { Allergy } from '../interfaces/allergy';
+import { Allergeen } from '../interfaces/allergeen';
 import { Label } from '../interfaces/label';
 import { MealInterface } from '../interfaces/meal';
 
@@ -11,7 +11,7 @@ export class Meal implements MealInterface {
   studentPrice: number;
   co2PerPortion: number;
   additives: Additive[];
-  allergies: Allergy[];
+  allergies: Allergeen[];
   labels: Label[];
   meatCategories: string[];
 
@@ -23,7 +23,7 @@ export class Meal implements MealInterface {
     studentPrice: number,
     co2PerPortion: number,
     additives: Additive[],
-    allergies: Allergy[],
+    allergies: Allergeen[],
     labels: Label[],
     meatCategories: string[]
   ) {

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ArangoDriver } from '../arango-driver/arango-driver';
 import { __param } from 'tslib';
 import { Meal } from '../classes/meal';
-import { Allergy } from '../interfaces/allergy';
+import { Allergy } from '../interfaces/allergeen';
 import { Additive } from '../interfaces/additive';
 import { Canteen } from '../interfaces/canteen';
 
