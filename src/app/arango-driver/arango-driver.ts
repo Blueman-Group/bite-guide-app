@@ -2,7 +2,7 @@ import { Database } from 'arangojs';
 import { MealDatabase } from '../interfaces/meal-database';
 import { MealPlan } from '../interfaces/mealplan';
 import { Additive } from '../interfaces/additive';
-import { Allergeen } from '../interfaces/allergeen';
+import { Allergen } from '../interfaces/allergen';
 import { Canteen } from '../interfaces/canteen';
 
 export class ArangoDriver {
@@ -37,7 +37,7 @@ export class ArangoDriver {
   }
 
   public getAllergyCollection() {
-    return this._db.collection<Allergeen>('allergy');
+    return this._db.collection<Allergen>('allergy');
   }
 
   public getCanteenCollection() {

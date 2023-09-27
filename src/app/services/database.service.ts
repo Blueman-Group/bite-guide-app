@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ArangoDriver } from '../arango-driver/arango-driver';
 import { __param } from 'tslib';
 import { Meal } from '../classes/meal';
-import { Allergy } from '../interfaces/allergeen';
+import { Allergen } from '../interfaces/allergen';
 import { Additive } from '../interfaces/additive';
 import { Canteen } from '../interfaces/canteen';
 
@@ -40,7 +40,7 @@ export class DatabaseService {
       for (let additiveKey of mealDb.additives) {
         additives.push(await this.getAdditive(additiveKey));
       }
-      let allergies: Allergy[] = [];
+      let allergies: Allergen[] = [];
       for (let allergyKey of mealDb.allergens) {
         allergies.push(await this.getAllergy(allergyKey));
       }
@@ -61,7 +61,7 @@ export class DatabaseService {
     }
   }
 
-  public async getAllergy(_key: string): Promise<Allergy> {
+  public async getAllergy(_key: string): Promise<Allergen> {
     if (await this._arango.getAllergyCollection().documentExists(_key)) {
       return await this._arango.getAllergyCollection().document(_key);
     } else {
