@@ -29,7 +29,7 @@ export class ArangoDriver {
   }
 
   public getMealPlanCollection() {
-    return this._db.collection<MealPlan>('meal-plan');
+    return this._db.collection<MealPlan>('meal_plan');
   }
 
   public getAdditiveCollection() {
