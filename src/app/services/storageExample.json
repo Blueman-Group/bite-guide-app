@@ -1,0 +1,20 @@
+{
+  "canteenKey": {
+    "canteen": {
+      "name": "Canteen name",
+      "location": "Canteen location"
+    },
+    "menu": [
+      {
+        "date": "2023-01-01",
+        "meals": [
+          {
+            "name": "Meal name",
+            "price": 0.0,
+            "description": "Meal description"
+          }
+        ]
+      }
+    ]
+  }
+}
