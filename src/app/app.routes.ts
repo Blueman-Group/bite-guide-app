@@ -23,4 +23,9 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./setup1/setup1.page').then((m) => m.Setup1Page),
   },
+  {
+    path: 'setup-2',
+    loadComponent: () =>
+      import('./setup2/setup2.page').then((m) => m.Setup2Page),
+  },
 ];
