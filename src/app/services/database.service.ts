@@ -11,6 +11,17 @@ import { Canteen } from '../interfaces/canteen';
 export class DatabaseService {
   private _arango: ArangoDriver = ArangoDriver.getInstance();
 
+  constructor() {}
+
+  public async checkArangoConnection(): Promise<boolean> {
+    try {
+      await this._arango.getDatabase().listCollections();
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   public async getMealsAtDate(date: Date, canteen: Canteen): Promise<Meal[]> {
     let collection = this._arango.getMealPlanCollection();
     let cursor = await this._arango.getDatabase().query(
