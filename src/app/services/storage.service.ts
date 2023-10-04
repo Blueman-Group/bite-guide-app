@@ -8,7 +8,7 @@ import { DatabaseService } from './database.service';
 @Injectable({
   providedIn: 'root',
 })
-export class _storageService {
+export class StorageService {
   private _storage: Storage | null = null;
   _storageReady = false;
 
