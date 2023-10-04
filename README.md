@@ -11,7 +11,9 @@
 ```
 
 #
-[![Quality gate](https://sonar.envyz.de/api/project_badges/quality_gate?project=biteguide&token=sqb_c8e7ef9bf11dfc9a266a8ee8ed670a4cd3618fa5)](https://sonar.envyz.de/dashboard?id=biteguide)
+[![Lines of Code](https://sonar.envyz.de/api/project_badges/measure?project=biteguide_develop&metric=ncloc&token=sqb_a82cf92ef2b35ded1708910f408d5cc9e31854dc)](https://sonar.envyz.de/dashboard?id=biteguide_develop)
+[![Quality Gate Status](https://sonar.envyz.de/api/project_badges/measure?project=biteguide_develop&metric=alert_status&token=sqb_a82cf92ef2b35ded1708910f408d5cc9e31854dc)](https://sonar.envyz.de/dashboard?id=biteguide_develop)
+[![Reliability Rating](https://sonar.envyz.de/api/project_badges/measure?project=biteguide_develop&metric=reliability_rating&token=sqb_a82cf92ef2b35ded1708910f408d5cc9e31854dc)](https://sonar.envyz.de/dashboard?id=biteguide_develop)
 #
 
 # BiteGuide: Entwicklerdokumentation
