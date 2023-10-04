@@ -2,7 +2,7 @@ import { Component, OnInit, AfterContentChecked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { StorageService } from '../services/storage.service';
 import { Canteen } from '../interfaces/canteen';
 
@@ -11,13 +11,16 @@ import { Canteen } from '../interfaces/canteen';
   templateUrl: './setup1.page.html',
   styleUrls: ['./setup1.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule],
+  imports: [IonicModule, CommonModule, FormsModule, RouterModule],
 })
 export class Setup1Page implements OnInit, AfterContentChecked {
   constructor(private router: Router, public storageService: StorageService) {}
 
   public canteens: Canteen[] = [];
   updating = false;
+  document = document;
+
+  canteen: string = '';
 
   customPopoverOptions = {
     cssClass: 'setup-popover',
