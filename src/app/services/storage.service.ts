@@ -15,7 +15,9 @@ export class StorageService {
   constructor(
     private storage: Storage,
     private databaseService: DatabaseService
-  ) {}
+  ) {
+    this.init().then(() => console.log('storage service ready'));
+  }
 
   async init() {
     this._storage = await this.storage.create();
@@ -24,6 +26,10 @@ export class StorageService {
       this._storageReady = true;
       await this._storage.remove('readyTest');
     }
+  }
+
+  async checkSetup(): Promise<boolean> {
+    return await this._storage?.get('setup');
   }
 
   async checkCanteen(key: string): Promise<boolean> {
@@ -40,6 +46,7 @@ export class StorageService {
     let canteens: Canteen[] = [];
     const keys = await this._storage?.keys();
     for (let key of keys ?? []) {
+      if (key === 'setup') continue;
       const canteen = await this.getCanteen(key);
       canteens.push(canteen.canteen);
     }
@@ -82,5 +89,15 @@ export class StorageService {
       meals: databaseMeals,
     });
     return databaseMeals;
+  }
+
+  //a method names updateCanteens which updates the existing canteens in the local storage with the actual ones from the datbase
+  public async updateCanteens(): Promise<void> {
+    let canteens = await this.databaseService.getCanteens();
+    for (let canteen of canteens) {
+      if (!(await this.checkCanteen(canteen._key))) {
+        await this.addCanteen(canteen._key, canteen);
+      }
+    }
   }
 }
