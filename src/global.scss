@@ -24,3 +24,13 @@
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
+
+* {
+  font-family: "sofia-pro", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.setup-popover * {
+  width: 250px !important;
+}
