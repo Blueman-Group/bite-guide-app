@@ -1,0 +1,27 @@
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="hello">
+    <h3>Hey 👋<br />Willkommen bei BiteGuide!</h3>
+    <p>
+      Damit wir dir deine Lieblingsspeisen in deiner Umgebung vorschlagen
+      können, nenne uns doch bitte für welche Mensa in der Region Stuttgart du
+      dich am meisten interessierst.
+    </p>
+  </div>
+  <ion-list>
+    <ion-item>
+      <ion-select
+        aria-label="Canteen"
+        interface="popover"
+        placeholder="Mensa auswählen"
+        shape="round"
+        [interfaceOptions]="customPopoverOptions"
+      >
+        <ion-select-option
+          *ngFor="let canteen of this.canteens"
+          value="{{canteen._key}}"
+          >{{canteen.name.replace('MENSA', '')}}</ion-select-option
+        >
+      </ion-select>
+    </ion-item>
+  </ion-list>
+</ion-content>
