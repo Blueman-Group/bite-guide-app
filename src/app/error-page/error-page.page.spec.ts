@@ -5,11 +5,11 @@ describe('ErrorPagePage', () => {
   let component: ErrorPagePage;
   let fixture: ComponentFixture<ErrorPagePage>;
 
-  beforeEach(async(() => {
+  beforeEach(async () => {
     fixture = TestBed.createComponent(ErrorPagePage);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }));
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();
