@@ -13,23 +13,25 @@ export class DatabaseService {
 
   public async getMealsAtDate(date: Date, canteen: Canteen): Promise<Meal[]> {
     let collection = this._arango.getMealPlanCollection();
-    console.log(date.toISOString().substring(0, 10));
     let cursor = await this._arango.getDatabase().query(
-      `FOR m IN \`${collection.name}\` 
-          FILTER m.date == "${date.toISOString().substring(0, 10)}"
-          FILTER m.canteen == "${canteen._key}"
-          LET meals = (
-            FOR meal in 1 any m._id meal_plan_position
-              let additives = (
-                for additive in 1 outbound meal._id meal_additive_map
-                  return additive
-              )
-              let allergens = (
-                for allergen in 1 outbound meal._id meal_allergen_map
-                  return allergen
-              )
-            return {meal: meal, additives: additives, allergens: allergens}
-          )
+      `FOR mealplan IN \`${collection.name}\` 
+          FILTER mealplan.date == "${date.toISOString().substring(0, 10)}"
+          FILTER mealplan.canteenId == "${canteen._key}"
+            let meals = (
+              for meal in mealplan.mealIds
+                  let doc = DOCUMENT(meal)
+                  let additives = (
+                      for additive in doc.additiveIds
+                          let additiveId = CONCAT('additive/', additive)
+                          return DOCUMENT(additiveId)
+                  )
+                  let allergens = (
+                      for allergen in doc.allergenIds
+                          let allergenId = CONCAT('allergen/', allergen)
+                          return DOCUMENT(allergenId)
+                  )
+                  return {meal: doc, additives: additives, allergens: allergens}
+            )
           RETURN meals`
     );
 
@@ -108,10 +110,11 @@ export class DatabaseService {
     }
   }
 
-  //a method which returns the additives of a given meal as an array of Additive objects
+  //a method which returns the additives of a given meal key from the database as an array of Additive objects
   public async getAdditivesOfMeal(_key: string): Promise<Additive[]> {
     let cursor = await this._arango.getDatabase().query(
-      `FOR additive IN 1..1 OUTBOUND "meal/${_key}" meal_additive_map
+      `FOR additive IN additive
+        FILTER additive._key IN ${_key}.additiveIds[*]
         RETURN additive`
     );
     let result = await cursor.all();
@@ -122,10 +125,11 @@ export class DatabaseService {
     return additiveList;
   }
 
-  //a method which returns the allergens of a given meal as an array of Allergen objects
+  //a method which returns the allergens of a given meal key from the database as an array of Allergen objects
   public async getAllergensOfMeal(_key: string): Promise<Allergen[]> {
     let cursor = await this._arango.getDatabase().query(
-      `FOR allergen IN 1..1 OUTBOUND "meal/${_key}" meal_allergen_map
+      `FOR allergen IN allergen
+        FILTER allergen._key IN ${_key}.allergenIds[*]
         RETURN allergen`
     );
     let result = await cursor.all();

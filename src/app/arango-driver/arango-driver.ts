@@ -37,7 +37,7 @@ export class ArangoDriver {
   }
 
   public getAllergyCollection() {
-    return this._db.collection<Allergen>('allergy');
+    return this._db.collection<Allergen>('allergen');
   }
 
   public getCanteenCollection() {
