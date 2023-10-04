@@ -26,6 +26,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./own-plan/own-plan.page').then((m) => m.OwnPlanPage),
       },
+      {
+        path: '404',
+        loadComponent: () =>
+          import('./error-page/error-page.page').then((m) => m.ErrorPagePage),
+      },
     ],
   },
+
+  { path: '**', redirectTo: '/404' },
 ];
