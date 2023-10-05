@@ -47,6 +47,7 @@ export class StorageService {
     const keys = await this._storage?.keys();
     for (let key of keys ?? []) {
       if (key === 'setup') continue;
+      if (key === 'favorite') continue;
       const canteen = await this.getCanteen(key);
       canteens.push(canteen.canteen);
     }
@@ -99,5 +100,13 @@ export class StorageService {
         await this.addCanteen(canteen._key, canteen);
       }
     }
+  }
+
+  public async setFavorite(key: string): Promise<void> {
+    await this.storage?.set('favorite', key);
+  }
+
+  public async getFavoriteCanteen(): Promise<StorageCanteen> {
+    return await this.getCanteen(await this.storage?.get('favorite'));
   }
 }
