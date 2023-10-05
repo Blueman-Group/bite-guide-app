@@ -41,6 +41,7 @@ export class Setup2Page implements OnInit, AfterViewChecked {
         meals: await this.storageService.getMenu(canteen.canteen, new Date()),
       });
       if (canteen.menu.length != 0) {
+        document.getElementById('finish_anim')?.classList.remove('ion-hide');
         document.getElementById('finish_anim')?.classList.add('finish');
       } else {
         this.toastController

@@ -13,6 +13,40 @@ body {
   overflow: hidden;
 }
 
+#finish_anim {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+
+  background-color: rgba(50, 211, 77, 1);
+  color: rgba(50, 211, 77, 1);
+  border-radius: 3rem;
+  overflow: hidden;
+
+  &:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border-radius: 2px dotted #fff;
+    border-radius: 50%;
+    border-left: none;
+    border-bottom: none;
+    opacity: 0;
+  }
+
+  &.finish {
+    transition: transform 1s 0.1s ease-out, opacity 0.8s 0.1s,
+      background-color 0.1s 0.3s;
+    transform: scale(30);
+    opacity: 1;
+
+    &:after {
+      opacity: 0;
+    }
+  }
+}
+
 .scene {
   display: flex;
 }
