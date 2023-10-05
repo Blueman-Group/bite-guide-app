@@ -15,8 +15,7 @@
         placeholder="Mensa auswählen"
         shape="round"
         [interfaceOptions]="customPopoverOptions"
-        (ionChange)="document.getElementById('nextButton')?.classList?.remove('ion-hide')"
-        [(ngModel)]="this.canteen"
+        (ionChange)="this.onSelectChange($event.target)"
       >
         <ion-select-option
           *ngFor="let canteen of this.canteens"
@@ -28,7 +27,6 @@
   </ion-list>
   <ion-button
     [routerLink]="['/setup-2']"
-    [queryParams]="{ canteen: this.canteen }"
     fill="clear"
     expand="block"
     id="nextButton"

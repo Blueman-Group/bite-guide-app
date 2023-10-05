@@ -20,8 +20,6 @@ export class Setup1Page implements OnInit, AfterContentChecked {
   updating = false;
   document = document;
 
-  canteen: string = '';
-
   customPopoverOptions = {
     cssClass: 'setup-popover',
   };
@@ -41,5 +39,10 @@ export class Setup1Page implements OnInit, AfterContentChecked {
         this.updating = false;
       });
     }
+  }
+
+  onSelectChange(eventTarget: any) {
+    document.getElementById('nextButton')?.classList?.remove('ion-hide');
+    this.storageService.setFavorite(eventTarget.value);
   }
 }
