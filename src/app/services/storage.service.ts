@@ -32,6 +32,10 @@ export class StorageService {
     return await this._storage?.get('setup');
   }
 
+  async setSetup(): Promise<void> {
+    await this._storage?.set('setup', true);
+  }
+
   async checkCanteen(key: string): Promise<boolean> {
     const canteen = await this._storage?.get(key);
     return canteen;
@@ -46,8 +50,9 @@ export class StorageService {
     let canteens: Canteen[] = [];
     const keys = await this._storage?.keys();
     for (let key of keys ?? []) {
-      if (key === 'setup') continue;
-      if (key === 'favorite') continue;
+      console.log(key);
+      if (key === 'setup') break;
+      if (key === 'favorite') break;
       const canteen = await this.getCanteen(key);
       canteens.push(canteen.canteen);
     }
