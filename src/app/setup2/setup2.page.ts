@@ -32,6 +32,7 @@ export class Setup2Page implements OnInit, AfterViewChecked {
   async ngAfterViewChecked() {
     if (!this.updating) {
       this.updating = true;
+      let startTime = new Date().getTime();
       let canteen = await this.storageService.getFavoriteCanteen();
       if (canteen.menu.length != 0) {
         canteen.menu = [];
@@ -40,9 +41,28 @@ export class Setup2Page implements OnInit, AfterViewChecked {
         date: new Date().toISOString().substring(0, 10),
         meals: await this.storageService.getMenu(canteen.canteen, new Date()),
       });
+      await this.storageService.setSetup();
       if (canteen.menu.length != 0) {
+        const waitFunction = async () => {
+          while (new Date().getTime() - startTime < 3000) {
+            // Wait for 100 ms
+            await new Promise((resolve) => setTimeout(resolve, 100));
+          }
+        };
+        await waitFunction();
         document.getElementById('finish_anim')?.classList.remove('ion-hide');
         document.getElementById('finish_anim')?.classList.add('finish');
+        let animstart = new Date().getTime();
+        const checkmarkWaitFunction = async () => {
+          while (new Date().getTime() - animstart < 1500) {
+            await new Promise((resolve) => setTimeout(resolve, 100));
+          }
+        };
+        await checkmarkWaitFunction();
+        document.getElementById('checkmark')?.classList.remove('ion-hide');
+        startTime = new Date().getTime();
+        await waitFunction();
+        this.router.navigate(['home']);
       } else {
         this.toastController
           .create({
