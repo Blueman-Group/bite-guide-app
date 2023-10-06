@@ -7,6 +7,7 @@ import { DatabaseService } from '../services/database.service';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
+
   imports: [IonicModule],
 })
 export class HomePage {

@@ -13,8 +13,7 @@ export class MenuComponent implements OnInit {
   tabsLayout: string = 'icon-top';
   constructor(public platform: Platform) {
     if (!this.platform.is('mobile')) {
-
-      this.tabsPlacement = 'top';
+      this.tabsPlacement = 'start';
 
       this.tabsLayout = 'icon-start';
     }
