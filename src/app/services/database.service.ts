@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ArangoDriver } from '../arango-driver/arango-driver';
-import { __param } from 'tslib';
 import { Meal } from '../classes/meal';
-import { Allergy } from '../interfaces/allergy';
+import { Allergen } from '../interfaces/allergen';
 import { Additive } from '../interfaces/additive';
 import { Canteen } from '../interfaces/canteen';
 
@@ -12,56 +11,66 @@ import { Canteen } from '../interfaces/canteen';
 export class DatabaseService {
   private _arango: ArangoDriver = ArangoDriver.getInstance();
 
+  constructor() {}
+
+  public async checkArangoConnection(): Promise<boolean> {
+    try {
+      await this._arango.getDatabase().listCollections();
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   public async getMealsAtDate(date: Date, canteen: Canteen): Promise<Meal[]> {
     let collection = this._arango.getMealPlanCollection();
-    let cursor = await this._arango
-      .getDatabase()
-      .query(
-        `FOR m IN \`${collection.name}\` FILTER m.date == "${date
-          .toISOString()
-          .substring(0, 10)}" AND m.canteenId == ${canteen._key} RETURN m`
-      );
+    let cursor = await this._arango.getDatabase().query(
+      `FOR mealplan IN \`${collection.name}\` 
+          FILTER mealplan.date == "${date.toISOString().substring(0, 10)}"
+          FILTER mealplan.canteenId == "${canteen._key}"
+            let meals = (
+              for meal in mealplan.mealIds
+                  let doc = DOCUMENT(meal)
+                  let additives = (
+                      for additive in doc.additiveIds
+                          let additiveId = CONCAT('additive/', additive)
+                          return DOCUMENT(additiveId)
+                  )
+                  let allergens = (
+                      for allergen in doc.allergenIds
+                          let allergenId = CONCAT('allergen/', allergen)
+                          return DOCUMENT(allergenId)
+                  )
+                  return {meal: doc, additives: additives, allergens: allergens}
+            )
+          RETURN meals`
+    );
 
     let result = await cursor.all();
     let mealList: Meal[] = [];
     for (let resultDoc of result) {
-      for (let mealKey of resultDoc.meals) {
-        let meal = await this.getMeal(mealKey);
-        mealList.push(meal);
+      for (let meal of resultDoc) {
+        mealList.push(
+          new Meal(
+            meal.meal._key,
+            meal.meal.name,
+            meal.meal.mealCategory,
+            meal.meal.normalPrice,
+            meal.meal.studentPrice,
+            meal.meal.co2PerPortion,
+            meal.additives as unknown as Additive[],
+            meal.allergens as unknown as Allergen[],
+            meal.meal.labels,
+            meal.meal.meatCategories
+          )
+        );
       }
     }
+    console.log(mealList);
     return mealList;
   }
 
-  public async getMeal(_key: string): Promise<Meal> {
-    if (await this._arango.getMealCollection().documentExists(_key)) {
-      let mealDb = await this._arango.getMealCollection().document(_key);
-      let additives: Additive[] = [];
-      for (let additiveKey of mealDb.additives) {
-        additives.push(await this.getAdditive(additiveKey));
-      }
-      let allergies: Allergy[] = [];
-      for (let allergyKey of mealDb.allergens) {
-        allergies.push(await this.getAllergy(allergyKey));
-      }
-      return new Meal(
-        mealDb._key,
-        mealDb.name,
-        mealDb.mealCategory,
-        mealDb.normalPrice,
-        mealDb.studentPrice,
-        mealDb.co2PerPortion,
-        additives,
-        allergies,
-        mealDb.labels,
-        mealDb.meatCategories
-      );
-    } else {
-      throw new Error('Meal not found');
-    }
-  }
-
-  public async getAllergy(_key: string): Promise<Allergy> {
+  public async getAllergy(_key: string): Promise<Allergen> {
     if (await this._arango.getAllergyCollection().documentExists(_key)) {
       return await this._arango.getAllergyCollection().document(_key);
     } else {
@@ -87,5 +96,58 @@ export class DatabaseService {
       canteenList.push(resultDoc);
     }
     return canteenList;
+  }
+
+  //a method which returns the meal of a given key from the database as a Meal object and adds the additives and allergens to the meal
+  public async getMeal(_key: string): Promise<Meal> {
+    if (await this._arango.getMealCollection().documentExists(_key)) {
+      let meal = await this._arango.getMealCollection().document(_key);
+      let additives = await this.getAdditivesOfMeal(_key);
+      let allergens = await this.getAllergensOfMeal(_key);
+      return new Meal(
+        meal._key,
+        meal.name,
+        meal.mealCategory,
+        meal.normalPrice,
+        meal.studentPrice,
+        meal.co2PerPortion,
+        additives,
+        allergens,
+        meal.labels,
+        meal.meatCategories
+      );
+    } else {
+      throw new Error('Meal not found');
+    }
+  }
+
+  //a method which returns the additives of a given meal key from the database as an array of Additive objects
+  public async getAdditivesOfMeal(_key: string): Promise<Additive[]> {
+    let cursor = await this._arango.getDatabase().query(
+      `FOR additive IN additive
+        FILTER additive._key IN ${_key}.additiveIds[*]
+        RETURN additive`
+    );
+    let result = await cursor.all();
+    let additiveList: Additive[] = [];
+    for (let resultDoc of result) {
+      additiveList.push(resultDoc);
+    }
+    return additiveList;
+  }
+
+  //a method which returns the allergens of a given meal key from the database as an array of Allergen objects
+  public async getAllergensOfMeal(_key: string): Promise<Allergen[]> {
+    let cursor = await this._arango.getDatabase().query(
+      `FOR allergen IN allergen
+        FILTER allergen._key IN ${_key}.allergenIds[*]
+        RETURN allergen`
+    );
+    let result = await cursor.all();
+    let allergenList: Allergen[] = [];
+    for (let resultDoc of result) {
+      allergenList.push(resultDoc);
+    }
+    return allergenList;
   }
 }

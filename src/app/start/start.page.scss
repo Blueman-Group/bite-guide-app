@@ -1,0 +1,16 @@
+img {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  aspect-ratio: auto;
+}
+
+p {
+  position: absolute;
+  bottom: 5%;
+  left: 50%;
+  text-align: center;
+  transform: translate(-50%, -50%);
+}

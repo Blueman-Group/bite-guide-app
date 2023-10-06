@@ -1,26 +1,44 @@
-<ion-header [translucent]="true">
+<ion-header translucent="true">
   <ion-toolbar>
-    <ion-title> Blank </ion-title>
+    <ion-title><img id="logo" alt="logo" height="25" src="assets/icon/BiteGuideFont.png" /></ion-title>
+
   </ion-toolbar>
-
-  <ion-content [fullscreen]="true">
-    <ion-header collapse="condense">
-      <ion-toolbar>
-        <ion-title size="large">Blank</ion-title>
-      </ion-toolbar>
-    </ion-header>
-
-    <div id="container">
-      <strong>Ready to create an app?</strong>
-      <p>
-        Start with Ionic
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://ionicframework.com/docs/components"
-          >UI Components</a
-        >
-      </p>
-    </div>
-  </ion-content>
+  <slot name="navslot"></slot>
 </ion-header>
+
+<ion-content fullscreen="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large"><img alt="logo" height="40" id="logo" src="assets/icon/BiteGuide.png" /></ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-list>
+    <ion-item>
+      <ion-select aria-label="Fruit" interface="popover" placeholder="Selec cantine">
+        <ion-select-option value="apples">Central</ion-select-option>
+        <ion-select-option value="oranges">LB</ion-select-option>
+        <ion-select-option value="bananas">Vaihingen</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+  <div class="menu-container">
+    <ion-card>
+      <img alt="Silhouette of mountains" src="assets/icon/Pommes.jpg" />
+      <ion-card-header>
+        <ion-card-title>Pommes</ion-card-title>
+        <ion-card-subtitle>Gericht</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content> Allergene... </ion-card-content>
+    </ion-card>
+    <ion-card>
+      <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
+      <ion-card-header>
+        <ion-card-title>Pommes</ion-card-title>
+        <ion-card-subtitle>Gericht</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content> Allergene... </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
