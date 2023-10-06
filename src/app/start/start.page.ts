@@ -38,9 +38,11 @@ export class StartPage implements OnInit {
         toast.present();
         return;
       }
-      this.storageService.updateCanteens();
+      await this.storageService.updateCanteens();
 
-      this.router.navigate(['setup-1']);
+      this.router.navigate(['setup', '1']);
+    } else {
+      this.router.navigate(['home']);
     }
   }
 }
