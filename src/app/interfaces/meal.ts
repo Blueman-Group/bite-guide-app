@@ -1,6 +1,5 @@
 import { Additive } from './additive';
 import { Allergen } from './allergen';
-import { Label } from './label';
 
 export interface MealInterface {
   _key: string;
@@ -11,6 +10,4 @@ export interface MealInterface {
   co2PerPortion: number;
   additives: Additive[];
   allergies: Allergen[];
-  labels: Label[];
-  meatCategories: string[];
 }

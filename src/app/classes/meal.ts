@@ -1,6 +1,5 @@
 import { Additive } from '../interfaces/additive';
 import { Allergen } from '../interfaces/allergen';
-import { Label } from '../interfaces/label';
 import { MealInterface } from '../interfaces/meal';
 
 export class Meal implements MealInterface {
@@ -12,8 +11,6 @@ export class Meal implements MealInterface {
   co2PerPortion: number;
   additives: Additive[];
   allergies: Allergen[];
-  labels: Label[];
-  meatCategories: string[];
 
   constructor(
     _key: string,
@@ -23,9 +20,7 @@ export class Meal implements MealInterface {
     studentPrice: number,
     co2PerPortion: number,
     additives: Additive[],
-    allergies: Allergen[],
-    labels: Label[],
-    meatCategories: string[]
+    allergies: Allergen[]
   ) {
     this._key = _key;
     this.name = name;
@@ -35,7 +30,5 @@ export class Meal implements MealInterface {
     this.co2PerPortion = co2PerPortion;
     this.additives = additives;
     this.allergies = allergies;
-    this.labels = labels;
-    this.meatCategories = meatCategories;
   }
 }
