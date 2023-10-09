@@ -5,6 +5,7 @@ import { IonicModule, ToastController } from '@ionic/angular';
 import { StorageService } from '../services/storage.service';
 import { Router } from '@angular/router';
 import { DatabaseService } from '../services/database.service';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-start',
@@ -42,6 +43,22 @@ export class StartPage implements OnInit {
 
       this.router.navigate(['setup', '1']);
     } else {
+      let favoriteCanteeen = await this.storageService.getFavoriteCanteen();
+      if (
+        (
+          await this.storageService.getActualMeals(
+            favoriteCanteeen.canteen._key
+          )
+        ).length < 5
+      ) {
+        await this.storageService.updateMenus(favoriteCanteeen.canteen._key);
+      } else {
+        this.storageService
+          .updateMenus(favoriteCanteeen.canteen._key)
+          .then(() => {
+            console.log('Updated meals');
+          });
+      }
       this.router.navigate(['home']);
     }
   }

@@ -37,12 +37,10 @@ export class Setup2Page implements OnInit, AfterViewChecked {
       if (canteen.menu.length != 0) {
         canteen.menu = [];
       }
-      canteen.menu.push({
-        date: new Date().toISOString().substring(0, 10),
-        meals: await this.storageService.getMenu(canteen.canteen, new Date()),
-      });
+      console.log('update cateen plan');
+      await this.storageService.updateMenus(canteen.canteen._key);
       await this.storageService.setSetup();
-      if (canteen.menu.length != 0) {
+      if ((await this.storageService.getFavoriteCanteen()).menu.length != 0) {
         const waitFunction = async () => {
           while (new Date().getTime() - startTime < 3000) {
             // Wait for 100 ms
@@ -62,7 +60,7 @@ export class Setup2Page implements OnInit, AfterViewChecked {
         document.getElementById('checkmark')?.classList.remove('ion-hide');
         startTime = new Date().getTime();
         await waitFunction();
-        this.router.navigate(['home']);
+        this.router.navigate(['/home']);
       } else {
         this.toastController
           .create({
