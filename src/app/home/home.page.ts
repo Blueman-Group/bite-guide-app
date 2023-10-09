@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
-import { DatabaseService } from '../services/database.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -9,16 +9,10 @@ import { DatabaseService } from '../services/database.service';
   standalone: true,
   imports: [IonicModule],
 })
-export class HomePage {
-  constructor(private databaseService: DatabaseService) {
-    this.databaseService
-      .getMealsAtDate(new Date(), {
-        _key: '2',
-        name: 'Mensa Academica',
-        location: 'Reichenhainer Str. 55, 09126 Chemnitz',
-      })
-      .then((meals) => {
-        console.log(meals);
-      });
+export class HomePage implements OnInit {
+  constructor(private router: Router) {}
+
+  ngOnInit(): void {
+    if (!this.router.navigated) this.router.navigate(['/']);
   }
 }
