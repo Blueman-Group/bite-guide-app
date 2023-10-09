@@ -59,9 +59,7 @@ export class DatabaseService {
             meal.meal.studentPrice,
             meal.meal.co2PerPortion,
             meal.additives as unknown as Additive[],
-            meal.allergens as unknown as Allergen[],
-            meal.meal.labels,
-            meal.meal.meatCategories
+            meal.allergens as unknown as Allergen[]
           )
         );
       }
@@ -112,9 +110,7 @@ export class DatabaseService {
         meal.studentPrice,
         meal.co2PerPortion,
         additives,
-        allergens,
-        meal.labels,
-        meal.meatCategories
+        allergens
       );
     } else {
       throw new Error('Meal not found');
