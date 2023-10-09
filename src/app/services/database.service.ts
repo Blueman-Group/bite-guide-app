@@ -11,8 +11,6 @@ import { Canteen } from '../interfaces/canteen';
 export class DatabaseService {
   private _arango: ArangoDriver = ArangoDriver.getInstance();
 
-  constructor() {}
-
   public async checkArangoConnection(): Promise<boolean> {
     try {
       await this._arango.getDatabase().listCollections();
