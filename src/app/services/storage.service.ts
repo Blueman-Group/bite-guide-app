@@ -46,11 +46,14 @@ export class StorageService {
     return canteen;
   }
 
+  async setCateen(key: string, canteen: StorageCanteen) {
+    await this._storage?.set(key, canteen);
+  }
+
   async getCanteens(): Promise<Canteen[]> {
     let canteens: Canteen[] = [];
     const keys = await this._storage?.keys();
     for (let key of keys ?? []) {
-      console.log(key);
       if (key === 'setup') break;
       if (key === 'favorite') break;
       const canteen = await this.getCanteen(key);
@@ -90,11 +93,59 @@ export class StorageService {
       date,
       canteen
     );
-    this.addMenu(canteen, {
+    await this.addMenu(canteen, {
       date: date.toISOString().substring(0, 10),
       meals: databaseMeals,
     });
     return databaseMeals;
+  }
+
+  public async updateMenus(key: string): Promise<void> {
+    let storageCanteen = await this.getCanteen(key);
+    let date = new Date();
+    storageCanteen.menu = storageCanteen.menu.filter(
+      (m: { date: string; meals: Meal[] }) =>
+        new Date(m.date).getWeek() <= date.getWeek()
+    );
+
+    let itDate = new Date();
+    if (storageCanteen.menu.length < 10) {
+      if (
+        storageCanteen.menu.find(
+          (m: { date: string; meals: Meal[] }) =>
+            new Date(m.date).getWeek() === date.getWeek()
+        )
+      ) {
+        itDate.setToNextWeek();
+        for (let i = 0; i < 5; i++) {
+          await this.getMenu(storageCanteen.canteen, itDate);
+          itDate.setDate(itDate.getDate() + 1);
+        }
+      } else {
+        itDate.setToCurrentWeek();
+        for (let i = 0; i < 5; i++) {
+          await this.getMenu(storageCanteen.canteen, itDate);
+          itDate.setDate(itDate.getDate() + 1);
+        }
+        itDate.setToNextWeek();
+        for (let i = 0; i < 5; i++) {
+          await this.getMenu(storageCanteen.canteen, itDate);
+          itDate.setDate(itDate.getDate() + 1);
+        }
+      }
+    }
+  }
+
+  public async getActualMeals(
+    key: string
+  ): Promise<{ date: string; meals: Meal[] }[]> {
+    let storageCanteen = await this.getCanteen(key);
+    let date = new Date();
+    let menu = storageCanteen.menu.filter(
+      (m: { date: string; meals: Meal[] }) =>
+        new Date(m.date).getWeek() <= date.getWeek()
+    );
+    return menu;
   }
 
   //a method names updateCanteens which updates the existing canteens in the local storage with the actual ones from the datbase
@@ -115,3 +166,56 @@ export class StorageService {
     return await this.getCanteen(await this.storage?.get('favorite'));
   }
 }
+
+declare global {
+  interface Date {
+    getWeek(): number;
+    setToNextWeek(): void;
+    setToCurrentWeek(): void;
+  }
+}
+
+Date.prototype.setToCurrentWeek = function () {
+  //a function which sets the date to the beginning of the current week
+  let day = this.getDay();
+  let diff = day - 1;
+  this.setDate(this.getDate() - diff);
+};
+
+Date.prototype.setToNextWeek = function () {
+  //a function which sets the date to the beginning of next week
+  let day = this.getDay();
+  let diff = 8 - day;
+  this.setDate(this.getDate() + diff);
+};
+
+Date.prototype.getWeek = function () {
+  let dowOffset = 1; //start week on monday
+  var newYear = new Date(this.getFullYear(), 0, 1);
+  var day = newYear.getDay() - dowOffset; //the day of week the year begins on
+  day = day >= 0 ? day : day + 7;
+  let x;
+  var daynum =
+    Math.floor(
+      (this.getTime() -
+        newYear.getTime() -
+        (this.getTimezoneOffset() - newYear.getTimezoneOffset()) * 60000) /
+        86400000
+    ) + 1;
+  var weeknum;
+  //if the year starts before the middle of a week
+  if (day < 4) {
+    weeknum = Math.floor((daynum + day - 1) / 7) + 1;
+    if (weeknum > 52) {
+      let nYear = new Date(this.getFullYear() + 1, 0, 1);
+      let nday = nYear.getDay() - dowOffset;
+      nday = nday >= 0 ? nday : nday + 7;
+      /*if the next year starts before the middle of
+              the week, it is week #1 of that year*/
+      weeknum = nday < 4 ? 1 : 53;
+    }
+  } else {
+    weeknum = Math.floor((daynum + day - 1) / 7);
+  }
+  return weeknum;
+};
