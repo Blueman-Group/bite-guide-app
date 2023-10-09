@@ -11,6 +11,7 @@ export class Meal implements MealInterface {
   co2PerPortion: number;
   additives: Additive[];
   allergies: Allergen[];
+  imageUrl: string;
 
   constructor(
     _key: string,
@@ -20,7 +21,8 @@ export class Meal implements MealInterface {
     studentPrice: number,
     co2PerPortion: number,
     additives: Additive[],
-    allergies: Allergen[]
+    allergies: Allergen[],
+    imageUrl: string
   ) {
     this._key = _key;
     this.name = name;
@@ -30,5 +32,6 @@ export class Meal implements MealInterface {
     this.co2PerPortion = co2PerPortion;
     this.additives = additives;
     this.allergies = allergies;
+    this.imageUrl = imageUrl;
   }
 }

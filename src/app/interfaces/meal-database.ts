@@ -7,4 +7,5 @@ export interface MealDatabase {
   co2PerPortion: number;
   additives: string[];
   allergens: string[];
+  imageUrl: string;
 }

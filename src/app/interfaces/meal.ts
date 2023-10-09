@@ -10,4 +10,5 @@ export interface MealInterface {
   co2PerPortion: number;
   additives: Additive[];
   allergies: Allergen[];
+  imageUrl: string;
 }
