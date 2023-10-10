@@ -9,6 +9,6 @@ export interface MealInterface {
   studentPrice: number;
   co2PerPortion: number;
   additives: Additive[];
-  allergies: Allergen[];
+  allergens: Allergen[];
   imageUrl: string;
 }
