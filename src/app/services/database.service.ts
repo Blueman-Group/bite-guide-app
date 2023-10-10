@@ -63,7 +63,6 @@ export class DatabaseService {
         );
       }
     }
-    console.log(mealList);
     return mealList;
   }
 
