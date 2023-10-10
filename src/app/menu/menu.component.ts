@@ -13,7 +13,7 @@ export class MenuComponent implements OnInit {
   tabsLayout: string = 'icon-top';
   constructor(public platform: Platform) {
     if (!this.platform.is('mobile')) {
-      this.tabsPlacement = '`navslot`';
+      this.tabsPlacement = 'top';
       this.tabsLayout = 'icon-start';
     }
   }

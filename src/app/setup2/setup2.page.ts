@@ -60,7 +60,7 @@ export class Setup2Page implements OnInit, AfterViewChecked {
         document.getElementById('checkmark')?.classList.remove('ion-hide');
         startTime = new Date().getTime();
         await waitFunction();
-        this.router.navigate(['/home']);
+        this.router.navigate(['/home/main']);
       } else {
         this.toastController
           .create({

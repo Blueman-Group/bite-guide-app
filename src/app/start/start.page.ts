@@ -59,7 +59,7 @@ export class StartPage implements OnInit {
             console.log('Updated meals');
           });
       }
-      this.router.navigate(['home']);
+      this.router.navigate(['home/main']);
     }
   }
 }
