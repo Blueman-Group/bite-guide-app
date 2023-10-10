@@ -38,27 +38,123 @@
       </ion-select>
     </ion-item>
   </ion-list>
+  <div class="loading_data" *ngIf="this.loading">
+    <span class="loader"></span>
+    <p>Mensaplan wird geladen...</p>
+  </div>
   <div class="menu-container">
-    <ion-card>
-      <img alt="Silhouette of mountains" src="assets/icon/Pommes.jpg" />
+    <ion-card *ngFor="let meal of this.currentMeals">
+      <img alt="meal-picture" src="{{meal.imageUrl}}" *ngIf="meal.imageUrl" />
       <ion-card-header>
-        <ion-card-title>Pommes</ion-card-title>
-        <ion-card-subtitle>Gericht</ion-card-subtitle>
+        <ion-card-title>{{meal.name}}</ion-card-title>
+        <ion-card-subtitle>{{meal.mealCategory}}</ion-card-subtitle>
       </ion-card-header>
 
-      <ion-card-content> Allergene... </ion-card-content>
-    </ion-card>
-    <ion-card>
-      <img
-        alt="Silhouette of mountains"
-        src="https://ionicframework.com/docs/img/demos/card-media.png"
-      />
-      <ion-card-header>
-        <ion-card-title>Pommes</ion-card-title>
-        <ion-card-subtitle>Gericht</ion-card-subtitle>
-      </ion-card-header>
-
-      <ion-card-content> Allergene... </ion-card-content>
+      <ion-card-content>
+        <ion-list lines="none">
+          <ion-item>
+            <ion-icon
+              name="pricetag-outline"
+              slot="start"
+              aria-hidden="true"
+            ></ion-icon>
+            <ion-label>
+              Studenten: {{meal.studentPrice | number:'.2-2':'de'}}€ / Gast:
+              {{meal.normalPrice | number:'.2-2':'de'}}€</ion-label
+            >
+          </ion-item>
+          <ion-item>
+            <ion-icon
+              name="leaf-outline"
+              slot="start"
+              aria-hidden="true"
+              color="{{meal.co2ClassInfo}}"
+            ></ion-icon>
+            <ion-label
+              >CO<sub>2</sub>/Portion: {{meal.co2PerPortion}}g</ion-label
+            >
+          </ion-item>
+          <ion-item class="buttons">
+            <ion-button
+              *ngIf="meal.additives.length > 0"
+              size="default"
+              id="{{meal._key}}-additives"
+            >
+              <ion-icon
+                name="information-circle-outline"
+                slot="start"
+                aria-hidden="true"
+              ></ion-icon>
+              <ion-label>Zusatzstoffe</ion-label>
+            </ion-button>
+            <ion-button
+              *ngIf="meal.allergens.length > 0"
+              size="default"
+              id="{{meal._key}}-allergens"
+              class="allergens-button"
+            >
+              <ion-icon
+                name="information-circle-outline"
+                slot="start"
+                aria-hidden="true"
+              ></ion-icon>
+              <ion-label>Allergene</ion-label>
+            </ion-button>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
     </ion-card>
   </div>
+  <ion-modal
+    *ngFor="let meal of this.currentMeals"
+    trigger="{{meal._key}}-additives"
+    [initialBreakpoint]="1"
+    [breakpoints]="[0, 1]"
+  >
+    <ng-template>
+      <div class="ion-padding block">
+        <h2>Zusatzstoffe</h2>
+        <ion-item lines="none">
+          <ion-icon
+            name="pizza-outline"
+            slot="start"
+            aria-hidden="true"
+          ></ion-icon>
+          <ion-label class="ion-text-wrap">{{meal.name}}</ion-label>
+        </ion-item>
+        <hr />
+        <ion-list class="list">
+          <ion-item *ngFor="let additive of meal.additives">
+            <ion-label>{{additive.description}}</ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
+    </ng-template>
+  </ion-modal>
+  <ion-modal
+    *ngFor="let meal of this.currentMeals"
+    trigger="{{meal._key}}-allergens"
+    [initialBreakpoint]="1"
+    [breakpoints]="[0, 1]"
+  >
+    <ng-template>
+      <div class="ion-padding block">
+        <h2>Allergene</h2>
+        <ion-item lines="none">
+          <ion-icon
+            name="pizza-outline"
+            slot="start"
+            aria-hidden="true"
+          ></ion-icon>
+          <ion-label class="ion-text-wrap">{{meal.name}}</ion-label>
+        </ion-item>
+        <hr />
+        <ion-list class="list">
+          <ion-item *ngFor="let allergen of meal.allergens">
+            <ion-label>{{allergen.description}}</ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
+    </ng-template>
+  </ion-modal>
 </ion-content>

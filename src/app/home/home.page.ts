@@ -1,11 +1,17 @@
-import { Component, OnInit, AfterContentChecked } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
+import {
+  Component,
+  OnInit,
+  AfterContentChecked,
+  ViewChild,
+} from '@angular/core';
+import { IonModal, IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { StorageCanteen } from '../interfaces/storage-canteen';
 import { StorageService } from '../services/storage.service';
 import { Canteen } from '../interfaces/canteen';
+import { Meal } from '../classes/meal';
 
 @Component({
   selector: 'app-home',
@@ -17,8 +23,11 @@ import { Canteen } from '../interfaces/canteen';
 export class HomePage implements OnInit, AfterContentChecked {
   selectedCantine: string = '';
   selectedCantineData: StorageCanteen | null = null;
+  currentMeals: Meal[] = [];
   canteens: Canteen[] = [];
   updating = false;
+  selectedDate: string = new Date().toISOString().substring(0, 10);
+  loading = false;
 
   constructor(private router: Router, private storageService: StorageService) {}
 
@@ -29,18 +38,35 @@ export class HomePage implements OnInit, AfterContentChecked {
   async ngAfterContentChecked() {
     if (!this.updating) {
       this.updating = true;
+      this.loading = true;
+      if ((await this.storageService.getFavoriteCanteen()) == null) {
+        this.updating = false;
+        return;
+      }
       this.selectedCantineData = await this.storageService.getFavoriteCanteen();
       this.selectedCantine = this.selectedCantineData.canteen._key;
       this.canteens = await this.storageService.getCanteens();
+      this.currentMeals =
+        this.selectedCantineData.menu.find(
+          (menu) => menu.date === this.selectedDate
+        )?.meals ?? [];
+      this.loading = false;
+      if (this.currentMeals.length == 0) this.updating = false;
     }
   }
 
   async onSelectChange() {
+    this.loading = true;
+    this.currentMeals = [];
     await this.storageService.updateMenus(this.selectedCantine);
     let storageCanteen = await this.storageService.getCanteen(
       this.selectedCantine
     );
     this.selectedCantineData = storageCanteen;
-    console.log(this.selectedCantineData);
+    this.currentMeals =
+      this.selectedCantineData.menu.find(
+        (menu) => menu.date === this.selectedDate
+      )?.meals ?? [];
+    this.loading = false;
   }
 }
