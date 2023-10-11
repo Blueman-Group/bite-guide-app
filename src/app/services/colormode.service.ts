@@ -13,7 +13,6 @@ export class ColorModeService {
 
   async init() {
     let colormode = await this.storageService.getColorMode();
-    console.log(colormode);
     if (colormode) {
       this.initializeDarkMode(colormode === 'dark');
     } else {
