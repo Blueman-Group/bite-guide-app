@@ -1,19 +1,16 @@
 <ion-tabs>
-  <ion-tab-bar [slot]="this.tabsPlacement">
-    <ion-tab-button tab="main" [layout]="this.tabsLayout">
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="main">
       <ion-icon name="book-outline"></ion-icon>
-      Home
+      Kantinenplan
     </ion-tab-button>
-    <ion-tab-button tab="own-mealplan" [layout]="this.tabsLayout">
+    <!-- <ion-tab-button tab="own-mealplan" [layout]="this.tabsLayout">
       <ion-icon name="create-outline"></ion-icon>
       Own mealplan
-    </ion-tab-button>
-    <ion-tab-button tab="history" [layout]="this.tabsLayout">
-      <ion-icon name="hourglass-outline"></ion-icon> History
-    </ion-tab-button>
-    <ion-tab-button tab="settings" [layout]="this.tabsLayout">
+    </ion-tab-button> -->
+    <ion-tab-button tab="settings">
       <ion-icon name="cog-outline"></ion-icon>
-      Settings
+      Einstellungen
     </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>
