@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { IonicModule, Platform } from '@ionic/angular';
+import { Component } from '@angular/core';
+import { IonicModule } from '@ionic/angular';
 
 @Component({
   selector: 'app-menu',
@@ -8,15 +8,4 @@ import { IonicModule, Platform } from '@ionic/angular';
   standalone: true,
   imports: [IonicModule],
 })
-export class MenuComponent implements OnInit {
-  tabsPlacement: string = 'bottom';
-  tabsLayout: string = 'icon-top';
-  constructor(public platform: Platform) {
-    if (!this.platform.is('mobile')) {
-      this.tabsPlacement = 'top';
-      this.tabsLayout = 'icon-start';
-    }
-  }
-
-  ngOnInit() {}
-}
+export class MenuComponent {}
