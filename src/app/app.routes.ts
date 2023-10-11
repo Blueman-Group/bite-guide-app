@@ -23,11 +23,6 @@ export const routes: Routes = [
           import('./settings/settings.page').then((m) => m.SettingsPage),
       },
       {
-        path: 'history',
-        loadComponent: () =>
-          import('./history/history.page').then((m) => m.HistoryPage),
-      },
-      {
         path: 'own-mealplan',
         loadComponent: () =>
           import('./own-mealplan/own-mealplan.page').then(
