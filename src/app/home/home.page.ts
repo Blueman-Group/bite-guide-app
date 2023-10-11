@@ -1,24 +1,26 @@
-import {
-  Component,
-  OnInit,
-  AfterContentChecked,
-  ViewChild,
-} from '@angular/core';
-import { IonModal, IonicModule } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { Component, OnInit, AfterContentChecked } from '@angular/core';
+import { IonicModule } from '@ionic/angular';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { StorageCanteen } from '../interfaces/storage-canteen';
 import { StorageService } from '../services/storage.service';
 import { Canteen } from '../interfaces/canteen';
 import { Meal } from '../classes/meal';
+import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule],
+  imports: [
+    IonicModule,
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    NavbarHeaderComponent,
+  ],
 })
 export class HomePage implements OnInit, AfterContentChecked {
   selectedCantine: string = '';

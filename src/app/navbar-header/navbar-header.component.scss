@@ -1,0 +1,23 @@
+ion-toolbar {
+  flex-direction: row;
+}
+
+.routeActive,
+.routeActive ion-icon {
+  color: var(--ion-color-primary);
+}
+
+.nav ion-label {
+  margin-left: 10px;
+}
+
+.nav {
+  display: none;
+  flex-direction: row;
+}
+
+@media screen and (min-width: 650px) {
+  .nav {
+    display: flex;
+  }
+}
