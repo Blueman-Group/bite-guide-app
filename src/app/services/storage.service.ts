@@ -175,12 +175,18 @@ Date.prototype.setToNextWeek = function () {
 
 Date.prototype.getWeek = function () {
   let dowOffset = 1; //start week on monday
-  var newYear = new Date(this.getFullYear(), 0, 1);
-  var day = newYear.getDay() - dowOffset; //the day of week the year begins on
+  let newYear = new Date(this.getFullYear(), 0, 1);
+  let day = newYear.getDay() - dowOffset; //the day of week the year begins on
   day = day >= 0 ? day : day + 7;
   let x;
-  var daynum = Math.floor((this.getTime() - newYear.getTime() - (this.getTimezoneOffset() - newYear.getTimezoneOffset()) * 60000) / 86400000) + 1;
-  var weeknum;
+  let daynum =
+    Math.floor(
+      (this.getTime() -
+        newYear.getTime() -
+        (this.getTimezoneOffset() - newYear.getTimezoneOffset()) * 60000) /
+        86400000
+    ) + 1;
+  let weeknum;
   //if the year starts before the middle of a week
   if (day < 4) {
     weeknum = Math.floor((daynum + day - 1) / 7) + 1;
