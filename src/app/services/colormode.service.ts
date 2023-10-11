@@ -22,14 +22,17 @@ export class ColorModeService {
     }
   }
 
-  initializeDarkMode(isDarK: boolean) {
-    console.log(isDarK);
-    this.darkMode = isDarK;
-    if (isDarK) this.toggleDarkMode();
+  initializeDarkMode(isDark: boolean) {
+    this.darkMode = isDark;
+    if (isDark) this.toggleDarkMode();
     if (this.darkMode) {
-      document.getElementById('darkModeChanger_icon')?.setAttribute('name', 'moon-outline');
+      document
+        .getElementById('darkModeChanger_icon')
+        ?.setAttribute('name', 'moon-outline');
     } else {
-      document.getElementById('darkModeChanger_icon')?.setAttribute('name', 'sunny-outline');
+      document
+        .getElementById('darkModeChanger_icon')
+        ?.setAttribute('name', 'sunny-outline');
     }
   }
 
