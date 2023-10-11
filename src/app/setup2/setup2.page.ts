@@ -34,6 +34,10 @@ export class Setup2Page implements OnInit, AfterViewChecked {
       this.updating = true;
       let startTime = new Date().getTime();
       let canteen = await this.storageService.getFavoriteCanteen();
+      if (!canteen) {
+        this.router.navigate(['/']);
+        return;
+      }
       if (canteen.menu.length != 0) {
         canteen.menu = [];
       }
