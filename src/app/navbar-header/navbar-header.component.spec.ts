@@ -10,7 +10,6 @@ describe('NavbarHeaderComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [NavbarHeaderComponent],
       imports: [IonicModule.forRoot(), RouterModule.forRoot([])],
     }).compileComponents();
 
