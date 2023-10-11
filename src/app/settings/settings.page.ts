@@ -47,7 +47,7 @@ export class SettingsPage implements OnInit {
 
   async onSelectChange() {
     this.loading = true;
-    let storageCanteen = this.storageService.setFavorite(this.selectedCantine);
+    this.storageService.setFavorite(this.selectedCantine);
     this.loading = false;
   }
 }
