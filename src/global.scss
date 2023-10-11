@@ -36,3 +36,19 @@
     display: none !important;
   }
 }
+
+//COLOR SWITCHING BUTTON
+
+body.dark .btn {
+  box-shadow: inset 0 8px 60px rgba(0, 0, 0, 0.3), inset 8px 0 8px rgba(0, 0, 0, 0.3), inset 0 -4px 4px rgba(0, 0, 0, 0.3);
+}
+
+body.dark .btn_indicator {
+  transform: translateX(3.1em);
+  background-color: var(--ion-color-step-100);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+}
+
+body.dark .btn_icon {
+  color: var(--ion-color-dark);
+}
