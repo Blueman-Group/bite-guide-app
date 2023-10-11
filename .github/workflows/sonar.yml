@@ -4,11 +4,9 @@ on:
   push:
     branches:
       - develop
-  pull_request:
-    types: [opened, synchronize, reopened]
 
 jobs:
-  build:
+  sonarqube-check:
     name: Test on SonarQube
     runs-on: ubuntu-latest
     permissions: read-all
@@ -21,7 +19,7 @@ jobs:
       - name: Run lint
         run: npm run lint
       - name: Test and coverage
-        run: npm run test -- --configuration=ci --watch=false --browsers=ChromeHeadless
+        run: npm run test:coverage
       - uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
