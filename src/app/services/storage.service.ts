@@ -12,10 +12,7 @@ export class StorageService {
   private _storage: Storage | null = null;
   _storageReady = false;
 
-  constructor(
-    private storage: Storage,
-    private databaseService: DatabaseService
-  ) {
+  constructor(private storage: Storage, private databaseService: DatabaseService) {
     this.init().then(() => console.log('storage service ready'));
   }
 
@@ -56,6 +53,7 @@ export class StorageService {
     for (let key of keys ?? []) {
       if (key === 'setup') break;
       if (key === 'favorite') break;
+      if (key === 'colormode') break;
       const canteen = await this.getCanteen(key);
       canteens.push(canteen.canteen);
     }
@@ -66,10 +64,7 @@ export class StorageService {
     await this._storage?.set(key, { canteen, menu: [] });
   }
 
-  async addMenu(
-    canteen: Canteen,
-    menu: { date: string; meals: Meal[] }
-  ): Promise<void> {
+  async addMenu(canteen: Canteen, menu: { date: string; meals: Meal[] }): Promise<void> {
     if (!(await this.checkCanteen(canteen._key))) {
       await this.addCanteen(canteen._key, canteen);
     }
@@ -81,18 +76,12 @@ export class StorageService {
 
   async getMenu(canteen: Canteen, date: Date): Promise<Meal[]> {
     const storageCanteen = await this.getCanteen(canteen._key);
-    let menu = storageCanteen.menu.find(
-      (m: { date: string; meals: Meal[] }) =>
-        m.date === date.toISOString().substring(0, 10)
-    );
+    let menu = storageCanteen.menu.find((m: { date: string; meals: Meal[] }) => m.date === date.toISOString().substring(0, 10));
     if (menu) {
       return menu.meals;
     }
 
-    let databaseMeals = await this.databaseService.getMealsAtDate(
-      date,
-      canteen
-    );
+    let databaseMeals = await this.databaseService.getMealsAtDate(date, canteen);
     await this.addMenu(canteen, {
       date: date.toISOString().substring(0, 10),
       meals: databaseMeals,
@@ -103,19 +92,11 @@ export class StorageService {
   public async updateMenus(key: string): Promise<void> {
     let storageCanteen = await this.getCanteen(key);
     let date = new Date();
-    storageCanteen.menu = storageCanteen.menu.filter(
-      (m: { date: string; meals: Meal[] }) =>
-        new Date(m.date).getWeek() <= date.getWeek()
-    );
+    storageCanteen.menu = storageCanteen.menu.filter((m: { date: string; meals: Meal[] }) => new Date(m.date).getWeek() <= date.getWeek());
 
     let itDate = new Date();
     if (storageCanteen.menu.length < 10) {
-      if (
-        storageCanteen.menu.find(
-          (m: { date: string; meals: Meal[] }) =>
-            new Date(m.date).getWeek() === date.getWeek()
-        )
-      ) {
+      if (storageCanteen.menu.find((m: { date: string; meals: Meal[] }) => new Date(m.date).getWeek() === date.getWeek())) {
         itDate.setToNextWeek();
         for (let i = 0; i < 5; i++) {
           await this.getMenu(storageCanteen.canteen, itDate);
@@ -136,15 +117,10 @@ export class StorageService {
     }
   }
 
-  public async getActualMeals(
-    key: string
-  ): Promise<{ date: string; meals: Meal[] }[]> {
+  public async getActualMeals(key: string): Promise<{ date: string; meals: Meal[] }[]> {
     let storageCanteen = await this.getCanteen(key);
     let date = new Date();
-    let menu = storageCanteen.menu.filter(
-      (m: { date: string; meals: Meal[] }) =>
-        new Date(m.date).getWeek() <= date.getWeek()
-    );
+    let menu = storageCanteen.menu.filter((m: { date: string; meals: Meal[] }) => new Date(m.date).getWeek() <= date.getWeek());
     return menu;
   }
 
@@ -159,11 +135,19 @@ export class StorageService {
   }
 
   public async setFavorite(key: string): Promise<void> {
-    await this.storage?.set('favorite', key);
+    await this._storage?.set('favorite', key);
   }
 
   public async getFavoriteCanteen(): Promise<StorageCanteen> {
-    return await this.getCanteen(await this.storage?.get('favorite'));
+    return await this.getCanteen(await this._storage?.get('favorite'));
+  }
+
+  async setColorMode(colorMode: 'dark' | 'light'): Promise<void> {
+    await this._storage?.set('colormode', colorMode);
+  }
+
+  async getColorMode(): Promise<'dark' | 'light'> {
+    return await this.storage?.get('colormode');
   }
 }
 
@@ -195,13 +179,7 @@ Date.prototype.getWeek = function () {
   var day = newYear.getDay() - dowOffset; //the day of week the year begins on
   day = day >= 0 ? day : day + 7;
   let x;
-  var daynum =
-    Math.floor(
-      (this.getTime() -
-        newYear.getTime() -
-        (this.getTimezoneOffset() - newYear.getTimezoneOffset()) * 60000) /
-        86400000
-    ) + 1;
+  var daynum = Math.floor((this.getTime() - newYear.getTime() - (this.getTimezoneOffset() - newYear.getTimezoneOffset()) * 60000) / 86400000) + 1;
   var weeknum;
   //if the year starts before the middle of a week
   if (day < 4) {

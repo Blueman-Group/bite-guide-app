@@ -1,4 +1,5 @@
 <ion-content [fullscreen]="true">
-  <img src="assets/startup_logo.png" alt="Biteguide Startup Logo" />
+  <img src="assets/startup_logo.png" alt="Biteguide Startup Logo" *ngIf="this.colorModeService.darkMode" />
+  <img src="assets/startup_logo_dark.png" alt="Biteguide Startup Logo" *ngIf="!this.colorModeService.darkMode" />
   <p>from<br />Blueman Group</p>
 </ion-content>
