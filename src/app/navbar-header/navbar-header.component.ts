@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
@@ -10,8 +10,4 @@ import { IonicModule } from '@ionic/angular';
   standalone: true,
   imports: [RouterModule, FormsModule, IonicModule],
 })
-export class NavbarHeaderComponent implements OnInit {
-  constructor() {}
-
-  ngOnInit() {}
-}
+export class NavbarHeaderComponent {}

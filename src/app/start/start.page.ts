@@ -5,7 +5,6 @@ import { IonicModule, ToastController } from '@ionic/angular';
 import { StorageService } from '../services/storage.service';
 import { Router } from '@angular/router';
 import { DatabaseService } from '../services/database.service';
-import { of } from 'rxjs';
 import { ColorModeService } from '../services/colormode.service';
 
 @Component({

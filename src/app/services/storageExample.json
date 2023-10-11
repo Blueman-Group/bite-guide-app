@@ -1,8 +1,7 @@
 {
   "canteenKey": {
     "canteen": {
-      "name": "Canteen name",
-      "location": "Canteen location"
+      "name": "Canteen name"
     },
     "menu": [
       {
