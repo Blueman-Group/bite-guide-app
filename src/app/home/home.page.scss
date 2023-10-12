@@ -50,11 +50,7 @@ ion-card > img {
   width: 100%;
   object-fit: cover;
 
-  mask-image: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 1) 90%,
-    rgba(0, 0, 0, 0)
-  );
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0));
 }
 
 ion-card {
@@ -104,8 +100,7 @@ ion-card {
   width: 55px;
   height: 53px;
   background: #fff;
-  background-image: radial-gradient(circle 3px, #fff6 90%, transparent 10%),
-    radial-gradient(circle 12px, #ffc400 90%, transparent 10%),
+  background-image: radial-gradient(circle 3px, #fff6 90%, transparent 10%), radial-gradient(circle 12px, #ffc400 90%, transparent 10%),
     radial-gradient(circle 12px, #ffae00 100%, transparent 0);
   background-repeat: no-repeat;
   background-position: -4px -6px, -2px -2px, -1px -1px;
@@ -141,4 +136,9 @@ ion-card {
     border-radius: 50% 36% 50% 50% / 49% 50% 45% 45%;
     background-position: -2px -4px, 2px 2px, 1px 1px;
   }
+}
+
+.select {
+  text-align: center;
+  margin: auto;
 }
