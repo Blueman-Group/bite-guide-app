@@ -23,7 +23,7 @@ export class HomePage implements OnInit, AfterContentChecked {
   canteens: Canteen[] = [];
   updating = false;
   selectedDate: string = new Date().toISOString().substring(0, 10);
-  formattedDate = formatDate(this.selectedDate, 'dd.MM.YY', 'de-DE');
+  formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
   loading = false;
 
   constructor(private router: Router, private storageService: StorageService) {}
@@ -60,13 +60,28 @@ export class HomePage implements OnInit, AfterContentChecked {
   }
 
   async incrementDate() {
-    this.selectedDate = new Date(new Date(this.selectedDate).getTime() + 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
-    this.formattedDate = formatDate(this.selectedDate, 'dd.MM.YY', 'de-DE');
+    // if selected date is friday, increment by 3 days
+    if (new Date(this.selectedDate).getDay() == 5) {
+      this.selectedDate = new Date(new Date(this.selectedDate).getTime() + 3 * 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+    } else {
+      this.selectedDate = new Date(new Date(this.selectedDate).getTime() + 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+    }
+    this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.onSelectChange();
   }
   async decrementDate() {
-    this.selectedDate = new Date(new Date(this.selectedDate).getTime() - 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
-    this.formattedDate = formatDate(this.selectedDate, 'dd.MM.YY', 'de-DE');
+    if (new Date(this.selectedDate).getDay() == 1) {
+      this.selectedDate = new Date(new Date(this.selectedDate).getTime() - 3 * 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+    } else {
+      this.selectedDate = new Date(new Date(this.selectedDate).getTime() - 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+    }
+    this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
+    this.onSelectChange();
+  }
+  async today() {
+    // selected date to today
+    this.selectedDate = new Date().toISOString().substring(0, 10);
+    this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.onSelectChange();
   }
 }
