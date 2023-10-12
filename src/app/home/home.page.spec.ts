@@ -3,6 +3,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HomePage } from './home.page';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { RouterModule } from '@angular/router';
+import localeDe from '@angular/common/locales/de';
+import localeDeExtra from '@angular/common/locales/extra/de';
+import { registerLocaleData } from '@angular/common';
 
 describe('HomePage', () => {
   let component: HomePage;
@@ -13,6 +16,9 @@ describe('HomePage', () => {
       imports: [IonicStorageModule.forRoot(), RouterModule.forRoot([])],
       providers: [Storage],
     }).compileComponents();
+
+    registerLocaleData(localeDe, 'de-DE', localeDeExtra);
+
     fixture = TestBed.createComponent(HomePage);
     component = fixture.componentInstance;
     fixture.detectChanges();
