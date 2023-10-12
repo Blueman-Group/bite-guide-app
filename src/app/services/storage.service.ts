@@ -12,8 +12,10 @@ export class StorageService {
   private _storage: Storage | null = null;
   _storageReady = false;
 
-  //inject Storage and DatabaseService
-  constructor(private storage: Storage, private databaseService: DatabaseService) {}
+  //inject Storage and DatabaseService and init device storage
+  constructor(private storage: Storage, private databaseService: DatabaseService) {
+    this.init();
+  }
 
   /**init storage on device with create methode and check if it is ready*/
   async init() {
