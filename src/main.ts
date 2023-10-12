@@ -12,12 +12,13 @@ import { environment } from './environments/environment';
 import { Drivers } from '@ionic/storage';
 import { registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
+import localeDeExtra from '@angular/common/locales/extra/de';
 
 if (environment.production) {
   enableProdMode();
 }
 
-registerLocaleData(localeDe);
+registerLocaleData(localeDe, 'de-DE', localeDeExtra);
 
 bootstrapApplication(AppComponent, {
   providers: [
