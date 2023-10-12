@@ -1,3 +1,7 @@
+img {
+  aspect-ratio: 16 / 9;
+}
+
 #container {
   text-align: center;
 
@@ -20,8 +24,8 @@ ion-modal {
   --height: auto;
 }
 
-.allergens-button {
-  margin-left: 10px;
+.buttons {
+  margin-top: 20px;
 }
 
 #container strong {
@@ -50,15 +54,21 @@ ion-card > img {
   width: 100%;
   object-fit: cover;
 
-  mask-image: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 1) 90%,
-    rgba(0, 0, 0, 0)
-  );
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0));
 }
 
 ion-card {
   width: 90%;
+  display: flex;
+  flex-direction: column;
+}
+
+ion-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  flex-grow: 1;
 }
 
 @media screen and (min-width: 500px) {
@@ -104,8 +114,7 @@ ion-card {
   width: 55px;
   height: 53px;
   background: #fff;
-  background-image: radial-gradient(circle 3px, #fff6 90%, transparent 10%),
-    radial-gradient(circle 12px, #ffc400 90%, transparent 10%),
+  background-image: radial-gradient(circle 3px, #fff6 90%, transparent 10%), radial-gradient(circle 12px, #ffc400 90%, transparent 10%),
     radial-gradient(circle 12px, #ffae00 100%, transparent 0);
   background-repeat: no-repeat;
   background-position: -4px -6px, -2px -2px, -1px -1px;
