@@ -36,7 +36,7 @@
   </div>
   <div class="menu-container">
     <ion-card *ngFor="let meal of this.currentMeals">
-      <img alt="meal-picture" src="{{meal.imageUrl}}" alt="Kein Bild verfügbar" />
+      <img class="meal-img" src="{{meal.imageUrl}}" alt="Kein Bild verfügbar" />
       <ion-card-header>
         <ion-card-title>{{meal.name}}</ion-card-title>
         <ion-card-subtitle>{{meal.mealCategory}}</ion-card-subtitle>
