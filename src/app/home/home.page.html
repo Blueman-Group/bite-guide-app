@@ -15,7 +15,7 @@
       </ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-list class="select">
+  <ion-list>
     <ion-item>
       <ion-select label="Mensa" labelPlacement="floating" interface="popover" placeholder="Mensa auswählen"
         shape="round" [(ngModel)]="this.selectedCantine" (ionChange)="this.onSelectChange()">
@@ -23,10 +23,10 @@
           ', '')}}</ion-select-option>
       </ion-select>
     </ion-item>
-    <ion-item>
-      <ion-button slot="start" (click)="decrementDate()">-</ion-button>
-      <ion-label type="date">{{this.selectedDate}}</ion-label>
-      <ion-button slot="end" (click)="incrementDate()">+</ion-button>
+    <ion-item class="select">
+      <ion-icon name="chevron-back-outline" (click)="decrementDate()"></ion-icon>
+      <ion-label type="date">{{this.formattedDate}}</ion-label>
+      <ion-icon class="button" name="chevron-forward-outline" (click)="incrementDate()"></ion-icon>
     </ion-item>
   </ion-list>
   <div class="loading_data" *ngIf="this.loading">
