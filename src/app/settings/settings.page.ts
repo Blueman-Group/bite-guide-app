@@ -7,6 +7,7 @@ import { StorageCanteen } from '../interfaces/storage-canteen';
 import { StorageService } from '../services/storage.service';
 import { Canteen } from '../interfaces/canteen';
 import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component';
+import { ColorModeService } from '../services/colormode.service';
 
 @Component({
   selector: 'app-settings',
@@ -23,7 +24,7 @@ export class SettingsPage implements OnInit {
   selectedDate: string = new Date().toISOString().substring(0, 10);
   loading = false;
 
-  constructor(private router: Router, private storageService: StorageService) {}
+  constructor(private router: Router, private storageService: StorageService, public colorModeService: ColorModeService) {}
 
   ngOnInit(): void {
     if (!this.router.navigated) this.router.navigate(['/']);
@@ -49,5 +50,20 @@ export class SettingsPage implements OnInit {
     this.loading = true;
     this.storageService.setFavorite(this.selectedCantine);
     this.loading = false;
+  }
+
+  toggleDark() {
+    this.colorModeService.toggleDarkMode();
+    let icon = document.getElementById('darkModeChanger_icon')!;
+    this.storageService.setColorMode(this.colorModeService.darkMode ? 'dark' : 'light');
+    if (this.colorModeService.darkMode) {
+      icon.setAttribute('name', 'moon-outline');
+    } else {
+      icon.setAttribute('name', 'sunny-outline');
+    }
+    icon.classList.add('animated');
+    setTimeout(() => {
+      icon.classList.remove('animated');
+    }, 500);
   }
 }

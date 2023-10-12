@@ -22,16 +22,19 @@
         [(ngModel)]="this.selectedCantine"
         (ionChange)="this.onSelectChange()"
       >
-        <ion-select-option
-          *ngFor="let canteen of this.canteens"
-          value="{{canteen._key}}"
-          >{{canteen.name.replace('MENSA ', '')}}</ion-select-option
-        >
+        <ion-select-option *ngFor="let canteen of this.canteens" value="{{canteen._key}}">{{canteen.name.replace('MENSA ', '')}}</ion-select-option>
       </ion-select>
     </ion-item>
 
-    <ion-item>
-      <ion-toggle> Darkmode </ion-toggle>
+    <ion-item style="margin: 20px 0px">
+      <ion-label>Dark Mode</ion-label>
+      <div class="btn" (click)="this.toggleDark()">
+        <div class="btn_indicator">
+          <div class="btn-icon-container">
+            <ion-icon name="moon-outline" size="large" class="btn_icon" id="darkModeChanger_icon"></ion-icon>
+          </div>
+        </div>
+      </div>
     </ion-item>
   </ion-list>
 </ion-content>

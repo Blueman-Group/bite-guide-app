@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { StartPage } from './start.page';
-import { IonicStorageModule } from '@ionic/storage-angular';
+import { Storage } from '@ionic/storage-angular';
+import { StorageService } from '../services/storage.service';
 
 describe('StartPage', () => {
   let component: StartPage;
@@ -8,8 +9,7 @@ describe('StartPage', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [IonicStorageModule.forRoot()],
-      providers: [Storage],
+      providers: [StorageService, Storage],
     }).compileComponents();
 
     fixture = TestBed.createComponent(StartPage);
