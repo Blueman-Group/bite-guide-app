@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterContentChecked } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, formatDate } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { StorageCanteen } from '../interfaces/storage-canteen';
 import { StorageService } from '../services/storage.service';
@@ -14,13 +14,7 @@ import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component'
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
-  imports: [
-    IonicModule,
-    CommonModule,
-    FormsModule,
-    RouterModule,
-    NavbarHeaderComponent,
-  ],
+  imports: [IonicModule, CommonModule, FormsModule, RouterModule, NavbarHeaderComponent],
 })
 export class HomePage implements OnInit, AfterContentChecked {
   selectedCantine: string = '';
@@ -29,6 +23,7 @@ export class HomePage implements OnInit, AfterContentChecked {
   canteens: Canteen[] = [];
   updating = false;
   selectedDate: string = new Date().toISOString().substring(0, 10);
+  formattedDate = formatDate(this.selectedDate, 'dd.MM.YY', 'de-DE');
   loading = false;
 
   constructor(private router: Router, private storageService: StorageService) {}
@@ -48,10 +43,7 @@ export class HomePage implements OnInit, AfterContentChecked {
       this.selectedCantineData = await this.storageService.getFavoriteCanteen();
       this.selectedCantine = this.selectedCantineData.canteen._key;
       this.canteens = await this.storageService.getCanteens();
-      this.currentMeals =
-        this.selectedCantineData.menu.find(
-          (menu) => menu.date === this.selectedDate
-        )?.meals ?? [];
+      this.currentMeals = this.selectedCantineData.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
       this.loading = false;
       if (this.currentMeals.length == 0) this.updating = false;
     }
@@ -61,31 +53,20 @@ export class HomePage implements OnInit, AfterContentChecked {
     this.loading = true;
     this.currentMeals = [];
     await this.storageService.updateMenus(this.selectedCantine);
-    let storageCanteen = await this.storageService.getCanteen(
-      this.selectedCantine
-    );
+    let storageCanteen = await this.storageService.getCanteen(this.selectedCantine);
     this.selectedCantineData = storageCanteen;
-    this.currentMeals =
-      this.selectedCantineData.menu.find(
-        (menu) => menu.date === this.selectedDate
-      )?.meals ?? [];
+    this.currentMeals = this.selectedCantineData.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
     this.loading = false;
   }
 
   async incrementDate() {
-    this.selectedDate = new Date(
-      new Date(this.selectedDate).getTime() + 24 * 60 * 60 * 1000
-    )
-      .toISOString()
-      .substring(0, 10);
+    this.selectedDate = new Date(new Date(this.selectedDate).getTime() + 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+    this.formattedDate = formatDate(this.selectedDate, 'dd.MM.YY', 'de-DE');
     this.onSelectChange();
   }
   async decrementDate() {
-    this.selectedDate = new Date(
-      new Date(this.selectedDate).getTime() - 24 * 60 * 60 * 1000
-    )
-      .toISOString()
-      .substring(0, 10);
+    this.selectedDate = new Date(new Date(this.selectedDate).getTime() - 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+    this.formattedDate = formatDate(this.selectedDate, 'dd.MM.YY', 'de-DE');
     this.onSelectChange();
   }
 }
