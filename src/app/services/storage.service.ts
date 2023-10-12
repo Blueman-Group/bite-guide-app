@@ -119,12 +119,12 @@ export class StorageService {
     if (storageCanteen.menu.length < 10) {
       if (storageCanteen.menu.find((m: { date: string; meals: Meal[] }) => getWeek(new Date(m.date)) === getWeek(date))) {
         setToNextWeek(itDate);
-        this._updateWeek(itDate, storageCanteen);
+        await this._updateWeek(itDate, storageCanteen);
       } else {
         setToCurrentWeek(itDate);
-        this._updateWeek(itDate, storageCanteen);
+        await this._updateWeek(itDate, storageCanteen);
         setToNextWeek(itDate);
-        this._updateWeek(itDate, storageCanteen);
+        await this._updateWeek(itDate, storageCanteen);
       }
     } else {
       storageCanteen.menu
@@ -133,7 +133,7 @@ export class StorageService {
           storageCanteen.menu.splice(storageCanteen.menu.indexOf(m), 1);
         });
       setToNextWeek(itDate);
-      this._updateWeek(itDate, storageCanteen);
+      await this._updateWeek(itDate, storageCanteen);
     }
   }
 
