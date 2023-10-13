@@ -37,14 +37,6 @@
       </ion-label>
       <ion-icon class="button" name="chevron-forward-outline" (click)="incrementDate()"></ion-icon>
     </ion-item>
-    <ion-item>
-      <ion-icon name="chevron-back-outline" (click)="decrementDate()"></ion-icon>
-      <ion-label type="date" class="select">
-        <h2>{{this.formattedDate}} &nbsp;</h2>
-        <ion-button (click)="today()">Heute</ion-button>
-      </ion-label>
-      <ion-icon class="button" name="chevron-forward-outline" (click)="incrementDate()"></ion-icon>
-    </ion-item>
   </ion-list>
   <div class="loading_data" *ngIf="this.loading">
     <span class="loader"></span>
