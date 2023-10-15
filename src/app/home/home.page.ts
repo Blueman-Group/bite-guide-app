@@ -22,7 +22,12 @@ export class HomePage implements OnInit, AfterContentChecked {
   currentMeals: Meal[] = [];
   canteens: Canteen[] = [];
   updating = false;
-  selectedDate: string = new Date().toISOString().substring(0, 10);
+  // if selected date is weekend set to monday if its a weekday set to today
+  selectedDate: string =
+    new Date().getDay() == 6 || new Date().getDay() == 0
+      ? new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString().substring(0, 10)
+      : new Date().toISOString().substring(0, 10);
+
   formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
   loading = false;
 
@@ -83,5 +88,15 @@ export class HomePage implements OnInit, AfterContentChecked {
     this.selectedDate = new Date().toISOString().substring(0, 10);
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.onSelectChange();
+  }
+
+  onSwipe(event: any) {
+    if (event.direction === 'swiperight') {
+      console.log('swipeleft');
+      this.incrementDate();
+    } else if (event.direction === 'swipeleft') {
+      console.log('swipeleft');
+      this.decrementDate();
+    }
   }
 }
