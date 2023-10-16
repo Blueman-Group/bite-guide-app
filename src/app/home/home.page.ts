@@ -1,5 +1,5 @@
-import { Component, OnInit, AfterContentChecked } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
+import { Component, OnInit, AfterContentChecked, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { IonicModule, IonicSlides } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule, formatDate } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -9,6 +9,11 @@ import { Canteen } from '../interfaces/canteen';
 import { Meal } from '../classes/meal';
 import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component';
 
+@NgModule({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+})
+export class HomePageModule {}
+
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -17,6 +22,7 @@ import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component'
   imports: [IonicModule, CommonModule, FormsModule, RouterModule, NavbarHeaderComponent],
 })
 export class HomePage implements OnInit, AfterContentChecked {
+  swiperModules = [IonicSlides];
   selectedCantine: string = '';
   selectedCantineData: StorageCanteen | null = null;
   currentMeals: Meal[] = [];
