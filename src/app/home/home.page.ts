@@ -1,4 +1,3 @@
-import { Component, OnInit, AfterContentChecked, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { IonicModule, IonicSlides } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule, formatDate } from '@angular/common';
@@ -8,6 +7,7 @@ import { StorageService } from '../services/storage.service';
 import { Canteen } from '../interfaces/canteen';
 import { Meal } from '../classes/meal';
 import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component';
+import { Component, OnInit, AfterContentChecked, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -22,7 +22,6 @@ export class HomePageModule {}
   imports: [IonicModule, CommonModule, FormsModule, RouterModule, NavbarHeaderComponent],
 })
 export class HomePage implements OnInit, AfterContentChecked {
-  swiperModules = [IonicSlides];
   selectedCantine: string = '';
   selectedCantineData: StorageCanteen | null = null;
   currentMeals: Meal[] = [];
@@ -36,6 +35,7 @@ export class HomePage implements OnInit, AfterContentChecked {
 
   formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
   loading = false;
+  swiperModules = [IonicSlides];
 
   constructor(private router: Router, private storageService: StorageService) {}
 
@@ -97,12 +97,12 @@ export class HomePage implements OnInit, AfterContentChecked {
   }
 
   onSwipe(event: any) {
-    if (event.direction === 'swiperight') {
-      console.log('swipeleft');
-      this.incrementDate();
-    } else if (event.direction === 'swipeleft') {
-      console.log('swipeleft');
+    if (event.direction === 'prev') {
+      // Swipe nach links
       this.decrementDate();
+    } else if (event.direction === 'next') {
+      // Swipe nach rechts
+      this.incrementDate();
     }
   }
 }

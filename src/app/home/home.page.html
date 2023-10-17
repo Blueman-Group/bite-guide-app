@@ -30,11 +30,16 @@
       </ion-select>
     </ion-item>
 
-    <ion-item (ionSwipe)="onSwipe($event)">
+    <ion-item>
       <ion-icon name="chevron-back-outline" (click)="decrementDate()"></ion-icon>
       <ion-label type="date" class="select">
-        <h2>{{this.formattedDate}} &nbsp;</h2>
-        <ion-button (click)="today()">Heute</ion-button>
+        <swiper-container class="swiper-container" (slidechange)="onSwipe($event)">
+          <swiper-slide>
+            <h2>{{this.formattedDate}} &nbsp;</h2>
+            <ion-button (click)="today()">Heute</ion-button>
+          </swiper-slide>
+          <swiper-slide>Hallo</swiper-slide>
+        </swiper-container>
       </ion-label>
       <ion-icon class="button" name="chevron-forward-outline" (click)="incrementDate()"></ion-icon>
     </ion-item>
