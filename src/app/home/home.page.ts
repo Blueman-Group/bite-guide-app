@@ -7,18 +7,15 @@ import { StorageService } from '../services/storage.service';
 import { Canteen } from '../interfaces/canteen';
 import { Meal } from '../classes/meal';
 import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component';
-import { Component, OnInit, AfterContentChecked, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-
-@NgModule({
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-})
-export class HomePageModule {}
+import { Component, OnInit, AfterContentChecked, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { register } from 'swiper/element/bundle';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [IonicModule, CommonModule, FormsModule, RouterModule, NavbarHeaderComponent],
 })
 export class HomePage implements OnInit, AfterContentChecked {
@@ -37,7 +34,9 @@ export class HomePage implements OnInit, AfterContentChecked {
   loading = false;
   swiperModules = [IonicSlides];
 
-  constructor(private router: Router, private storageService: StorageService) {}
+  constructor(private router: Router, private storageService: StorageService) {
+    register();
+  }
 
   ngOnInit(): void {
     if (!this.router.navigated) this.router.navigate(['/']);
@@ -104,5 +103,9 @@ export class HomePage implements OnInit, AfterContentChecked {
       // Swipe nach rechts
       this.incrementDate();
     }
+  }
+
+  test() {
+    console.log('test');
   }
 }
