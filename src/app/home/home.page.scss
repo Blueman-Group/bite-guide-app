@@ -144,5 +144,12 @@ ion-card {
   justify-content: center;
 }
 
-.button {
+.gesture__zone {
+  background-color: #efefef;
+  padding: 20px;
+  margin: 10px;
+  border-radius: 3px;
+  height: 500px;
+  text-align: center;
+  overflow: auto;
 }
