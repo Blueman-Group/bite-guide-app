@@ -85,7 +85,7 @@
             <ion-button *ngIf="meal.allergens.length > 0" id="{{meal._key}}-allergens" class="allergens-button"
               size="default">
               <ion-icon name="information-circle-outline" slot="start" aria-hidden="true"></ion-icon>
-              <ion-label>Aller gene</ion-label>
+              <ion-label>Allergene</ion-label>
               <ion-modal trigger="{{meal._key}}-allergens" [initialBreakpoint]="1" [breakpoints]="[0, 1]">
                 <ng-template>
                   <div class="ion-padding block">
