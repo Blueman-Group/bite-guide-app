@@ -9,8 +9,12 @@ import { DatabaseService } from './database.service';
   providedIn: 'root',
 })
 export class StorageService {
-  _storage: Storage | null = null;
+  private _storage: Storage | null = null;
   _storageReady = false;
+
+  getStorage(): Storage | null {
+    return this._storage;
+  }
 
   //inject Storage and DatabaseService and init device storage
   constructor(private storage: Storage, private databaseService: DatabaseService) {

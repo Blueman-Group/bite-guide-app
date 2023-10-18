@@ -18,7 +18,7 @@ describe('StorageService', () => {
     });
     service = TestBed.inject(StorageService);
     await service.init();
-    service._storage?.clear();
+    service.getStorage()?.clear();
     testStorageCanteen = {
       canteen: {
         _key: 'test',
@@ -33,27 +33,27 @@ describe('StorageService', () => {
   });
 
   it('should check if canteen exists', async () => {
-    await service._storage?.set('test', 'test');
+    await service.getStorage()?.set('test', 'test');
     expect(await service.checkCanteen('test')).toBeTruthy();
   });
 
   it('should get a canteen', async () => {
-    await service._storage?.set('test', testStorageCanteen);
+    await service.getStorage()?.set('test', testStorageCanteen);
     expect(await service.getCanteen('test')).toEqual(testStorageCanteen);
   });
 
   it('should set a canteen', async () => {
     await service.setCanteen('test', testStorageCanteen);
-    expect(await service._storage?.get('test')).toEqual(testStorageCanteen);
+    expect(await service.getStorage()?.get('test')).toEqual(testStorageCanteen);
   });
 
   it('should get the list of canteens saved in storage', async () => {
-    await service._storage?.set('test', testStorageCanteen);
+    await service.getStorage()?.set('test', testStorageCanteen);
     expect(await service.getCanteens()).toEqual([testStorageCanteen.canteen]);
   });
 
   it('should add a menu to a non existing canteen', async () => {
-    const storage = service._storage;
+    const storage = service.getStorage();
     if (storage) {
       await service.addMenu(testStorageCanteen.canteen, testMenu);
       const storedCanteen = await storage.get('test');
@@ -64,7 +64,7 @@ describe('StorageService', () => {
   });
 
   it('should add a menu to an existing canteen', async () => {
-    const storage = service._storage;
+    const storage = service.getStorage();
     if (storage) {
       await storage.set('test', testStorageCanteen);
       await service.addMenu(testStorageCanteen.canteen, testMenu);
