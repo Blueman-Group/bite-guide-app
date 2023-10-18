@@ -1,13 +1,13 @@
 import { IonicModule, GestureController, GestureDetail } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule, formatDate } from '@angular/common';
+import { ChangeDetectorRef, Component, OnInit, AfterContentChecked, AfterViewInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { StorageCanteen } from '../interfaces/storage-canteen';
 import { StorageService } from '../services/storage.service';
 import { Canteen } from '../interfaces/canteen';
 import { Meal } from '../classes/meal';
 import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component';
-import { Component, OnInit, AfterContentChecked, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-home',
