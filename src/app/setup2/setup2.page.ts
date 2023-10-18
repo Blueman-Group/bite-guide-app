@@ -43,7 +43,6 @@ export class Setup2Page implements OnInit, AfterViewChecked {
       await this.storageService.updateMenus(canteen.canteen._key);
       //set setup to true to save that the app was setup
       await this.storageService.setSetup();
-      console.log(await this.storageService.getFavoriteCanteen());
       //if the menu is empty there have to be a problem with the connection to the database
       if ((await this.storageService.getFavoriteCanteen()).menu.length == 0) {
         this.toastController
