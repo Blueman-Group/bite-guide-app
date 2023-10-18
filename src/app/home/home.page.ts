@@ -1,25 +1,23 @@
-import { IonicModule, IonicSlides } from '@ionic/angular';
+import { IonicModule, GestureController } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule, formatDate } from '@angular/common';
+import { ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { StorageCanteen } from '../interfaces/storage-canteen';
 import { StorageService } from '../services/storage.service';
 import { Canteen } from '../interfaces/canteen';
 import { Meal } from '../classes/meal';
 import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component';
-import { Component, OnInit, AfterContentChecked, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { register } from 'swiper/element/bundle';
-import Swiper from 'swiper';
+import { Component, OnInit, AfterContentChecked, AfterViewInit } from '@angular/core';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [IonicModule, CommonModule, FormsModule, RouterModule, NavbarHeaderComponent],
 })
-export class HomePage implements OnInit, AfterContentChecked {
+export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
   selectedCantine: string = '';
   selectedCantineData: StorageCanteen | null = null;
   currentMeals: Meal[] = [];
@@ -33,14 +31,42 @@ export class HomePage implements OnInit, AfterContentChecked {
 
   formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
   loading = false;
-  swiperModules = [IonicSlides];
 
-  constructor(private router: Router, private storageService: StorageService) {
-    register();
-  }
+  constructor(
+    private router: Router,
+    private storageService: StorageService,
+    private gestureController: GestureController,
+    private cdRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     if (!this.router.navigated) this.router.navigate(['/']);
+  }
+
+  ngAfterViewInit(): void {
+    const gesture = this.gestureController.create({
+      el: document.getElementById('menu-container')!,
+      onStart: () => this.cdRef.detectChanges(),
+      onMove: (ev) => {
+        let deltaX = ev.deltaX;
+        if (deltaX < -80) {
+          gesture.enable(false);
+          this.incrementDate().then(() => {
+            this.cdRef.detectChanges();
+            gesture.enable();
+          });
+        } else if (deltaX > 80) {
+          gesture.enable(false);
+          this.decrementDate().then(() => {
+            this.cdRef.detectChanges();
+            gesture.enable();
+          });
+        }
+      },
+      onEnd: () => this.cdRef.detectChanges(),
+      gestureName: 'swipeOnMenu',
+    });
+    gesture.enable();
   }
 
   async ngAfterContentChecked() {
@@ -71,46 +97,43 @@ export class HomePage implements OnInit, AfterContentChecked {
   }
 
   async incrementDate() {
+    let newDate = '';
     // if selected date is friday, increment by 3 days
     if (new Date(this.selectedDate).getDay() == 5) {
-      this.selectedDate = new Date(new Date(this.selectedDate).getTime() + 3 * 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+      newDate = new Date(new Date(this.selectedDate).getTime() + 3 * 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
     } else {
-      this.selectedDate = new Date(new Date(this.selectedDate).getTime() + 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+      newDate = new Date(new Date(this.selectedDate).getTime() + 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
     }
+    let canteenMeals = this.selectedCantineData?.menu.find((menu) => menu.date === newDate)?.meals ?? [];
+    if (canteenMeals.length == 0) {
+      return;
+    }
+    this.selectedDate = newDate;
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
-    this.currentMeals = this.selectedCantineData?.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
+    this.currentMeals = canteenMeals;
   }
+
   async decrementDate() {
+    let newDate = '';
     if (new Date(this.selectedDate).getDay() == 1) {
-      this.selectedDate = new Date(new Date(this.selectedDate).getTime() - 3 * 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+      newDate = new Date(new Date(this.selectedDate).getTime() - 3 * 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
     } else {
-      this.selectedDate = new Date(new Date(this.selectedDate).getTime() - 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+      newDate = new Date(new Date(this.selectedDate).getTime() - 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
     }
+    let canteenMeals = this.selectedCantineData?.menu.find((menu) => menu.date === newDate)?.meals ?? [];
+    if (canteenMeals.length == 0) {
+      return;
+    }
+    this.selectedDate = newDate;
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
-    this.currentMeals = this.selectedCantineData?.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
+    this.currentMeals = canteenMeals;
   }
+
   async today() {
     // selected date to today
     this.selectedDate = new Date().toISOString().substring(0, 10);
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
-  }
-
-  onSwipe(event: any) {
-    if (event.direction === 'prev') {
-      // Swipe nach links
-      this.decrementDate();
-    } else if (event.direction === 'next') {
-      // Swipe nach rechts
-      this.incrementDate();
-    }
-  }
-
-  test(swiper: Swiper) {
-    console.log(swiper.swipeDirection);
-    if (swiper.swipeDirection === 'next') {
-      this.incrementDate();
-    } else {
-      this.decrementDate();
-    }
+    this.currentMeals = [];
+    this.currentMeals = this.selectedCantineData?.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
   }
 }
