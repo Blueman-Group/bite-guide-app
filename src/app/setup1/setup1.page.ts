@@ -14,17 +14,14 @@ import { Canteen } from '../interfaces/canteen';
   imports: [IonicModule, CommonModule, FormsModule, RouterModule],
 })
 export class Setup1Page implements OnInit, AfterContentChecked {
-  constructor(private router: Router, public storageService: StorageService) {}
-
   public canteens: Canteen[] = [];
   updating = false;
   document = document;
 
-  customPopoverOptions = {
-    cssClass: 'setup-popover',
-  };
+  constructor(private router: Router, public storageService: StorageService) {}
 
   ngOnInit() {
+    //if not navigated go back to startup
     let navigated = this.router.navigated;
     if (!navigated) {
       this.router.navigate(['']);

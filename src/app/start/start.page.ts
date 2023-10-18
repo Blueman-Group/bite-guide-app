@@ -24,6 +24,7 @@ export class StartPage implements OnInit {
   ) {}
 
   async ngOnInit() {
+    //wait until storage is ready
     while (!this.storageService._storageReady) {
       await new Promise((resolve) => setTimeout(resolve, 300));
     }
@@ -39,17 +40,16 @@ export class StartPage implements OnInit {
         toast.present();
         return;
       }
+      //if not setup load canteens in storage and start setup
       await this.storageService.updateCanteens();
-
       this.router.navigate(['setup', '1']);
     } else {
+      //if setup get favorite canteens, update menus and go to main page
       let favoriteCanteeen = await this.storageService.getFavoriteCanteen();
       if ((await this.storageService.getActualMeals(favoriteCanteeen.canteen._key)).length < 5) {
         await this.storageService.updateMenus(favoriteCanteeen.canteen._key);
       } else {
-        this.storageService.updateMenus(favoriteCanteeen.canteen._key).then(() => {
-          console.log('Updated meals');
-        });
+        this.storageService.updateMenus(favoriteCanteeen.canteen._key);
       }
       this.router.navigate(['home/main']);
     }

@@ -73,7 +73,7 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     if (!this.updating) {
       this.updating = true;
       this.loading = true;
-      if ((await this.storageService.getFavoriteCanteen()) == null) {
+      if (!(await this.storageService.getFavoriteCanteen())) {
         this.updating = false;
         return;
       }
@@ -86,16 +86,22 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     }
   }
 
+  // Update the canteen data for the selected canteen if the selected canteen changes
   async onSelectChange() {
     this.loading = true;
     this.currentMeals = [];
     await this.storageService.updateMenus(this.selectedCantine);
     let storageCanteen = await this.storageService.getCanteen(this.selectedCantine);
     this.selectedCantineData = storageCanteen;
-    this.currentMeals = this.selectedCantineData.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
+    if (this.selectedCantineData) {
+      this.currentMeals = this.selectedCantineData.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
+    } else {
+      this.currentMeals = [];
+    }
     this.loading = false;
   }
 
+  // Update the canteen data for the selected date if the selected date changes
   async incrementDate() {
     let newDate = '';
     // if selected date is friday, increment by 3 days
