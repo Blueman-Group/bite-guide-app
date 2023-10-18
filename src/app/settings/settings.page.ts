@@ -20,20 +20,18 @@ export class SettingsPage implements OnInit {
   selectedCantine: string = '';
   selectedCantineData: StorageCanteen | null = null;
   canteens: Canteen[] = [];
-  updating = false;
   selectedDate: string = new Date().toISOString().substring(0, 10);
-  loading = false;
+  updating = false;
 
   constructor(private router: Router, private storageService: StorageService, public colorModeService: ColorModeService) {}
 
   ngOnInit(): void {
-    if (!this.router.navigated) this.router.navigate(['/']);
+    if (!this.router.navigated) this.router.navigate(['']);
   }
 
   async ngAfterContentChecked() {
     if (!this.updating) {
       this.updating = true;
-      this.loading = true;
       if ((await this.storageService.getFavoriteCanteen()) == null) {
         this.updating = false;
         return;
@@ -41,15 +39,11 @@ export class SettingsPage implements OnInit {
       this.selectedCantineData = await this.storageService.getFavoriteCanteen();
       this.selectedCantine = this.selectedCantineData.canteen._key;
       this.canteens = await this.storageService.getCanteens();
-
-      this.loading = false;
     }
   }
 
   async onSelectChange() {
-    this.loading = true;
     this.storageService.setFavorite(this.selectedCantine);
-    this.loading = false;
   }
 
   toggleDark() {

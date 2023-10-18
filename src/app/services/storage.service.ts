@@ -12,6 +12,10 @@ export class StorageService {
   private _storage: Storage | null = null;
   _storageReady = false;
 
+  getStorage(): Storage | null {
+    return this._storage;
+  }
+
   //inject Storage and DatabaseService and init device storage
   constructor(private storage: Storage, private databaseService: DatabaseService) {
     this.init();
@@ -27,25 +31,47 @@ export class StorageService {
     }
   }
 
+  /**
+   * Check if app was setup
+   * @returns true if app was setup
+   */
   async checkSetup(): Promise<boolean> {
     return await this._storage?.get('setup');
   }
 
+  /**
+   * Set setup to true if app was setup
+   */
   async setSetup(): Promise<void> {
     await this._storage?.set('setup', true);
   }
 
+  /**
+   * Check if canteen exists in storage
+   * @param key Canteen key
+   * @returns true if canteen exists in storage
+   */
   async checkCanteen(key: string): Promise<boolean> {
     const canteen = await this._storage?.get(key);
     return canteen;
   }
 
+  /**
+   * Get canteen object from storage
+   * @param key Canteen key
+   * @returns StorageCanteen object of canteen
+   */
   async getCanteen(key: string): Promise<StorageCanteen> {
     const canteen = await this._storage?.get(key);
     return canteen;
   }
 
-  async setCateen(key: string, canteen: StorageCanteen) {
+  /**
+   * Set canteen object in storage with key
+   * @param key Key of canteen
+   * @param canteen StorageCanteen Object which should be saved under the given key
+   */
+  async setCanteen(key: string, canteen: StorageCanteen) {
     await this._storage?.set(key, canteen);
   }
 
@@ -112,26 +138,28 @@ export class StorageService {
    */
   public async updateMenus(key: string): Promise<void> {
     let storageCanteen = await this.getCanteen(key);
-    let date = new Date();
-    storageCanteen.menu = storageCanteen.menu.filter((m: { date: string; meals: Meal[] }) => getWeek(new Date(m.date)) <= getWeek(date));
+    let today = new Date();
+
+    if (!storageCanteen) {
+      return;
+    }
+
+    storageCanteen.menu
+      .filter((m: { date: string; meals: Meal[] }) => getWeek(new Date(m.date)) < getWeek(today))
+      .forEach((m: { date: string; meals: Meal[] }) => {
+        storageCanteen.menu.splice(storageCanteen.menu.indexOf(m), 1);
+      });
+
+    await this.setCanteen(key, storageCanteen);
 
     let itDate = new Date();
-    if (storageCanteen.menu.length < 10) {
-      if (storageCanteen.menu.find((m: { date: string; meals: Meal[] }) => getWeek(new Date(m.date)) === getWeek(date))) {
-        setToNextWeek(itDate);
-        await this._updateWeek(itDate, storageCanteen);
-      } else {
-        setToCurrentWeek(itDate);
-        await this._updateWeek(itDate, storageCanteen);
-        setToNextWeek(itDate);
-        await this._updateWeek(itDate, storageCanteen);
-      }
-    } else {
-      storageCanteen.menu
-        .filter((m: { date: string; meals: Meal[] }) => getWeek(new Date(m.date)) > getWeek(date))
-        .forEach((m: { date: string; meals: Meal[] }) => {
-          storageCanteen.menu.splice(storageCanteen.menu.indexOf(m), 1);
-        });
+    //if it cannot find menus for the current week then update
+    if (!storageCanteen.menu.find((m: { date: string; meals: Meal[] }) => getWeek(new Date(m.date)) === getWeek(today))) {
+      setToCurrentWeek(itDate);
+      await this._updateWeek(itDate, storageCanteen);
+    }
+    //if it cannot find menus for the next week then update
+    if (!storageCanteen.menu.find((m: { date: string; meals: Meal[] }) => getWeek(new Date(m.date)) === getWeek(today) + 1)) {
       setToNextWeek(itDate);
       await this._updateWeek(itDate, storageCanteen);
     }
@@ -211,9 +239,7 @@ export class StorageService {
  * @param date Date which should be set to the beginning of the current week
  */
 function setToCurrentWeek(date: Date) {
-  let day = date.getDay();
-  let diff = day - 1;
-  date.setDate(day - diff);
+  date.setDate(date.getDate() - date.getDay() + 1);
 }
 
 /**
@@ -221,9 +247,7 @@ function setToCurrentWeek(date: Date) {
  * @param date Date which should be set to the beginning of the next week
  */
 function setToNextWeek(date: Date) {
-  let day = date.getDay();
-  let diff = 8 - day;
-  date.setDate(day + diff);
+  date.setDate(date.getDate() - date.getDay() + 7 + 1);
 }
 
 /**

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ArangoDriver } from '../arango-driver/arango-driver';
-import { Meal } from '../classes/meal';
+import { Meal, MealInformation } from '../classes/meal';
 import { Allergen } from '../interfaces/allergen';
 import { Additive } from '../interfaces/additive';
 import { Canteen } from '../interfaces/canteen';
@@ -60,17 +60,20 @@ export class DatabaseService {
     //create meal object of all returned meals
     for (let resultDoc of result) {
       for (let meal of resultDoc) {
+        let mealInformation = {
+          normalPrice: meal.meal.normalPrice,
+          studentPrice: meal.meal.studentPrice,
+          co2PerPortion: meal.meal.co2PerPortion,
+        };
         mealList.push(
           new Meal(
             meal.meal._key,
             meal.meal.name,
             meal.meal.mealCategory,
-            meal.meal.normalPrice,
-            meal.meal.studentPrice,
-            meal.meal.co2PerPortion,
             meal.additives as unknown as Additive[],
             meal.allergens as unknown as Allergen[],
-            meal.meal.imageUrl
+            meal.meal.imageUrl,
+            mealInformation
           )
         );
       }
@@ -128,17 +131,12 @@ export class DatabaseService {
       let meal = await this._arango.getMealCollection().document(_key);
       let additives = await this.getAdditivesOfMeal(_key);
       let allergens = await this.getAllergensOfMeal(_key);
-      return new Meal(
-        meal._key,
-        meal.name,
-        meal.mealCategory,
-        meal.normalPrice,
-        meal.studentPrice,
-        meal.co2PerPortion,
-        additives,
-        allergens,
-        meal.imageUrl
-      );
+      let mealInformation: MealInformation = {
+        normalPrice: meal.normalPrice,
+        studentPrice: meal.studentPrice,
+        co2PerPortion: meal.co2PerPortion,
+      };
+      return new Meal(meal._key, meal.name, meal.mealCategory, additives, allergens, meal.imageUrl, mealInformation);
     } else {
       throw new Error('Meal not found');
     }

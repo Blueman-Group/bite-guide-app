@@ -8,18 +8,6 @@
   transform: translateY(-50%);
 }
 
-ion-card ion-item {
-  --ion-item-background: var(--ion-card-background);
-}
-
-ion-modal ion-item {
-  --ion-item-background: var(--ion-background-color);
-}
-
-ion-modal {
-  --height: auto;
-}
-
 #container strong {
   font-size: 20px;
   line-height: 26px;
@@ -38,6 +26,18 @@ ion-modal {
   text-decoration: none;
 }
 
+ion-card ion-item {
+  --ion-item-background: var(--ion-card-background);
+}
+
+ion-modal ion-item {
+  --ion-item-background: var(--ion-background-color);
+}
+
+ion-modal {
+  --height: auto;
+}
+
 #logo {
   padding-top: 5px;
 }
@@ -47,19 +47,18 @@ ion-card {
   display: flex;
   flex-direction: column;
 }
+@media screen and (min-width: 500px) {
+  ion-card {
+    max-width: 25rem;
+    min-width: 15rem;
+  }
+}
 
 .meal-img {
   aspect-ratio: 16 / 9;
   width: 100%;
   object-fit: cover;
   mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0));
-}
-
-@media screen and (min-width: 500px) {
-  ion-card {
-    max-width: 25rem;
-    min-width: 15rem;
-  }
 }
 
 .menu-container {
@@ -129,6 +128,7 @@ ion-card {
     transform: rotate(-5deg);
   }
 }
+
 @keyframes ylmov {
   to {
     border-radius: 50% 36% 50% 50% / 49% 50% 45% 45%;
@@ -140,7 +140,4 @@ ion-card {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.button {
 }

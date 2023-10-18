@@ -1,7 +1,12 @@
-import { time } from 'console';
 import { Additive } from '../interfaces/additive';
 import { Allergen } from '../interfaces/allergen';
 import { MealInterface } from '../interfaces/meal';
+
+export interface MealInformation {
+  normalPrice: number;
+  studentPrice: number;
+  co2PerPortion: number;
+}
 
 export class Meal implements MealInterface {
   _key: string;
@@ -19,22 +24,20 @@ export class Meal implements MealInterface {
     _key: string,
     name: string,
     mealCategory: string,
-    normalPrice: number,
-    studentPrice: number,
-    co2PerPortion: number,
     additives: Additive[],
     allergens: Allergen[],
-    imageUrl: string
+    imageUrl: string,
+    mealInformation: MealInformation
   ) {
     this._key = _key;
     this.name = name;
     this.mealCategory = mealCategory;
-    this.normalPrice = normalPrice;
-    this.studentPrice = studentPrice;
-    this.co2PerPortion = co2PerPortion;
-    if (co2PerPortion < 500) {
+    this.normalPrice = mealInformation.normalPrice;
+    this.studentPrice = mealInformation.studentPrice;
+    this.co2PerPortion = mealInformation.co2PerPortion;
+    if (this.co2PerPortion < 500) {
       this.co2ClassInfo = 'success';
-    } else if (co2PerPortion < 1000) {
+    } else if (this.co2PerPortion < 1000) {
       this.co2ClassInfo = 'warning';
     } else {
       this.co2ClassInfo = 'danger';
