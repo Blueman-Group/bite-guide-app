@@ -153,14 +153,14 @@ export class StorageService {
     await this.setCanteen(key, storageCanteen);
 
     let itDate = new Date();
-    //if it cannot find menus for the next week then update
-    if (!storageCanteen.menu.find((m: { date: string; meals: Meal[] }) => getWeek(new Date(m.date)) === getWeek(today) + 1)) {
-      setToNextWeek(itDate);
-      await this._updateWeek(itDate, storageCanteen);
-    }
     //if it cannot find menus for the current week then update
     if (!storageCanteen.menu.find((m: { date: string; meals: Meal[] }) => getWeek(new Date(m.date)) === getWeek(today))) {
       setToCurrentWeek(itDate);
+      await this._updateWeek(itDate, storageCanteen);
+    }
+    //if it cannot find menus for the next week then update
+    if (!storageCanteen.menu.find((m: { date: string; meals: Meal[] }) => getWeek(new Date(m.date)) === getWeek(today) + 1)) {
+      setToNextWeek(itDate);
       await this._updateWeek(itDate, storageCanteen);
     }
   }
