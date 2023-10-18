@@ -9,6 +9,7 @@ export class ArangoDriver {
   private static _instance: ArangoDriver;
   private _db: Database;
 
+  // Open connection to Arango database
   constructor() {
     this._db = new Database({
       url: 'https://arango.envyz.de',
@@ -17,6 +18,7 @@ export class ArangoDriver {
     });
   }
 
+  // Singleton pattern
   public static getInstance(): ArangoDriver {
     if (!ArangoDriver._instance) {
       ArangoDriver._instance = new ArangoDriver();
