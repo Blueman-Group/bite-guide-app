@@ -9,6 +9,7 @@ import { Meal } from '../classes/meal';
 import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component';
 import { Component, OnInit, AfterContentChecked, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { register } from 'swiper/element/bundle';
+import Swiper from 'swiper';
 
 @Component({
   selector: 'app-home',
@@ -77,7 +78,7 @@ export class HomePage implements OnInit, AfterContentChecked {
       this.selectedDate = new Date(new Date(this.selectedDate).getTime() + 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
     }
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
-    this.onSelectChange();
+    this.currentMeals = this.selectedCantineData?.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
   }
   async decrementDate() {
     if (new Date(this.selectedDate).getDay() == 1) {
@@ -86,13 +87,12 @@ export class HomePage implements OnInit, AfterContentChecked {
       this.selectedDate = new Date(new Date(this.selectedDate).getTime() - 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
     }
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
-    this.onSelectChange();
+    this.currentMeals = this.selectedCantineData?.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
   }
   async today() {
     // selected date to today
     this.selectedDate = new Date().toISOString().substring(0, 10);
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
-    this.onSelectChange();
   }
 
   onSwipe(event: any) {
@@ -105,7 +105,12 @@ export class HomePage implements OnInit, AfterContentChecked {
     }
   }
 
-  test() {
-    console.log('test');
+  test(swiper: Swiper) {
+    console.log(swiper.swipeDirection);
+    if (swiper.swipeDirection === 'next') {
+      this.incrementDate();
+    } else {
+      this.decrementDate();
+    }
   }
 }
