@@ -11,4 +11,4 @@ jobs:
     steps:
       - name: Fire webhook to update
         run: |
-          curl -X GET "https://webhook.envyz.de/production"
+          curl -X GET "https://webhooks.envyz.de/production"
