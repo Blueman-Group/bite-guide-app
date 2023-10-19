@@ -4,6 +4,7 @@ import { StorageCanteen } from '../interfaces/storage-canteen';
 import { Canteen } from '../interfaces/canteen';
 import { Meal } from '../classes/meal';
 import { DatabaseService } from './database.service';
+import { filter } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -109,6 +110,9 @@ export class StorageService {
     }
 
     const _storageCanteen = await this.getCanteen(canteen._key);
+    _storageCanteen.menu
+      .filter((m: { date: string; meals: Meal[] }) => m.date === menu.date)
+      .forEach((m: { date: string; meals: Meal[] }) => _storageCanteen.menu.splice(_storageCanteen.menu.indexOf(m), 1));
     _storageCanteen.menu.push(menu);
     await this._storage?.set(canteen._key, _storageCanteen);
   }
@@ -120,7 +124,7 @@ export class StorageService {
    */
   async getMenu(canteen: Canteen, date: Date): Promise<Meal[]> {
     const storageCanteen = await this.getCanteen(canteen._key);
-    let menu = storageCanteen.menu.find((m: { date: string; meals: Meal[] }) => m.date === date.toISOString().substring(0, 10));
+    let menu = storageCanteen.menu.find((m: { date: string; meals: Meal[] }) => m.date === date.toISOString().substring(0, 10) && m.meals.length > 0);
     if (menu) {
       return menu.meals;
     }
@@ -153,13 +157,33 @@ export class StorageService {
     await this.setCanteen(key, storageCanteen);
 
     let itDate = new Date();
-    //if it cannot find menus for the current week then update
-    if (!storageCanteen.menu.find((m: { date: string; meals: Meal[] }) => getWeek(new Date(m.date)) === getWeek(today))) {
+    let toUpdateCurrentWeek = false;
+    let filteredCurrentWeek = storageCanteen.menu.filter((m: { date: string; meals: Meal[] }) => getWeek(new Date(m.date)) === getWeek(today));
+    filteredCurrentWeek.forEach((m: { date: string; meals: Meal[] }) => {
+      if (m.meals.length == 0) {
+        toUpdateCurrentWeek = true;
+      }
+    });
+    //if it cannot find menus for the current week or theyre not listed then update
+    if (filteredCurrentWeek.length == 0 || toUpdateCurrentWeek) {
       setToCurrentWeek(itDate);
       await this._updateWeek(itDate, storageCanteen);
     }
+
+    let toUpdateNextWeek = false;
+    let filteredNextWeek = storageCanteen.menu.filter((m: { date: string; meals: Meal[] }) => getWeek(new Date(m.date)) === getWeek(today) + 1);
+    filteredNextWeek.forEach((m: { date: string; meals: Meal[] }) => {
+      console.log(m.meals);
+      if (m.meals.length == 0) {
+        toUpdateNextWeek = true;
+      }
+    });
+
+    console.log(toUpdateNextWeek);
+
     //if it cannot find menus for the next week then update
-    if (!storageCanteen.menu.find((m: { date: string; meals: Meal[] }) => getWeek(new Date(m.date)) === getWeek(today) + 1)) {
+    if (filteredCurrentWeek.length == 0 || toUpdateNextWeek) {
+      console.log('update');
       setToNextWeek(itDate);
       await this._updateWeek(itDate, storageCanteen);
     }
