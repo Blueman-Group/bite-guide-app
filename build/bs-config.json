@@ -1,7 +1,7 @@
 {
   "port": 1111,
-  "files": ["/home/dodo/biteguide/frontend/programmentwurf-gruppe-5/www/**/*.{html,htm,css,js}"],
-  "server": { "baseDir": "/home/dodo/biteguide/frontend/programmentwurf-gruppe-5/www" },
+  "files": ["/home/biteguide/programmentwurf-gruppe-5/www/**/*.{html,htm,css,js}"],
+  "server": { "baseDir": "/home/biteguide/programmentwurf-gruppe-5/www" },
   "open": false,
   "notify": false
 }
