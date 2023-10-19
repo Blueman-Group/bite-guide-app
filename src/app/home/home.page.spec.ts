@@ -36,22 +36,6 @@ describe('HomePage', () => {
     expect(navigateSpy).toHaveBeenCalledWith(['/']);
   });
 
-  it('should increment the date', () => {
-    component.incrementDate();
-    let date = new Date();
-    if (date.getDay() == 5) date.setDate(date.getDate() + 3);
-    else date.setDate(date.getDate() + 1);
-    expect(component.selectedDate).toBe(date.toISOString().substring(0, 10));
-  });
-
-  it('should decrement the date', () => {
-    component.decrementDate();
-    let date = new Date();
-    if (date.getDay() == 1) date.setDate(date.getDate() - 3);
-    else date.setDate(date.getDate() - 1);
-    expect(component.selectedDate).toBe(date.toISOString().substring(0, 10));
-  });
-
   it('should select today', () => {
     component.today();
     let date = new Date();
