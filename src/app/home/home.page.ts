@@ -1,13 +1,14 @@
-import { Component, OnInit, AfterContentChecked } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, GestureController, GestureDetail } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule, formatDate } from '@angular/common';
+import { ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { StorageCanteen } from '../interfaces/storage-canteen';
 import { StorageService } from '../services/storage.service';
 import { Canteen } from '../interfaces/canteen';
 import { Meal } from '../classes/meal';
 import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component';
+import { Component, OnInit, AfterContentChecked, AfterViewInit } from '@angular/core';
 
 @Component({
   selector: 'app-home',
@@ -16,23 +17,58 @@ import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component'
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule, RouterModule, NavbarHeaderComponent],
 })
-export class HomePage implements OnInit, AfterContentChecked {
+export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
   selectedCantine: string = '';
   selectedCantineData: StorageCanteen | null = null;
   currentMeals: Meal[] = [];
   canteens: Canteen[] = [];
   updating = false;
-  selectedDate: string = new Date().toISOString().substring(0, 10);
+  // if selected date is weekend set to monday if its a weekday set to today
+  selectedDate: string =
+    new Date().getDay() == 6 || new Date().getDay() == 0
+      ? new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString().substring(0, 10)
+      : new Date().toISOString().substring(0, 10);
+
   formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
   loading = false;
 
-  constructor(private router: Router, private storageService: StorageService) {}
+  constructor(
+    private router: Router,
+    private storageService: StorageService,
+    private gestureController: GestureController,
+    private cdRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     if (!this.router.navigated) this.router.navigate(['/']);
   }
 
-  // Update the canteen data for the favorite canteen
+  ngAfterViewInit(): void {
+    const gesture = this.gestureController.create({
+      el: document.getElementById('menu-container')!,
+      onStart: () => this.cdRef.detectChanges(),
+      onMove: (ev: GestureDetail) => {
+        let deltaX = ev.deltaX;
+        if (deltaX < -80) {
+          gesture.enable(false);
+          this.incrementDate().then(() => {
+            this.cdRef.detectChanges();
+            gesture.enable();
+          });
+        } else if (deltaX > 80) {
+          gesture.enable(false);
+          this.decrementDate().then(() => {
+            this.cdRef.detectChanges();
+            gesture.enable();
+          });
+        }
+      },
+      onEnd: () => this.cdRef.detectChanges(),
+      gestureName: 'swipeOnMenu',
+    });
+    gesture.enable();
+  }
+
   async ngAfterContentChecked() {
     if (!this.updating) {
       this.updating = true;
@@ -67,32 +103,43 @@ export class HomePage implements OnInit, AfterContentChecked {
 
   // Update the canteen data for the selected date if the selected date changes
   async incrementDate() {
+    let newDate = '';
     // if selected date is friday, increment by 3 days
     if (new Date(this.selectedDate).getDay() == 5) {
-      this.selectedDate = new Date(new Date(this.selectedDate).getTime() + 3 * 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+      newDate = new Date(new Date(this.selectedDate).getTime() + 3 * 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
     } else {
-      this.selectedDate = new Date(new Date(this.selectedDate).getTime() + 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+      newDate = new Date(new Date(this.selectedDate).getTime() + 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
     }
+    let canteenMeals = this.selectedCantineData?.menu.find((menu) => menu.date === newDate)?.meals ?? [];
+    if (canteenMeals.length == 0) {
+      return;
+    }
+    this.selectedDate = newDate;
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
-    this.onSelectChange();
+    this.currentMeals = canteenMeals;
   }
 
-  // Update the canteen data for the selected date if the selected date changes
   async decrementDate() {
-    // if selected date is monday, decrement by 3 days
+    let newDate = '';
     if (new Date(this.selectedDate).getDay() == 1) {
-      this.selectedDate = new Date(new Date(this.selectedDate).getTime() - 3 * 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+      newDate = new Date(new Date(this.selectedDate).getTime() - 3 * 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
     } else {
-      this.selectedDate = new Date(new Date(this.selectedDate).getTime() - 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+      newDate = new Date(new Date(this.selectedDate).getTime() - 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
     }
+    let canteenMeals = this.selectedCantineData?.menu.find((menu) => menu.date === newDate)?.meals ?? [];
+    if (canteenMeals.length == 0) {
+      return;
+    }
+    this.selectedDate = newDate;
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
-    this.onSelectChange();
+    this.currentMeals = canteenMeals;
   }
 
   async today() {
     // selected date to today
     this.selectedDate = new Date().toISOString().substring(0, 10);
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
-    this.onSelectChange();
+    this.currentMeals = [];
+    this.currentMeals = this.selectedCantineData?.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
   }
 }
