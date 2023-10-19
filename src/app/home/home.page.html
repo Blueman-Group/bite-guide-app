@@ -26,7 +26,9 @@
         [(ngModel)]="this.selectedCantine"
         (ionChange)="this.onSelectChange()"
       >
-        <ion-select-option *ngFor="let canteen of this.canteens" value="{{canteen._key}}">{{canteen.name.replace('MENSA ', '')}}</ion-select-option>
+        <ion-select-option *ngFor="let canteen of this.canteens" value="{{canteen._key}}"
+          >{{canteen.name.replace('MENSA ', '').toUpperCase()}}</ion-select-option
+        >
       </ion-select>
     </ion-item>
 
