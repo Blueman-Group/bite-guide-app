@@ -66,7 +66,7 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
       onEnd: () => this.cdRef.detectChanges(),
       gestureName: 'swipeOnMenu',
     });
-    if (this.platform.is('mobile') || this.platform.is('mobileweb')) gesture.enable();
+    if (this.platform.is('mobile')) gesture.enable();
   }
 
   async ngAfterContentChecked() {
