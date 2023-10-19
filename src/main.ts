@@ -1,5 +1,3 @@
-/// <reference types="@angular/localize" />
-
 import { enableProdMode, importProvidersFrom, isDevMode } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { RouteReuseStrategy, provideRouter } from '@angular/router';
@@ -25,18 +23,20 @@ bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     importProvidersFrom(IonicModule.forRoot({})),
-    importProvidersFrom(IonicStorageModule.forRoot({
+    importProvidersFrom(
+      IonicStorageModule.forRoot({
         name: '__biteGuideStorage',
         driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage],
-    })),
+      })
+    ),
     provideRouter(routes),
     provideServiceWorker('ngsw-worker.js', {
-        enabled: !isDevMode(),
-        registrationStrategy: 'registerWhenStable:30000'
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000',
     }),
     provideServiceWorker('ngsw-worker.js', {
-        enabled: !isDevMode(),
-        registrationStrategy: 'registerWhenStable:30000'
-    })
-],
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
+  ],
 });
