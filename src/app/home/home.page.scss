@@ -141,3 +141,23 @@ ion-card {
   align-items: center;
   justify-content: center;
 }
+
+.icon {
+  cursor: pointer;
+}
+
+ion-card-title {
+  font-size: 1.3rem;
+}
+
+ion-card-subtitle {
+  font-size: 0.7rem;
+}
+
+.pin {
+  position: absolute;
+  top: 0.6em;
+  right: 0.4em;
+  height: 1.5em;
+  width: 1.5em;
+}
