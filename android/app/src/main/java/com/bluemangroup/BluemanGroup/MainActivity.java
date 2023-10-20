@@ -1,4 +1,4 @@
-package io.ionic.starter;
+package com.bluemangroup.BluemanGroup;
 
 import com.getcapacitor.BridgeActivity;
 

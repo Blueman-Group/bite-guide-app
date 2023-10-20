@@ -1,12 +1,12 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'biteguide',
+  appId: 'com.bluemangroup.BluemanGroup',
+  appName: 'android',
   webDir: 'www',
   server: {
-    androidScheme: 'https',
-  },
+    androidScheme: 'https'
+  }
 };
 
 export default config;
