@@ -1,4 +1,4 @@
-import { IonicModule, GestureController, GestureDetail } from '@ionic/angular';
+import { IonicModule, GestureController, GestureDetail, Platform } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule, formatDate } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, AfterContentChecked, AfterViewInit } from '@angular/core';
@@ -35,7 +35,8 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     private router: Router,
     private storageService: StorageService,
     private gestureController: GestureController,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    public platform: Platform
   ) {}
 
   ngOnInit(): void {
@@ -142,7 +143,7 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     this.currentMeals = this.selectedCantineData?.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
   }
 
-  async updateMeals() {
+  async updateMealsFromStorage() {
     this.updating = true;
     if (this.updating) return;
     this.selectedCantineData = await this.storageService.getFavoriteCanteen();
@@ -150,5 +151,11 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     this.canteens = await this.storageService.getCanteens();
     this.currentMeals = this.selectedCantineData.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
     this.updating = false;
+  }
+
+  handleRefresh(event: any) {
+    setTimeout(() => {
+      this.updateMealsFromStorage().then(() => event.target.complete());
+    }, 2000);
   }
 }

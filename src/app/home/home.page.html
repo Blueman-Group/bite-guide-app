@@ -8,6 +8,14 @@
 </ion-header>
 
 <ion-content fullscreen="true">
+  <ion-refresher
+    *ngIf="this.platform.is('mobile')"
+    slot="fixed"
+    [pullFactor]="0.5"
+    [pullMin]="100"
+    [pullMax]="200"
+    (ionRefresh)="handleRefresh($event)"
+  ></ion-refresher>
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">
@@ -17,10 +25,16 @@
   </ion-header>
   <ion-list>
     <ion-item>
-      <ion-select label="Mensa" labelPlacement="floating" interface="popover" placeholder="Mensa auswählen"
-        shape="round" [(ngModel)]="this.selectedCantine" (ionChange)="this.onSelectChange()">
-        <ion-select-option *ngFor="let canteen of this.canteens" value="{{canteen._key}}">{{canteen.name.replace('MENSA
-          ', '')}}</ion-select-option>
+      <ion-select
+        label="Mensa"
+        labelPlacement="floating"
+        interface="popover"
+        placeholder="Mensa auswählen"
+        shape="round"
+        [(ngModel)]="this.selectedCantine"
+        (ionChange)="this.onSelectChange()"
+      >
+        <ion-select-option *ngFor="let canteen of this.canteens" value="{{canteen._key}}">{{canteen.name.replace('MENSA ', '')}}</ion-select-option>
       </ion-select>
     </ion-item>
 
@@ -46,7 +60,7 @@
         <img class="no-meal-img" alt="Kein Bild verfügbar" />
       </ng-template>
       <ion-card-header>
-        <img src="assets/icon/bookmark_clear.svg" slot="end" />
+        <img src="assets/icon/bookmark_clear.svg" slot="end" alt="Bookmark" />
         <ion-card-title size="small">{{meal.name}}</ion-card-title>
         <ion-card-subtitle>{{meal.mealCategory}}</ion-card-subtitle>
       </ion-card-header>
@@ -57,8 +71,8 @@
               <ion-item class="ion-no-padding">
                 <ion-icon name="pricetag-outline" slot="start" aria-hidden="true"></ion-icon>
                 <ion-label>
-                  Studenten: {{meal.studentPrice | number:'.2-2':'de-DE'}}€ / Gast: {{meal.normalPrice |
-                  number:'.2-2':'de-DE'}}€</ion-label>
+                  Studenten: {{meal.studentPrice | number:'.2-2':'de-DE'}}€ / Gast: {{meal.normalPrice | number:'.2-2':'de-DE'}}€</ion-label
+                >
               </ion-item>
               <ion-item class="ion-no-padding">
                 <ion-icon name="leaf-outline" slot="start" aria-hidden="true" color="{{meal.co2ClassInfo}}"></ion-icon>
@@ -88,8 +102,7 @@
                 </ng-template>
               </ion-modal>
             </ion-button>
-            <ion-button *ngIf="meal.allergens.length > 0" id="{{meal._key}}-allergens" class="allergens-button"
-              size="small">
+            <ion-button *ngIf="meal.allergens.length > 0" id="{{meal._key}}-allergens" class="allergens-button" size="small">
               <ion-icon name="information-circle-outline" slot="start" aria-hidden="true"></ion-icon>
               <ion-label>Allergene</ion-label>
               <ion-modal trigger="{{meal._key}}-allergens" [initialBreakpoint]="1" [breakpoints]="[0, 1]">
@@ -119,4 +132,3 @@
   <div _ngcontent-sns-c132="" getaxis="" class="rectangle"></div>
   <button id="update" class="ion-hidden" (click)="updateMeals()"></button>
 </ion-content>
-
