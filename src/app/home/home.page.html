@@ -23,6 +23,7 @@
         interface="popover"
         placeholder="Mensa auswählen"
         shape="round"
+        [interfaceOptions]="{ cssClass: 'canteenSelect' }"
         [(ngModel)]="this.selectedCantine"
         (ionChange)="this.onSelectChange()"
       >
@@ -54,7 +55,6 @@
         <img class="no-meal-img" alt="Kein Bild verfügbar" />
       </ng-template>
       <ion-card-header>
-        <img src="assets/icon/bookmark_clear.svg" slot="end" />
         <ion-card-title size="small">{{meal.name}}</ion-card-title>
         <ion-card-subtitle>{{meal.mealCategory}}</ion-card-subtitle>
       </ion-card-header>
