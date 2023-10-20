@@ -1,4 +1,4 @@
-import { IonicModule, GestureController } from '@ionic/angular';
+import { IonicModule, GestureController, GestureDetail } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule, formatDate } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, AfterContentChecked, AfterViewInit } from '@angular/core';
@@ -46,7 +46,7 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     const gesture = this.gestureController.create({
       el: document.getElementById('menu-container')!,
       onStart: () => this.cdRef.detectChanges(),
-      onMove: (ev) => {
+      onMove: (ev: GestureDetail) => {
         let deltaX = ev.deltaX;
         if (deltaX < -80) {
           gesture.enable(false);
