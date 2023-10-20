@@ -1,4 +1,4 @@
-import { IonicModule, GestureController, GestureDetail } from '@ionic/angular';
+import { IonicModule, GestureController, GestureDetail, Platform } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule, formatDate } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, AfterContentChecked, AfterViewInit } from '@angular/core';
@@ -35,7 +35,8 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     private router: Router,
     private storageService: StorageService,
     private gestureController: GestureController,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private platform: Platform
   ) {}
 
   ngOnInit(): void {
@@ -65,7 +66,7 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
       onEnd: () => this.cdRef.detectChanges(),
       gestureName: 'swipeOnMenu',
     });
-    gesture.enable();
+    if (this.platform.is('mobile')) gesture.enable();
   }
 
   async ngAfterContentChecked() {

@@ -9,7 +9,9 @@
   <ion-list>
     <ion-item>
       <ion-select label="Mensa" interface="popover" labelPlacement="floating" shape="round" (ionChange)="this.onSelectChange($event.target)">
-        <ion-select-option *ngFor="let canteen of this.canteens" value="{{canteen._key}}">{{canteen.name.replace('MENSA ', '')}}</ion-select-option>
+        <ion-select-option *ngFor="let canteen of this.canteens" value="{{canteen._key}}"
+          >{{canteen.name.replace('MENSA ', '').toUpperCase()}}</ion-select-option
+        >
       </ion-select>
     </ion-item>
   </ion-list>

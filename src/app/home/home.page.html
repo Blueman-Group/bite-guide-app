@@ -26,7 +26,9 @@
         [(ngModel)]="this.selectedCantine"
         (ionChange)="this.onSelectChange()"
       >
-        <ion-select-option *ngFor="let canteen of this.canteens" value="{{canteen._key}}">{{canteen.name.replace('MENSA ', '')}}</ion-select-option>
+        <ion-select-option *ngFor="let canteen of this.canteens" value="{{canteen._key}}"
+          >{{canteen.name.replace('MENSA ', '').toUpperCase()}}</ion-select-option
+        >
       </ion-select>
     </ion-item>
 
@@ -76,7 +78,7 @@
             <ion-button *ngIf="meal.additives.length > 0" id="{{meal._key}}-additives" size="small">
               <ion-icon name="information-circle-outline" slot="start" aria-hidden="true"></ion-icon>
               <ion-label>Zusatzstoffe</ion-label>
-              <ion-modal trigger="{{meal._key}}-additives" [initialBreakpoint]="1" [breakpoints]="[0, 1]">
+              <ion-modal trigger="{{meal._key}}-additives" [initialBreakpoint]="1" [breakpoints]="[0, 1]" handleBehavior="cycle">
                 <ng-template>
                   <div class="ion-padding block">
                     <h2>Zusatzstoffe</h2>
