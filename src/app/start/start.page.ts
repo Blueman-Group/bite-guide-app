@@ -49,7 +49,9 @@ export class StartPage implements OnInit {
       if ((await this.storageService.getActualMeals(favoriteCanteeen.canteen._key)).length < 5) {
         await this.storageService.updateMenus(favoriteCanteeen.canteen._key);
       } else {
-        this.storageService.updateMenus(favoriteCanteeen.canteen._key);
+        this.storageService.updateMenus(favoriteCanteeen.canteen._key).then(() => {
+          document.getElementById('update')?.click();
+        });
       }
       this.router.navigate(['home/main']);
     }
