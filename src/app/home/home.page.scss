@@ -54,11 +54,19 @@ ion-card {
   }
 }
 
-.meal-img {
+.meal-img,
+.no-meal-img {
   aspect-ratio: 16 / 9;
   width: 100%;
   object-fit: cover;
   mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0));
+}
+
+@media screen and (max-width: 856px) {
+  .no-meal-img {
+    visibility: hidden;
+    aspect-ratio: auto;
+  }
 }
 
 .menu-container {
