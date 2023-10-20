@@ -38,9 +38,13 @@
     <p>Mensaplan wird geladen...</p>
   </div>
   <div class="menu-container" id="menu-container">
-    <ion-card *ngFor="let meal of this.currentMeals">
-      <img class="meal-img" src="{{meal.imageUrl}}" alt="Kein Bild verfügbar" />
-
+    <ion-card *ngFor="let meal of this.currentMeals" class="meal-card">
+      <ng-template [ngIf]="meal.imageUrl" [ngIfElse]="hideImage">
+        <img class="meal-img" src="{{meal.imageUrl}}" alt="Kein Bild verfügbar" />
+      </ng-template>
+      <ng-template #hideImage>
+        <img class="no-meal-img" alt="Kein Bild verfügbar" />
+      </ng-template>
       <ion-card-header>
         <img src="assets/icon/bookmark_clear.svg" slot="end" />
         <ion-card-title size="small">{{meal.name}}</ion-card-title>
