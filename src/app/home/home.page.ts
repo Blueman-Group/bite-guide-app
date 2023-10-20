@@ -142,4 +142,14 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     this.currentMeals = [];
     this.currentMeals = this.selectedCantineData?.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
   }
+
+  async updateMeals() {
+    this.updating = true;
+    if (this.updating) return;
+    this.selectedCantineData = await this.storageService.getFavoriteCanteen();
+    this.selectedCantine = this.selectedCantineData.canteen._key;
+    this.canteens = await this.storageService.getCanteens();
+    this.currentMeals = this.selectedCantineData.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
+    this.updating = false;
+  }
 }

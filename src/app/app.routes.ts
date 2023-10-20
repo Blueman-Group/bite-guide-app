@@ -9,8 +9,7 @@ export const routes: Routes = [
 
   {
     path: 'home',
-    loadComponent: () =>
-      import('./menu/menu.component').then((m) => m.MenuComponent),
+    loadComponent: () => import('./menu/menu.component').then((m) => m.MenuComponent),
     children: [
       {
         path: 'main',
@@ -19,15 +18,11 @@ export const routes: Routes = [
       },
       {
         path: 'settings',
-        loadComponent: () =>
-          import('./settings/settings.page').then((m) => m.SettingsPage),
+        loadComponent: () => import('./settings/settings.page').then((m) => m.SettingsPage),
       },
       {
         path: 'own-mealplan',
-        loadComponent: () =>
-          import('./own-mealplan/own-mealplan.page').then(
-            (m) => m.OwnMealplanPage
-          ),
+        loadComponent: () => import('./own-mealplan/own-mealplan.page').then((m) => m.OwnMealplanPage),
       },
     ],
   },
@@ -36,14 +31,17 @@ export const routes: Routes = [
     children: [
       {
         path: '1',
-        loadComponent: () =>
-          import('./setup1/setup1.page').then((m) => m.Setup1Page),
+        loadComponent: () => import('./setup1/setup1.page').then((m) => m.Setup1Page),
       },
       {
         path: '2',
-        loadComponent: () =>
-          import('./setup2/setup2.page').then((m) => m.Setup2Page),
+        loadComponent: () => import('./setup2/setup2.page').then((m) => m.Setup2Page),
       },
     ],
   },
+  {
+    path: '404',
+    loadComponent: () => import('./error-page/error-page.page').then((m) => m.ErrorPagePage),
+  },
+  { path: '**', redirectTo: '/404' },
 ];
