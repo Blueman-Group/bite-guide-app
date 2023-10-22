@@ -1,13 +1,29 @@
-<ion-header [translucent]="true">
+<ion-header translucent="true">
   <ion-toolbar>
-    <ion-title>own-mealplan</ion-title>
+    <ion-title size="large">Einstellungen</ion-title>
+    <app-navbar-header slot="end"></app-navbar-header>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content fullscreen="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">own-mealplan</ion-title>
+      <ion-title size="large">
+        <img alt="logo" height="40" id="logo" src="assets/icon/BiteGuide.png" />
+      </ion-title>
     </ion-toolbar>
   </ion-header>
+
+  <swiper-container slides-per-view="3" free-mode="true" (slidechange)="test($event.detail[0])" [modules]="swiperModules" #swiper>
+    <swiper-slide *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]">
+      <ion-card class="ownmeals">
+        <ion-card-header>
+          <ion-card-title>Card Title</ion-card-title>
+          <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
+        </ion-card-header>
+
+        <ion-card-content> Here's a small text description for the card content. Nothing more, nothing less. </ion-card-content>
+      </ion-card></swiper-slide
+    >
+  </swiper-container>
 </ion-content>
