@@ -141,6 +141,7 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.currentMeals = [];
     this.currentMeals = this.selectedCantineData?.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
+    this.cdRef.detectChanges();
   }
 
   async updateMeals() {
@@ -150,6 +151,7 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     this.selectedCantine = this.selectedCantineData.canteen._key;
     this.canteens = await this.storageService.getCanteens();
     this.currentMeals = this.selectedCantineData.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
+    this.cdRef.detectChanges();
     this.updating = false;
   }
 }
