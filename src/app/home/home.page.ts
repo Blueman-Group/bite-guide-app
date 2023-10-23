@@ -49,16 +49,14 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
       onStart: () => this.cdRef.detectChanges(),
       onMove: (ev: GestureDetail) => {
         let deltaX = ev.deltaX;
-        if (deltaX < -80) {
+        if (deltaX < -50) {
           gesture.enable(false);
           this.incrementDate().then(() => {
-            this.cdRef.detectChanges();
             gesture.enable();
           });
-        } else if (deltaX > 80) {
+        } else if (deltaX > 50) {
           gesture.enable(false);
           this.decrementDate().then(() => {
-            this.cdRef.detectChanges();
             gesture.enable();
           });
         }
@@ -117,6 +115,7 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     this.selectedDate = newDate;
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.currentMeals = canteenMeals;
+    this.cdRef.detectChanges();
   }
 
   async decrementDate() {
@@ -133,6 +132,7 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     this.selectedDate = newDate;
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.currentMeals = canteenMeals;
+    this.cdRef.detectChanges();
   }
 
   async today() {
