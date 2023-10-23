@@ -47,6 +47,10 @@
     <p>Mensaplan wird geladen...</p>
   </div>
   <div class="menu-container" id="menu-container">
+    <div class="no_meals" *ngIf="this.currentMeals.length === 0 && !this.loading">
+      <p>Leider hat die Mensa an diesem Tag nichts für dich zu bieten...</p>
+      <img src="assets/hungry.png" alt="Kein Essen" />
+    </div>
     <ion-card *ngFor="let meal of this.currentMeals" class="meal-card">
       <ng-template [ngIf]="meal.imageUrl" [ngIfElse]="hideImage">
         <img class="meal-img" src="{{meal.imageUrl}}" alt="Kein Bild verfügbar" />

@@ -111,7 +111,7 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
       newDate = new Date(new Date(this.selectedDate).getTime() + 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
     }
     let canteenMeals = this.selectedCantineData?.menu.find((menu) => menu.date === newDate)?.meals ?? [];
-    if (canteenMeals.length == 0) {
+    if (canteenMeals.length == 0 && new Date(this.selectedDate).getDay() == 5) {
       return;
     }
     this.selectedDate = newDate;
@@ -127,7 +127,7 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
       newDate = new Date(new Date(this.selectedDate).getTime() - 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
     }
     let canteenMeals = this.selectedCantineData?.menu.find((menu) => menu.date === newDate)?.meals ?? [];
-    if (canteenMeals.length == 0) {
+    if (canteenMeals.length == 0 && new Date(this.selectedDate).getDay() == 1) {
       return;
     }
     this.selectedDate = newDate;

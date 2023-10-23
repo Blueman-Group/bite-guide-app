@@ -169,3 +169,14 @@ ion-card-subtitle {
   height: 1.5em;
   width: 1.5em;
 }
+
+.no_meals {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.no_meals img {
+  width: 200px;
+}
