@@ -49,16 +49,14 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
       onStart: () => this.cdRef.detectChanges(),
       onMove: (ev: GestureDetail) => {
         let deltaX = ev.deltaX;
-        if (deltaX < -80) {
+        if (deltaX < -50) {
           gesture.enable(false);
           this.incrementDate().then(() => {
-            this.cdRef.detectChanges();
             gesture.enable();
           });
-        } else if (deltaX > 80) {
+        } else if (deltaX > 50) {
           gesture.enable(false);
           this.decrementDate().then(() => {
-            this.cdRef.detectChanges();
             gesture.enable();
           });
         }
@@ -111,12 +109,13 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
       newDate = new Date(new Date(this.selectedDate).getTime() + 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
     }
     let canteenMeals = this.selectedCantineData?.menu.find((menu) => menu.date === newDate)?.meals ?? [];
-    if (canteenMeals.length == 0) {
+    if (canteenMeals.length == 0 && new Date(this.selectedDate).getDay() == 5) {
       return;
     }
     this.selectedDate = newDate;
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.currentMeals = canteenMeals;
+    this.cdRef.detectChanges();
   }
 
   async decrementDate() {
@@ -127,12 +126,13 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
       newDate = new Date(new Date(this.selectedDate).getTime() - 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
     }
     let canteenMeals = this.selectedCantineData?.menu.find((menu) => menu.date === newDate)?.meals ?? [];
-    if (canteenMeals.length == 0) {
+    if (canteenMeals.length == 0 && new Date(this.selectedDate).getDay() == 1) {
       return;
     }
     this.selectedDate = newDate;
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.currentMeals = canteenMeals;
+    this.cdRef.detectChanges();
   }
 
   async today() {
@@ -141,6 +141,7 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.currentMeals = [];
     this.currentMeals = this.selectedCantineData?.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
+    this.cdRef.detectChanges();
   }
 
   async updateMeals() {
@@ -150,6 +151,7 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     this.selectedCantine = this.selectedCantineData.canteen._key;
     this.canteens = await this.storageService.getCanteens();
     this.currentMeals = this.selectedCantineData.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
+    this.cdRef.detectChanges();
     this.updating = false;
   }
 }

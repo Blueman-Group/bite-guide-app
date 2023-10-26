@@ -20,6 +20,7 @@ body {
   bottom: 0px;
   left: 0px;
   width: 50px;
+  z-index: 1;
   height: 50px;
 
   background-color: rgb(31, 150, 51);
@@ -34,6 +35,7 @@ body {
 }
 
 #checkmark p {
+  z-index: 10;
   font-size: 1.5rem;
   font-weight: bold;
   text-align: center;
@@ -46,6 +48,7 @@ body {
 }
 
 .checkmark_wrapper {
+  z-index: 1000;
   height: 100vh;
   display: flex;
   justify-content: center;
@@ -53,6 +56,7 @@ body {
 }
 
 .checkmark__circle {
+  z-index: 2000;
   stroke-dasharray: 166;
   stroke-dashoffset: 166;
   stroke-width: 2;
@@ -63,6 +67,7 @@ body {
 }
 
 .checkmark {
+  z-index: 2000;
   width: 56px;
   height: 56px;
   border-radius: 50%;
@@ -76,6 +81,7 @@ body {
 }
 
 .checkmark__check {
+  z-index: 2000;
   transform-origin: 50% 50%;
   stroke-dasharray: 48;
   stroke-dashoffset: 48;

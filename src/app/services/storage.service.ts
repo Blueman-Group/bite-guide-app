@@ -172,14 +172,15 @@ export class StorageService {
 
     let toUpdateNextWeek = false;
     let filteredNextWeek = storageCanteen.menu.filter((m: { date: string; meals: Meal[] }) => getWeek(new Date(m.date)) === getWeek(today) + 1);
+    console.log(filteredNextWeek);
     filteredNextWeek.forEach((m: { date: string; meals: Meal[] }) => {
       if (m.meals.length == 0) {
         toUpdateNextWeek = true;
       }
     });
 
-    //if it cannot find menus for the next week then update
-    if (filteredCurrentWeek.length == 0 || toUpdateNextWeek) {
+    //if it cannot find menus  for the next week then update
+    if (filteredNextWeek.length == 0 || toUpdateNextWeek) {
       setToNextWeek(itDate);
       await this._updateWeek(itDate, storageCanteen);
     }

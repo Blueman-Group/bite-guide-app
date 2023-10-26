@@ -31,9 +31,16 @@
   font-style: normal;
 }
 
+.canteenSelect ion-select-popover {
+  max-height: 250px;
+}
+
 @media screen and (min-width: 650px) {
   ion-tab-bar {
     display: none !important;
+  }
+  .canteenSelect ion-select-popover {
+    max-height: auto;
   }
 }
 
