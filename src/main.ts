@@ -22,7 +22,11 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    importProvidersFrom(IonicModule.forRoot({})),
+    importProvidersFrom(
+      IonicModule.forRoot({
+        swipeBackEnabled: false,
+      })
+    ),
     importProvidersFrom(
       IonicStorageModule.forRoot({
         name: '__biteGuideStorage',
