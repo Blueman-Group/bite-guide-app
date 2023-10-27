@@ -59,7 +59,9 @@ ion-card {
   aspect-ratio: 16 / 9;
   width: 100%;
   object-fit: cover;
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0));
+  mask-image: linear-gradient(to bottom, rgba(30, 30, 30, 1), 90%, rgba(0, 0, 0, 0));
+  -webkit-mask-image: linear-gradient(to bottom, rgba(30, 30, 30, 1), 90%, rgba(0, 0, 0, 0));
+  height: 180px;
 }
 
 @media screen and (max-width: 856px) {
