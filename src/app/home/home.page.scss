@@ -26,6 +26,10 @@
   text-decoration: none;
 }
 
+ion-content ion-card-title {
+  font-size: 1.5em;
+}
+
 ion-card ion-item {
   --ion-item-background: var(--ion-card-background);
 }
@@ -165,6 +169,7 @@ ion-card ion-grid {
 }
 
 ion-card-content {
+  padding-top: 10px;
   padding-bottom: 16px;
 }
 
