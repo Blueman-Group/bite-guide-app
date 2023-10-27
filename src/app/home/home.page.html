@@ -78,7 +78,7 @@
               </ion-item>
             </ion-list>
           </ion-row>
-          <ion-row class="ion-margin-top">
+          <ion-row class="ion-margin-top" *ngIf="meal.additives.length > 0 || meal.allergens.length > 0">
             <ion-button *ngIf="meal.additives.length > 0" id="{{meal._key}}-additives" size="small">
               <ion-icon name="information-circle-outline" slot="start" aria-hidden="true"></ion-icon>
               <ion-label>Zusatzstoffe</ion-label>

@@ -64,7 +64,7 @@ ion-card {
 
 @media screen and (max-width: 856px) {
   .no-meal-img {
-    visibility: hidden;
+    display: none;
     aspect-ratio: auto;
   }
 }
@@ -154,8 +154,24 @@ ion-card {
   cursor: pointer;
 }
 
-ion-card-title {
+card-title {
   font-size: 1.3rem;
+}
+
+ion-card ion-grid {
+  padding: 0;
+}
+
+ion-card-content {
+  padding-bottom: 16px;
+}
+
+ion-card-header {
+  padding-bottom: 0px;
+}
+
+ion-card-content ion-item {
+  height: 38px;
 }
 
 ion-card-subtitle {
