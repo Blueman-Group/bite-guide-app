@@ -136,8 +136,11 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
   }
 
   async today() {
-    // selected date to today
-    this.selectedDate = new Date().toISOString().substring(0, 10);
+    // selected date to today if its a weekday, if its a weekend set to monday
+
+    this.selectedDate = new Date().getDay() == 6 || new Date().getDay() == 0
+      ? new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString().substring(0, 10)
+      : new Date().toISOString().substring(0, 10);
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.currentMeals = [];
     this.currentMeals = this.selectedCantineData?.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
@@ -151,5 +154,9 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     this.canteens = await this.storageService.getCanteens();
     this.currentMeals = this.selectedCantineData.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
     this.updating = false;
+  }
+
+  async print(meal: Meal) {
+    await this.storageService.addMealToHistory(this.selectedDate, meal);
   }
 }

@@ -4,9 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule, IonicSlides } from '@ionic/angular';
 import { register } from 'swiper/element/bundle';
 import Swiper from 'swiper';
+import {StorageService} from '../services/storage.service';
+import { Meal } from '../classes/meal';
 
 import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component';
 import swiper from 'swiper';
+import { StorageHistory } from '../interfaces/storage-history';
+import { HistoryMeal } from '../classes/history';
 
 @Component({
   selector: 'app-own-mealplan',
@@ -18,9 +22,10 @@ import swiper from 'swiper';
 })
 export class OwnMealplanPage {
   swiperModules = [IonicSlides];
-  constructor() {
+  constructor(private storageService: StorageService) {
     register();
   }
+
   test(swiper: Swiper) {
     console.log(swiper.swipeDirection);
     if (swiper.swipeDirection === 'next') {
@@ -29,4 +34,10 @@ export class OwnMealplanPage {
       console.log('prev');
     }
   }
+
+  async add() {
+    await this.storageService.setHistory();
+  }
 }
+
+

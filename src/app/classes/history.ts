@@ -1,16 +1,25 @@
-import { HistoryInterface } from '../interfaces/history';
-import { Meal } from './meal';
+import {MealInformation } from './meal';
 
-export class History implements HistoryInterface {
-  date: string;
-  meals: Meal[];
-  constructor(date: string, meals: Meal[]) {
-    this.date = date;
-    this.meals = meals;
-  }
+export class HistoryMeal {
+  
+  _key: string;
 
-  addMeal(meal: Meal): void {
-    this.meals.push(meal);
-  }
-  deleteMeal(meal: Meal): void {}
+  name: string;
+  normalPrice: number;
+  studentPrice: number;
+  imageUrl: string;
+
+  constructor(
+    _key: string,
+    name: string,
+    imageUrl: string,
+    mealInformation: MealInformation
+  ) {
+    this._key = _key;
+    this.name = name;
+    this.normalPrice = mealInformation.normalPrice;
+    this.studentPrice = mealInformation.studentPrice;
+    this.imageUrl = imageUrl;
+
+}
 }

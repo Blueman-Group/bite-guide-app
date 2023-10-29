@@ -5,6 +5,8 @@ import { Canteen } from '../interfaces/canteen';
 import { Meal } from '../classes/meal';
 import { DatabaseService } from './database.service';
 import { filter } from 'rxjs';
+import { HistoryMeal } from '../classes/history';
+import { StorageHistory } from '../interfaces/storage-history';
 
 @Injectable({
   providedIn: 'root',
@@ -57,6 +59,11 @@ export class StorageService {
     return canteen;
   }
 
+  async checkHistory(): Promise<boolean> {
+    const history = await this._storage?.get('history');
+    return history;
+  }
+
   /**
    * Get canteen object from storage
    * @param key Canteen key
@@ -67,6 +74,12 @@ export class StorageService {
     return canteen;
   }
 
+    async getHistory(): Promise<StorageHistory> {
+    const history = await this._storage?.get("history");
+    return history;
+  }
+
+
   /**
    * Set canteen object in storage with key
    * @param key Key of canteen
@@ -74,6 +87,11 @@ export class StorageService {
    */
   async setCanteen(key: string, canteen: StorageCanteen) {
     await this._storage?.set(key, canteen);
+  }
+
+  async setHistory() {
+    let history: StorageHistory = {date: [{meals:[]}] };
+    await this._storage?.set("history", { week : history });
   }
 
   /**Get a list of all canteens saved in storage
@@ -86,6 +104,7 @@ export class StorageService {
       if (key === 'setup') break;
       if (key === 'favorite') break;
       if (key === 'colormode') break;
+      if (key === 'history') break;
       const canteen = await this.getCanteen(key);
       canteens.push(canteen.canteen);
     }
@@ -98,6 +117,21 @@ export class StorageService {
    */
   async addCanteen(key: string, canteen: Canteen): Promise<void> {
     await this._storage?.set(key, { canteen, menu: [] });
+  }
+
+  /**Add a menu to to the history on a specific date with the canteenkey where the meal was eaten
+   * @param date Date of the meal
+   * @param meal Meal Object to save
+   **/
+
+  async addMealToHistory(date: string, meal: HistoryMeal) {
+    const history = await this.getHistory();
+    let historyMeal= {_key: meal._key,name: meal.name, normalPrice: meal.normalPrice, studentPrice: meal.studentPrice, imageUrl: meal.imageUrl};
+    console.log(date);
+    console.log(meal);
+    let week = getWeek(new Date(date));
+    console.log(history);
+    
   }
 
   /**Add the menu of a canteen to storage
