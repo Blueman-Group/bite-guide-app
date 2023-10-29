@@ -8,13 +8,10 @@ import { IonicModule } from '@ionic/angular';
   templateUrl: './error-page.page.html',
   styleUrls: ['./error-page.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [IonicModule, CommonModule, FormsModule],
 })
 export class ErrorPagePage implements OnInit {
+  constructor() {}
 
-  constructor() { }
-
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 }
