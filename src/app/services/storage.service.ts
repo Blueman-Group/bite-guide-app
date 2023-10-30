@@ -4,7 +4,7 @@ import { StorageCanteen } from '../interfaces/storage-canteen';
 import { Canteen } from '../interfaces/canteen';
 import { Meal } from '../classes/meal';
 import { DatabaseService } from './database.service';
-import { filter } from 'rxjs';
+import { resolve } from 'dns';
 
 @Injectable({
   providedIn: 'root',
@@ -138,10 +138,10 @@ export class StorageService {
   }
 
   /**Update the menus of a specific canteen on all dates in the next 2 weeks
-   * @param key Key of the canteen which should be updated
+   * @param canteenKey Key of the canteen which should be updated
    */
-  public async updateMenus(key: string): Promise<void> {
-    let storageCanteen = await this.getCanteen(key);
+  public async updateMenus(canteenKey: string): Promise<void> {
+    let storageCanteen = await this.getCanteen(canteenKey);
     let today = new Date();
 
     if (!storageCanteen) {
@@ -154,7 +154,7 @@ export class StorageService {
         storageCanteen.menu.splice(storageCanteen.menu.indexOf(m), 1);
       });
 
-    await this.setCanteen(key, storageCanteen);
+    await this.setCanteen(canteenKey, storageCanteen);
 
     let itDate = new Date();
     let toUpdateCurrentWeek = false;
@@ -166,7 +166,6 @@ export class StorageService {
     });
     //if it cannot find menus for the current week or theyre not listed then update
     if (filteredCurrentWeek.length == 0 || toUpdateCurrentWeek) {
-      setToCurrentWeek(itDate);
       await this._updateWeek(itDate, storageCanteen);
     }
 
@@ -180,21 +179,23 @@ export class StorageService {
 
     //if it cannot find menus for the next week then update
     if (filteredCurrentWeek.length == 0 || toUpdateNextWeek) {
-      setToNextWeek(itDate);
+      setToBeginningOfNextWeek(itDate);
       await this._updateWeek(itDate, storageCanteen);
     }
   }
 
   /**
-   * Update the menu of a canteen on a specific week
-   * @param weekDate Date of the week which should be updated
+   * Updates the menu of a canteen on a specific week starting at the passed date
+   * @param startingDateOfWeek the starting date
    * @param storageCanteen StorageCanteen Object of which the menu should be updated
    */
-  private async _updateWeek(weekDate: Date, storageCanteen: StorageCanteen) {
-    for (let i = 0; i < 5; i++) {
+  private async _updateWeek(startingDateOfWeek: Date, storageCanteen: StorageCanteen) {
+    let weekDate: Date = new Date(startingDateOfWeek);
+    let weekNumber = getWeek(startingDateOfWeek);
+    do {
       await this.getMenu(storageCanteen.canteen, weekDate);
       weekDate.setDate(weekDate.getDate() + 1);
-    }
+    } while (weekNumber === getWeek(weekDate));
   }
 
   /**
@@ -218,6 +219,29 @@ export class StorageService {
       if (!(await this.checkCanteen(canteen._key))) {
         await this.addCanteen(canteen._key, canteen);
       }
+    }
+  }
+
+  /**
+   * Reloads all meals from the database for a specific canteen and saves them in the storage
+   * @param canteenKey Key of the canteen
+   * @returns a promise which resolves when the meals are reloaded
+   */
+  public async reloadMenuesOfCanteenFromDb(canteenKey: string): Promise<void> {
+    let canteenFromStorage: StorageCanteen = await this._storage?.get(canteenKey);
+    if (!canteenFromStorage) {
+      return;
+    }
+    let mealPlans = await this.databaseService.getAllMealPlansOfCanteen(canteenKey);
+    if (mealPlans.length > 0) {
+      canteenFromStorage.menu = []; // clear menu of canteen
+      // add meal plans to menu
+      for (let mealPlan of mealPlans) {
+        let meals: Meal[] =
+          mealPlan.mealIds == undefined || mealPlan.mealIds.length == 0 ? [] : await this.databaseService.getMeals(mealPlan.mealIds);
+        canteenFromStorage.menu.push({ date: mealPlan.date, meals: meals });
+      }
+      this.storage?.set(canteenKey, canteenFromStorage);
     }
   }
 
@@ -255,10 +279,10 @@ export class StorageService {
 }
 
 /**
- * A function which sets the date to the beginning of the current
- * @param date Date which should be set to the beginning of the current week
+ * A function which sets the passed date to the beginning of the week
+ * @param date Date which should be set to the beginning of the week
  */
-function setToCurrentWeek(date: Date) {
+function setToWeekStart(date: Date) {
   date.setDate(date.getDate() - date.getDay() + 1);
 }
 
@@ -266,7 +290,7 @@ function setToCurrentWeek(date: Date) {
  * A function which sets the date to the beginning of next week
  * @param date Date which should be set to the beginning of the next week
  */
-function setToNextWeek(date: Date) {
+function setToBeginningOfNextWeek(date: Date) {
   date.setDate(date.getDate() - date.getDay() + 7 + 1);
 }
 

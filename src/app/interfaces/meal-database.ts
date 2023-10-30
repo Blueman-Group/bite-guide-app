@@ -5,7 +5,7 @@ export interface MealDatabase {
   normalPrice: number;
   studentPrice: number;
   co2PerPortion: number;
-  additives: string[];
-  allergens: string[];
+  additiveIds: string[];
+  allergenIds: string[];
   imageUrl: string;
 }

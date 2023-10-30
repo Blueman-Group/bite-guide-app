@@ -1,4 +1,4 @@
-import { IonicModule, GestureController, GestureDetail, Platform } from '@ionic/angular';
+import { IonicModule, GestureController, GestureDetail, Platform, RefresherEventDetail, RefresherCustomEvent } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule, formatDate } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, AfterContentChecked, AfterViewInit } from '@angular/core';
@@ -8,6 +8,7 @@ import { StorageService } from '../services/storage.service';
 import { Canteen } from '../interfaces/canteen';
 import { Meal } from '../classes/meal';
 import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component';
+import { clear } from 'console';
 
 @Component({
   selector: 'app-home',
@@ -67,6 +68,10 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
       gestureName: 'swipeOnMenu',
     });
     gesture.enable();
+
+    document.getElementById('refresher')?.addEventListener('ionRefresh', ((event: RefresherCustomEvent) => {
+      this.handleRefresh(event);
+    }) as EventListener);
   }
 
   async ngAfterContentChecked() {
@@ -143,7 +148,7 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     this.currentMeals = this.selectedCantineData?.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
   }
 
-  async updateMealsFromStorage() {
+  async updateCurrentMeals() {
     this.updating = true;
     if (this.updating) return;
     this.selectedCantineData = await this.storageService.getFavoriteCanteen();
@@ -153,9 +158,11 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     this.updating = false;
   }
 
-  handleRefresh(event: any) {
-    setTimeout(() => {
-      this.updateMealsFromStorage().then(() => event.target.complete());
-    }, 2000);
+  async handleRefresh(event: RefresherCustomEvent) {
+    const timeoutId = setTimeout(() => {
+      console.error('Could not refresh because of timeout!');
+    }, 10000);
+    await this.storageService.reloadMenuesOfCanteenFromDb(this.selectedCantine).then(() => event.target.complete());
+    clearTimeout(timeoutId);
   }
 }
