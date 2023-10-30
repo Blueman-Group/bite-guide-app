@@ -120,6 +120,7 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     await this.checkNextDay();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.currentMeals = canteenMeals;
+    document.getElementById('today')?.setAttribute('fill', 'outline');
     this.cdRef.detectChanges();
   }
 
@@ -139,6 +140,7 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     await this.checkPrevDay();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.currentMeals = canteenMeals;
+    document.getElementById('today')?.setAttribute('fill', 'outline');
     this.cdRef.detectChanges();
   }
 
@@ -171,6 +173,7 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
   async today() {
     document.getElementById('prevDay')?.classList.remove('disabled');
     document.getElementById('nextDay')?.classList.remove('disabled');
+    document.getElementById('today')?.removeAttribute('fill');
     // selected date to today
     this.selectedDate = new Date().toISOString().substring(0, 10);
     await this.checkNextDay();
