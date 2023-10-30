@@ -44,15 +44,9 @@ export class StartPage implements OnInit {
       await this.storageService.updateCanteens();
       this.router.navigate(['setup', '1']);
     } else {
-      //if setup get favorite canteens, update menus and go to main page
-      let favoriteCanteeen = await this.storageService.getFavoriteCanteen();
-      if ((await this.storageService.getActualMeals(favoriteCanteeen.canteen._key)).length < 5) {
-        await this.storageService.updateMenus(favoriteCanteeen.canteen._key);
-      } else {
-        this.storageService.updateMenus(favoriteCanteeen.canteen._key).then(() => {
-          document.getElementById('update')?.click();
-        });
-      }
+      //if setup get favorite canteen, reload menus and go to main page
+      let favoriteCanteen = await this.storageService.getFavoriteCanteen();
+      this.storageService.reloadMenuesOfCanteenFromDb(favoriteCanteen.canteen._key);
       this.router.navigate(['home/main']);
     }
   }
