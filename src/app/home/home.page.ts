@@ -79,6 +79,8 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
       this.selectedCantine = this.selectedCantineData.canteen._key;
       this.canteens = await this.storageService.getCanteens();
       this.currentMeals = this.selectedCantineData.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
+      await this.checkNextDay();
+      await this.checkPrevDay();
       this.loading = false;
       if (this.currentMeals.length == 0) this.updating = false;
     }
@@ -101,6 +103,7 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
 
   // Update the canteen data for the selected date if the selected date changes
   async incrementDate() {
+    document.getElementById('prevDay')?.classList.remove('disabled');
     let newDate = '';
     // if selected date is friday, increment by 3 days
     if (new Date(this.selectedDate).getDay() == 5) {
@@ -109,16 +112,19 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
       newDate = new Date(new Date(this.selectedDate).getTime() + 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
     }
     let canteenMeals = this.selectedCantineData?.menu.find((menu) => menu.date === newDate)?.meals ?? [];
+
     if (canteenMeals.length == 0 && new Date(this.selectedDate).getDay() == 5) {
       return;
     }
     this.selectedDate = newDate;
+    await this.checkNextDay();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.currentMeals = canteenMeals;
     this.cdRef.detectChanges();
   }
 
   async decrementDate() {
+    document.getElementById('nextDay')?.classList.remove('disabled');
     let newDate = '';
     if (new Date(this.selectedDate).getDay() == 1) {
       newDate = new Date(new Date(this.selectedDate).getTime() - 3 * 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
@@ -130,14 +136,45 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
       return;
     }
     this.selectedDate = newDate;
+    await this.checkPrevDay();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.currentMeals = canteenMeals;
     this.cdRef.detectChanges();
   }
 
+  async checkNextDay() {
+    let nextDay = '';
+    if (new Date(this.selectedDate).getDay() == 5) {
+      nextDay = new Date(new Date(this.selectedDate).getTime() + 3 * 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+    } else {
+      nextDay = new Date(new Date(this.selectedDate).getTime() + 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+    }
+    let nextCanteenMeals = this.selectedCantineData?.menu.find((menu) => menu.date === nextDay)?.meals ?? [];
+    if (nextCanteenMeals.length == 0 && new Date(nextDay).getDay() == 1) {
+      document.getElementById('nextDay')?.classList.add('disabled');
+    }
+  }
+
+  async checkPrevDay() {
+    let prevDay = '';
+    if (new Date(this.selectedDate).getDay() == 1) {
+      prevDay = new Date(new Date(this.selectedDate).getTime() - 3 * 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+    } else {
+      prevDay = new Date(new Date(this.selectedDate).getTime() - 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+    }
+    let nextCanteenMeals = this.selectedCantineData?.menu.find((menu) => menu.date === prevDay)?.meals ?? [];
+    if (nextCanteenMeals.length == 0 && new Date(prevDay).getDay() == 5) {
+      document.getElementById('prevDay')?.classList.add('disabled');
+    }
+  }
+
   async today() {
+    document.getElementById('prevDay')?.classList.remove('disabled');
+    document.getElementById('nextDay')?.classList.remove('disabled');
     // selected date to today
     this.selectedDate = new Date().toISOString().substring(0, 10);
+    await this.checkNextDay();
+    await this.checkPrevDay();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.currentMeals = [];
     this.currentMeals = this.selectedCantineData?.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
