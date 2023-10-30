@@ -1,6 +1,6 @@
 export interface MealPlan {
   _key: string;
-  canteenKey: string;
+  canteenId: string;
   date: string;
-  meals: string[];
+  mealIds: string[];
 }
