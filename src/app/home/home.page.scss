@@ -156,7 +156,7 @@ ion-card {
   justify-content: center;
 }
 
-.icon {
+.icon:not(.disabled) {
   cursor: pointer;
 }
 
