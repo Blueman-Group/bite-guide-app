@@ -46,7 +46,7 @@ export class StartPage implements OnInit {
     } else {
       //if setup get favorite canteen, reload menus and go to main page
       let favoriteCanteen = await this.storageService.getFavoriteCanteen();
-      this.storageService.reloadMenuesOfCanteenFromDb(favoriteCanteen.canteen._key);
+      await this.storageService.reloadMenuesOfCanteenFromDb(favoriteCanteen.canteen._key);
       this.router.navigate(['home/main']);
     }
   }

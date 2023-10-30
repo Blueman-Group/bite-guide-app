@@ -1,3 +1,11 @@
+* {
+  --offset-top: 300px !important;
+}
+
+ion-refresher[slot="fixed"] {
+  top: 50px;
+}
+
 #container {
   text-align: center;
 

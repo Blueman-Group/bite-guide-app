@@ -7,16 +7,26 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content fullscreen="true">
-  <ion-refresher id="refresher" *ngIf="this.platform.is('mobile')" slot="fixed" [pullFactor]="0.5" [pullMin]="100" [pullMax]="200"></ion-refresher>
-  <ion-header collapse="condense">
+<ion-content [fullscreen]="true" [scrollEvents]="true" (ionScroll)="handleScroll($event)">
+  <ion-header collapse="condense" slot="fixed" id="biteguideLogo">
     <ion-toolbar>
       <ion-title size="large">
         <img alt="logo" height="40" id="logo" src="assets/icon/BiteGuide.png" />
       </ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-list>
+  <ion-refresher
+    id="refresher"
+    slot="fixed"
+    (ionRefresh)="this.handleRefresh($event)"
+    *ngIf="this.platform.is('mobile')"
+    [pullFactor]="0.5"
+    [pullMin]="100"
+    [pullMax]="200"
+  >
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ion-list id="canteenList">
     <ion-item>
       <ion-select
         label="Mensa"
@@ -31,7 +41,6 @@
         <ion-select-option *ngFor="let canteen of this.canteens" value="{{canteen._key}}">{{canteen.name.replace('MENSA ', '')}}</ion-select-option>
       </ion-select>
     </ion-item>
-
     <ion-item>
       <ion-icon id="prevDay" name="chevron-back-outline" (click)="decrementDate()" class="icon"></ion-icon>
       <ion-label type="date" class="select">

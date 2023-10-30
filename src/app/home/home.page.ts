@@ -1,4 +1,5 @@
-import { IonicModule, GestureController, GestureDetail, Platform, RefresherEventDetail, RefresherCustomEvent, ToastController } from '@ionic/angular';
+import { IonicModule, ScrollCustomEvent } from '@ionic/angular';
+import { GestureController, GestureDetail, Platform, RefresherCustomEvent, ToastController } from '@ionic/angular/standalone';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule, formatDate } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, AfterContentChecked, AfterViewInit } from '@angular/core';
@@ -65,9 +66,9 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
       gestureName: 'swipeOnMenu',
     });
     if (this.platform.is('mobile')) gesture.enable();
-    document.getElementById('refresher')?.addEventListener('ionRefresh', ((event: RefresherCustomEvent) => {
-      this.handleRefresh(event);
-    }) as EventListener);
+    if (this.platform.is('ios')) {
+      document.getElementById('canteenList')?.style.setProperty('margin-top', '60px');
+    }
   }
 
   async ngAfterContentChecked() {
@@ -192,7 +193,8 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     return this.selectedCantineData?.menu.find((menu) => menu.date === date)?.meals ?? [];
   }
 
-  async handleRefresh(event: RefresherCustomEvent) {
+  async handleRefresh(ev: Event) {
+    let event: RefresherCustomEvent = ev as RefresherCustomEvent;
     const timeoutId = setTimeout(() => {
       console.error('Could not refresh because of timeout!');
       this.toastController
@@ -211,5 +213,19 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     await this.storageService.reloadMenuesOfCanteenFromDb(this.selectedCantine).then(() => event.target.complete());
     this.cdRef.detectChanges();
     clearTimeout(timeoutId);
+  }
+
+  public handleScroll(event: Event) {
+    if (this.platform.is('ios')) {
+      let ev = event as ScrollCustomEvent;
+      if (ev.detail.deltaY > 0) {
+        document.getElementById('biteguideLogo')?.removeAttribute('slot');
+        document.getElementById('canteenList')?.style.removeProperty('margin-top');
+      }
+      if (ev.detail.currentY == 0) {
+        document.getElementById('biteguideLogo')?.setAttribute('slot', 'fixed');
+        document.getElementById('canteenList')?.style.setProperty('margin-top', '60px');
+      }
+    }
   }
 }
