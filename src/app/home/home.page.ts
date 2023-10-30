@@ -66,9 +66,6 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
       gestureName: 'swipeOnMenu',
     });
     if (this.platform.is('mobile')) gesture.enable();
-    if (this.platform.is('ios')) {
-      document.getElementById('canteenList')?.style.setProperty('margin-top', '60px');
-    }
   }
 
   async ngAfterContentChecked() {
@@ -213,19 +210,5 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     await this.storageService.reloadMenuesOfCanteenFromDb(this.selectedCantine).then(() => event.target.complete());
     this.cdRef.detectChanges();
     clearTimeout(timeoutId);
-  }
-
-  public handleScroll(event: Event) {
-    if (this.platform.is('ios')) {
-      let ev = event as ScrollCustomEvent;
-      if (ev.detail.deltaY > 0) {
-        document.getElementById('biteguideLogo')?.removeAttribute('slot');
-        document.getElementById('canteenList')?.style.removeProperty('margin-top');
-      }
-      if (ev.detail.currentY == 0) {
-        document.getElementById('biteguideLogo')?.setAttribute('slot', 'fixed');
-        document.getElementById('canteenList')?.style.setProperty('margin-top', '60px');
-      }
-    }
   }
 }

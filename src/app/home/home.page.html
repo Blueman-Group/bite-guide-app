@@ -7,14 +7,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" [scrollEvents]="true" (ionScroll)="handleScroll($event)">
-  <ion-header collapse="condense" slot="fixed" id="biteguideLogo">
-    <ion-toolbar>
-      <ion-title size="large">
-        <img alt="logo" height="40" id="logo" src="assets/icon/BiteGuide.png" />
-      </ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true">
   <ion-refresher
     id="refresher"
     slot="fixed"
@@ -26,7 +19,14 @@
   >
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-  <ion-list id="canteenList">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">
+        <img alt="logo" height="40" id="logo" src="assets/icon/BiteGuide.png" />
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-list>
     <ion-item>
       <ion-select
         label="Mensa"
