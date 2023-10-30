@@ -25,15 +25,24 @@
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
+@import "https://use.typekit.net/eim3rvv.css";
+
 * {
   font-family: "sofia-pro", sans-serif;
   font-weight: 300;
   font-style: normal;
 }
 
+.canteenSelect ion-select-popover {
+  max-height: 250px;
+}
+
 @media screen and (min-width: 650px) {
   ion-tab-bar {
     display: none !important;
+  }
+  .canteenSelect ion-select-popover {
+    max-height: auto;
   }
 }
 

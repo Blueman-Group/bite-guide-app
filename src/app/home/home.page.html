@@ -24,6 +24,7 @@
         interface="popover"
         placeholder="Mensa auswählen"
         shape="round"
+        [interfaceOptions]="{ cssClass: 'canteenSelect' }"
         [(ngModel)]="this.selectedCantine"
         (ionChange)="this.onSelectChange()"
       >
@@ -40,9 +41,12 @@
       <ion-icon class="button" name="chevron-forward-outline" (click)="incrementDate()" class="icon"></ion-icon>
     </ion-item>
   </ion-list>
-
   <ng-template [ngIf]="!this.loading" [ngIfElse]="showLoading">
     <div class="menu-container" id="menu-container">
+      <div class="no_meals" *ngIf="this.currentMeals.length === 0">
+        <p>Leider hat die Mensa an diesem Tag nichts für dich zu bieten...</p>
+        <img src="assets/hungry.png" alt="Kein Essen" />
+      </div>
       <ion-card *ngFor="let meal of this.currentMeals" class="meal-card">
         <ng-template [ngIf]="meal.imageUrl" [ngIfElse]="hideImage">
           <img class="meal-img" src="{{meal.imageUrl}}" alt="Kein Bild verfügbar" />
@@ -86,7 +90,7 @@
                       <hr />
                       <ion-list class="list">
                         <ion-item *ngFor="let additive of meal.additives">
-                          <ion-label>{{additive.description}}</ion-label>
+                          <ion-label class="ion-text-wrap">{{additive.description}}</ion-label>
                         </ion-item>
                       </ion-list>
                     </div>
@@ -107,7 +111,7 @@
                       <hr />
                       <ion-list class="list">
                         <ion-item *ngFor="let allergen of meal.allergens">
-                          <ion-label>{{allergen.description}}</ion-label>
+                          <ion-label class="ion-text-wrap">{{allergen.description}}</ion-label>
                         </ion-item>
                       </ion-list>
                     </div>

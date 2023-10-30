@@ -50,16 +50,14 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
       onStart: () => this.cdRef.detectChanges(),
       onMove: (ev: GestureDetail) => {
         let deltaX = ev.deltaX;
-        if (deltaX < -80) {
+        if (deltaX < -50) {
           gesture.enable(false);
           this.incrementDate().then(() => {
-            this.cdRef.detectChanges();
             gesture.enable();
           });
-        } else if (deltaX > 80) {
+        } else if (deltaX > 50) {
           gesture.enable(false);
           this.decrementDate().then(() => {
-            this.cdRef.detectChanges();
             gesture.enable();
           });
         }
@@ -67,8 +65,7 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
       onEnd: () => this.cdRef.detectChanges(),
       gestureName: 'swipeOnMenu',
     });
-    gesture.enable();
-
+    if (this.platform.is('mobile')) gesture.enable();
     document.getElementById('refresher')?.addEventListener('ionRefresh', ((event: RefresherCustomEvent) => {
       this.handleRefresh(event);
     }) as EventListener);
@@ -114,12 +111,13 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
       newDate = new Date(new Date(this.selectedDate).getTime() + 24 * 60 * 60 * 1000);
     }
     let canteenMeals = this.getMealsOfSelectedCanteenAt(this.getDateAsString(newDate));
-    if (canteenMeals.length == 0) {
+    if (canteenMeals.length == 0 && new Date(this.selectedDate).getDay() == 5) {
       return;
     }
     this.selectedDate = this.getDateAsString(newDate);
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.currentMeals = canteenMeals;
+    this.cdRef.detectChanges();
   }
 
   async decrementDate() {
@@ -130,12 +128,13 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
       newDate = new Date(new Date(this.selectedDate).getTime() - 24 * 60 * 60 * 1000);
     }
     let canteenMeals = this.getMealsOfSelectedCanteenAt(this.getDateAsString(newDate));
-    if (canteenMeals.length == 0) {
+    if (canteenMeals.length == 0 && new Date(this.selectedDate).getDay() == 1) {
       return;
     }
     this.selectedDate = this.getDateAsString(newDate);
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.currentMeals = canteenMeals;
+    this.cdRef.detectChanges();
   }
 
   async today() {
@@ -144,6 +143,7 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.currentMeals = [];
     this.currentMeals = this.getMealsOfSelectedCanteenAt(this.selectedDate);
+    this.cdRef.detectChanges();
   }
 
   getDateAsString(date: Date): string {
