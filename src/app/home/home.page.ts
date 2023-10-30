@@ -1,4 +1,4 @@
-import { IonicModule, GestureController, GestureDetail, Platform, RefresherEventDetail, RefresherCustomEvent } from '@ionic/angular';
+import { IonicModule, GestureController, GestureDetail, Platform, RefresherEventDetail, RefresherCustomEvent, ToastController } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule, formatDate } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, AfterContentChecked, AfterViewInit } from '@angular/core';
@@ -37,7 +37,8 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     private storageService: StorageService,
     private gestureController: GestureController,
     private cdRef: ChangeDetectorRef,
-    public platform: Platform
+    public platform: Platform,
+    private toastController: ToastController
   ) {}
 
   ngOnInit(): void {
@@ -157,8 +158,21 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
   async handleRefresh(event: RefresherCustomEvent) {
     const timeoutId = setTimeout(() => {
       console.error('Could not refresh because of timeout!');
+      this.toastController
+        .create({
+          message:
+            'Es konnten keine Gerichte aktuallisiert werden. Möglicherweise besteht keine Verbindung zum Internet. Bitte versuche es später erneut.',
+          duration: 5000,
+          position: 'top',
+          color: 'danger',
+          icon: 'cloud-offline-outline',
+        })
+        .then(async (toast) => {
+          await toast.present();
+        });
     }, 10000);
     await this.storageService.reloadMenuesOfCanteenFromDb(this.selectedCantine).then(() => event.target.complete());
+    this.cdRef.detectChanges();
     clearTimeout(timeoutId);
   }
 }
