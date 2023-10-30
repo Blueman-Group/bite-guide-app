@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, Platform } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { StorageCanteen } from '../interfaces/storage-canteen';
 import { StorageService } from '../services/storage.service';
 import { Canteen } from '../interfaces/canteen';
 import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component';
 import { ColorModeService } from '../services/colormode.service';
+import { App } from '@capacitor/app';
 
 @Component({
   selector: 'app-settings',
@@ -22,11 +23,27 @@ export class SettingsPage implements OnInit {
   canteens: Canteen[] = [];
   selectedDate: string = new Date().toISOString().substring(0, 10);
   updating = false;
+  version = 'Web';
 
-  constructor(private router: Router, private storageService: StorageService, public colorModeService: ColorModeService) {}
+  constructor(
+    private router: Router,
+    private storageService: StorageService,
+    public colorModeService: ColorModeService,
+    private platform: Platform
+  ) {}
 
   ngOnInit(): void {
-    if (!this.router.navigated) this.router.navigate(['']);
+    if (!this.router.navigated) {
+      this.router.navigate(['']);
+      return;
+    }
+    if (this.platform.is('capacitor')) {
+      App.getInfo().then((info) => {
+        this.version = info.version + ' (' + info.build + ')';
+      });
+    } else {
+      this.version = 'Web';
+    }
   }
 
   async ngAfterContentChecked() {

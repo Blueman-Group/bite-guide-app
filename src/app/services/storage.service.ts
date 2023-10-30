@@ -170,7 +170,6 @@ export class StorageService {
 
     let toUpdateNextWeek = false;
     let filteredNextWeek = storageCanteen.menu.filter((m: { date: string; meals: Meal[] }) => getWeek(new Date(m.date)) === getWeek(today) + 1);
-    console.log(filteredNextWeek);
     filteredNextWeek.forEach((m: { date: string; meals: Meal[] }) => {
       if (m.meals.length == 0) {
         toUpdateNextWeek = true;
