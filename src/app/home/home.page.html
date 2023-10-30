@@ -41,8 +41,8 @@
       <ion-icon id="nextDay" class="button" name="chevron-forward-outline" (click)="incrementDate()" class="icon"></ion-icon>
     </ion-item>
   </ion-list>
-  <ng-template [ngIf]="!this.loading" [ngIfElse]="showLoading">
-    <div class="menu-container" id="menu-container">
+  <div class="menu-container" id="menu-container">
+    <ng-template [ngIf]="!this.loading" [ngIfElse]="showLoading">
       <div class="no_meals" *ngIf="this.currentMeals.length === 0">
         <p>Leider hat die Mensa an diesem Tag nichts für dich zu bieten...</p>
         <img src="assets/hungry.png" alt="Kein Essen" />
@@ -121,8 +121,8 @@
           </ion-grid>
         </ion-card-content>
       </ion-card>
-    </div>
-  </ng-template>
+    </ng-template>
+  </div>
   <ng-template #showLoading>
     <div class="loading_data">
       <span class="loader"></span>
