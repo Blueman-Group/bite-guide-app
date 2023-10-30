@@ -4,6 +4,7 @@ import { Meal, MealInformation } from '../classes/meal';
 import { Allergen } from '../interfaces/allergen';
 import { Additive } from '../interfaces/additive';
 import { Canteen } from '../interfaces/canteen';
+import { MealPlan } from '../interfaces/mealplan';
 
 @Injectable({
   providedIn: 'root',
@@ -70,8 +71,8 @@ export class DatabaseService {
             meal.meal._key,
             meal.meal.name,
             meal.meal.mealCategory,
-            meal.additives as unknown as Additive[],
-            meal.allergens as unknown as Allergen[],
+            meal.additives as Additive[],
+            meal.allergens as Allergen[],
             meal.meal.imageUrl,
             mealInformation
           )
@@ -82,13 +83,81 @@ export class DatabaseService {
   }
 
   /**
+   * Gets all meals having the given ids from the database
+   * @param mealIds Ids of the meals to get
+   * @returns Array of meals
+   */
+  public async getMeals(mealIds: string[]): Promise<Meal[]> {
+    let mealCollection = this._arango.getMealCollection();
+    let additiveCollection = this._arango.getAdditiveCollection();
+    let allergenCollection = this._arango.getAllergenCollection();
+
+    let idsArr = mealIds.map((id) => {
+      return `"${id}"`;
+    });
+    let idsArrString = `[ ${idsArr} ]`;
+
+    let cursor = await this._arango.getDatabase().query(
+      `FOR m IN \`${mealCollection.name}\`
+        FILTER m._id IN ${idsArrString}  
+        LET additives = (
+            FOR a IN \`${additiveCollection.name}\`
+                FILTER a._key IN m.additiveIds
+                RETURN a
+              )
+        LET allergens = (
+            FOR a IN \`${allergenCollection.name}\`
+                FILTER a._key IN m.allergenIds
+                RETURN a
+              )
+        RETURN merge(m, {additiveIds: additives, allergenIds: allergens})`
+    );
+    let mealList: Meal[] = [];
+    let result = await cursor.all();
+    for (let resultDoc of result) {
+      let mealInformation = {
+        normalPrice: resultDoc.normalPrice,
+        studentPrice: resultDoc.studentPrice,
+        co2PerPortion: resultDoc.co2PerPortion,
+      };
+      mealList.push(
+        new Meal(
+          resultDoc._key,
+          resultDoc.name,
+          resultDoc.mealCategory,
+          resultDoc.additiveIds as Additive[],
+          resultDoc.allergenIds as Allergen[],
+          resultDoc.imageUrl,
+          mealInformation
+        )
+      );
+    }
+    return mealList;
+  }
+
+  /**
+   * Get all meal plans of a given canteen out of the database
+   * @param canteenKey Key of the canteen
+   * @returns Array of meal plan objects
+   */
+  public async getAllMealPlansOfCanteen(canteenKey: string): Promise<MealPlan[]> {
+    let collection = this._arango.getMealPlanCollection();
+    let cursor = await this._arango.getDatabase().query(
+      `FOR mealplan IN \`${collection.name}\` 
+          FILTER mealplan.canteenId == "${canteenKey}"
+          RETURN mealplan`
+    );
+    return cursor.all();
+  }
+
+  /**
    * Get the allergen object of a given key out of the database
    * @param _key Key of the allergen
    * @returns Allergen object of the given key
    */
   public async getAllergen(_key: string): Promise<Allergen> {
-    if (await this._arango.getAllergyCollection().documentExists(_key)) {
-      return await this._arango.getAllergyCollection().document(_key);
+    if (await this._arango.getAllergenCollection().documentExists(_key)) {
+      return await this._arango.getAllergenCollection().document(_key);
     } else {
       throw new Error('Allergen not found');
     }

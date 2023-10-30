@@ -1,4 +1,4 @@
-import { IonicModule, GestureController, GestureDetail, Platform } from '@ionic/angular';
+import { IonicModule, GestureController, GestureDetail, Platform, RefresherEventDetail, RefresherCustomEvent, ToastController } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule, formatDate } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, AfterContentChecked, AfterViewInit } from '@angular/core';
@@ -23,10 +23,9 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
   canteens: Canteen[] = [];
   updating = false;
   // if selected date is weekend set to monday if its a weekday set to today
-  selectedDate: string =
-    new Date().getDay() == 6 || new Date().getDay() == 0
-      ? new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString().substring(0, 10)
-      : new Date().toISOString().substring(0, 10);
+  selectedDate: string = this.getDateAsString(
+    new Date().getDay() == 6 || new Date().getDay() == 0 ? new Date(new Date().getTime() + 24 * 60 * 60 * 1000) : new Date()
+  );
 
   formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
   loading = false;
@@ -36,7 +35,8 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     private storageService: StorageService,
     private gestureController: GestureController,
     private cdRef: ChangeDetectorRef,
-    private platform: Platform
+    public platform: Platform,
+    private toastController: ToastController
   ) {}
 
   ngOnInit(): void {
@@ -65,6 +65,9 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
       gestureName: 'swipeOnMenu',
     });
     if (this.platform.is('mobile')) gesture.enable();
+    document.getElementById('refresher')?.addEventListener('ionRefresh', ((event: RefresherCustomEvent) => {
+      this.handleRefresh(event);
+    }) as EventListener);
   }
 
   async ngAfterContentChecked() {
@@ -78,7 +81,7 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
       this.selectedCantineData = await this.storageService.getFavoriteCanteen();
       this.selectedCantine = this.selectedCantineData.canteen._key;
       this.canteens = await this.storageService.getCanteens();
-      this.currentMeals = this.selectedCantineData.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
+      this.currentMeals = this.getMealsOfSelectedCanteenAt(this.selectedDate);
       await this.checkNextDay();
       await this.checkPrevDay();
       this.loading = false;
@@ -89,12 +92,10 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
   // Update the canteen data for the selected canteen if the selected canteen changes
   async onSelectChange() {
     this.loading = true;
-    this.currentMeals = [];
     await this.storageService.updateMenus(this.selectedCantine);
-    let storageCanteen = await this.storageService.getCanteen(this.selectedCantine);
-    this.selectedCantineData = storageCanteen;
+    this.selectedCantineData = await this.storageService.getCanteen(this.selectedCantine);
     if (this.selectedCantineData) {
-      this.currentMeals = this.selectedCantineData.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
+      this.currentMeals = this.getMealsOfSelectedCanteenAt(this.selectedDate);
     } else {
       this.currentMeals = [];
     }
@@ -104,19 +105,18 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
   // Update the canteen data for the selected date if the selected date changes
   async incrementDate() {
     document.getElementById('prevDay')?.classList.remove('disabled');
-    let newDate = '';
+    let newDate;
     // if selected date is friday, increment by 3 days
     if (new Date(this.selectedDate).getDay() == 5) {
-      newDate = new Date(new Date(this.selectedDate).getTime() + 3 * 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+      newDate = new Date(new Date(this.selectedDate).getTime() + 3 * 24 * 60 * 60 * 1000);
     } else {
-      newDate = new Date(new Date(this.selectedDate).getTime() + 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+      newDate = new Date(new Date(this.selectedDate).getTime() + 24 * 60 * 60 * 1000);
     }
-    let canteenMeals = this.selectedCantineData?.menu.find((menu) => menu.date === newDate)?.meals ?? [];
-
+    let canteenMeals = this.getMealsOfSelectedCanteenAt(this.getDateAsString(newDate));
     if (canteenMeals.length == 0 && new Date(this.selectedDate).getDay() == 5) {
       return;
     }
-    this.selectedDate = newDate;
+    this.selectedDate = this.getDateAsString(newDate);
     await this.checkNextDay();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.currentMeals = canteenMeals;
@@ -126,17 +126,17 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
 
   async decrementDate() {
     document.getElementById('nextDay')?.classList.remove('disabled');
-    let newDate = '';
+    let newDate;
     if (new Date(this.selectedDate).getDay() == 1) {
-      newDate = new Date(new Date(this.selectedDate).getTime() - 3 * 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+      newDate = new Date(new Date(this.selectedDate).getTime() - 3 * 24 * 60 * 60 * 1000);
     } else {
-      newDate = new Date(new Date(this.selectedDate).getTime() - 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+      newDate = new Date(new Date(this.selectedDate).getTime() - 24 * 60 * 60 * 1000);
     }
-    let canteenMeals = this.selectedCantineData?.menu.find((menu) => menu.date === newDate)?.meals ?? [];
+    let canteenMeals = this.getMealsOfSelectedCanteenAt(this.getDateAsString(newDate));
     if (canteenMeals.length == 0 && new Date(this.selectedDate).getDay() == 1) {
       return;
     }
-    this.selectedDate = newDate;
+    this.selectedDate = this.getDateAsString(newDate);
     await this.checkPrevDay();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.currentMeals = canteenMeals;
@@ -145,26 +145,26 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
   }
 
   async checkNextDay() {
-    let nextDay = '';
+    let nextDay;
     if (new Date(this.selectedDate).getDay() == 5) {
-      nextDay = new Date(new Date(this.selectedDate).getTime() + 3 * 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+      nextDay = new Date(new Date(this.selectedDate).getTime() + 3 * 24 * 60 * 60 * 1000);
     } else {
-      nextDay = new Date(new Date(this.selectedDate).getTime() + 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+      nextDay = new Date(new Date(this.selectedDate).getTime() + 24 * 60 * 60 * 1000);
     }
-    let nextCanteenMeals = this.selectedCantineData?.menu.find((menu) => menu.date === nextDay)?.meals ?? [];
+    let nextCanteenMeals = this.getMealsOfSelectedCanteenAt(this.getDateAsString(nextDay));
     if (nextCanteenMeals.length == 0 && new Date(nextDay).getDay() == 1) {
       document.getElementById('nextDay')?.classList.add('disabled');
     }
   }
 
   async checkPrevDay() {
-    let prevDay = '';
+    let prevDay;
     if (new Date(this.selectedDate).getDay() == 1) {
-      prevDay = new Date(new Date(this.selectedDate).getTime() - 3 * 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+      prevDay = new Date(new Date(this.selectedDate).getTime() - 3 * 24 * 60 * 60 * 1000);
     } else {
-      prevDay = new Date(new Date(this.selectedDate).getTime() - 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+      prevDay = new Date(new Date(this.selectedDate).getTime() - 24 * 60 * 60 * 1000);
     }
-    let nextCanteenMeals = this.selectedCantineData?.menu.find((menu) => menu.date === prevDay)?.meals ?? [];
+    let nextCanteenMeals = this.getMealsOfSelectedCanteenAt(this.getDateAsString(prevDay));
     if (nextCanteenMeals.length == 0 && new Date(prevDay).getDay() == 5) {
       document.getElementById('prevDay')?.classList.add('disabled');
     }
@@ -175,23 +175,41 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     document.getElementById('nextDay')?.classList.remove('disabled');
     document.getElementById('today')?.removeAttribute('fill');
     // selected date to today
-    this.selectedDate = new Date().toISOString().substring(0, 10);
+    this.selectedDate = this.getDateAsString(new Date());
     await this.checkNextDay();
     await this.checkPrevDay();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.currentMeals = [];
-    this.currentMeals = this.selectedCantineData?.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
+    this.currentMeals = this.getMealsOfSelectedCanteenAt(this.selectedDate);
     this.cdRef.detectChanges();
   }
 
-  async updateMeals() {
-    this.updating = true;
-    if (this.updating) return;
-    this.selectedCantineData = await this.storageService.getFavoriteCanteen();
-    this.selectedCantine = this.selectedCantineData.canteen._key;
-    this.canteens = await this.storageService.getCanteens();
-    this.currentMeals = this.selectedCantineData.menu.find((menu) => menu.date === this.selectedDate)?.meals ?? [];
+  getDateAsString(date: Date): string {
+    return date.toISOString().substring(0, 10);
+  }
+
+  getMealsOfSelectedCanteenAt(date: string): Meal[] {
+    return this.selectedCantineData?.menu.find((menu) => menu.date === date)?.meals ?? [];
+  }
+
+  async handleRefresh(event: RefresherCustomEvent) {
+    const timeoutId = setTimeout(() => {
+      console.error('Could not refresh because of timeout!');
+      this.toastController
+        .create({
+          message:
+            'Es konnten keine Gerichte aktuallisiert werden. Möglicherweise besteht keine Verbindung zum Internet. Bitte versuche es später erneut.',
+          duration: 5000,
+          position: 'top',
+          color: 'danger',
+          icon: 'cloud-offline-outline',
+        })
+        .then(async (toast) => {
+          await toast.present();
+        });
+    }, 10000);
+    await this.storageService.reloadMenuesOfCanteenFromDb(this.selectedCantine).then(() => event.target.complete());
     this.cdRef.detectChanges();
-    this.updating = false;
+    clearTimeout(timeoutId);
   }
 }
