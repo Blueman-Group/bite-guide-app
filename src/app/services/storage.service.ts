@@ -4,7 +4,6 @@ import { StorageCanteen } from '../interfaces/storage-canteen';
 import { Canteen } from '../interfaces/canteen';
 import { Meal } from '../classes/meal';
 import { DatabaseService } from './database.service';
-import { resolve } from 'dns';
 
 @Injectable({
   providedIn: 'root',
