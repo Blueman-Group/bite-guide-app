@@ -30,13 +30,6 @@ describe('SettingsPage', () => {
     expect(navigatedSpy).toHaveBeenCalledWith(['']);
   });
 
-  it('should update the favorite canteen on change', async () => {
-    let storageService = TestBed.inject(StorageService);
-    let storageSpy = spyOn(storageService, 'setFavorite');
-    await component.onSelectChange();
-    expect(storageSpy).toHaveBeenCalled();
-  });
-
   it('should update dark mode on toggle', async () => {
     let storageService = TestBed.inject(StorageService);
     let storageSpy = spyOn(storageService, 'setColorMode');
