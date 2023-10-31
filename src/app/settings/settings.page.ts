@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Component, OnInit } from '@angular/core';
-import { IonicModule, Platform } from '@ionic/angular';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { IonicModule, Platform, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { StorageCanteen } from '../interfaces/storage-canteen';
 import { StorageService } from '../services/storage.service';
@@ -29,7 +29,8 @@ export class SettingsPage implements OnInit {
     private router: Router,
     private storageService: StorageService,
     public colorModeService: ColorModeService,
-    private platform: Platform
+    private platform: Platform,
+    private toastController: ToastController
   ) {}
 
   ngOnInit(): void {
@@ -61,6 +62,36 @@ export class SettingsPage implements OnInit {
 
   async onSelectChange() {
     this.storageService.setFavorite(this.selectedCantine);
+    await this.presentChangeToast();
+  }
+
+  async presentChangeToast() {
+    let duration = 5000;
+    const toast = await this.toastController.create({
+      message: `Deine Standardkantine wurde geändert! Die App wird in ${duration / 1000} Sekunden neu geladen, um die Änderungen zu übernehmen.`,
+      duration: 5500,
+      position: 'bottom',
+      animated: true,
+      color: 'success',
+      positionAnchor: 'bottom',
+    });
+
+    await toast.present();
+    const timeout = () =>
+      setTimeout(() => {
+        duration -= 1000;
+
+        if (duration <= 0) {
+          window.location.reload();
+          return;
+        }
+        toast.message = `Deine Standardkantine wurde geändert! Die App wird in ${duration / 1000} ${
+          duration / 1000 == 1 ? 'Sekunde' : 'Sekunden'
+        } neu geladen, um die Änderungen zu übernehmen.`;
+        timeout();
+      }, 1000);
+
+    timeout();
   }
 
   toggleDark() {

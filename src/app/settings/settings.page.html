@@ -22,9 +22,7 @@
         [(ngModel)]="this.selectedCantine"
         (ionChange)="this.onSelectChange()"
       >
-        <ion-select-option *ngFor="let canteen of this.canteens" value="{{canteen._key}}"
-          >{{canteen.name.replace('MENSA ', '').toUpperCase()}}</ion-select-option
-        >
+        <ion-select-option *ngFor="let canteen of this.canteens" value="{{canteen._key}}">{{canteen.name.replace('MENSA ', '').toUpperCase()}}</ion-select-option>
       </ion-select>
     </ion-item>
 
@@ -41,7 +39,7 @@
   </ion-list>
 </ion-content>
 
-<ion-footer>
+<ion-footer id="bottom">
   <ion-label>
     <ion-text color="medium" class="ion-text-center">
       <p>Version: {{this.version}}</p>
