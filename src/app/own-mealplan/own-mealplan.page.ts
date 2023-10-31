@@ -35,8 +35,11 @@ export class OwnMealplanPage {
     }
   }
 
-  async add() {
+  async set() {
     await this.storageService.setHistory();
+  }
+  async add(){
+    await this.storageService.setMealToHistory();
   }
 }
 

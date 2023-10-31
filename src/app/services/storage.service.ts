@@ -74,7 +74,7 @@ export class StorageService {
     return canteen;
   }
 
-    async getHistory(): Promise<StorageHistory> {
+    async getHistory(){
     const history = await this._storage?.get("history");
     return history;
   }
@@ -90,8 +90,31 @@ export class StorageService {
   }
 
   async setHistory() {
-    let history: StorageHistory = {date: [{meals:[]}] };
-    await this._storage?.set("history", { week : history });
+    let historyMeal = {_key: "1", name: "Test", normalPrice: 1, studentPrice: 1, imageUrl: "https://sws2.maxmanager.xyz/assets/fotos/musikhochschule/Speisefotos/0-1/99149r53m_000154.jpg?v=1"};
+    let history = {"01-01-2023": [historyMeal] };
+    await this._storage?.set("history", { "KW3" : history });
+    console.log(this.getHistory());
+  }
+
+  async setMealToHistory() {
+    //adds a meal to the history of a specific date
+    let history = await this.getHistory();
+    let historyMeal = {_key: "1", name: "Test", normalPrice: 1, studentPrice: 1, imageUrl: "test"};
+    let date = "01-02-2032";
+    let week = getWeek(new Date());
+    let KW : string = "KW" + week;
+    let day :string = new Date().toISOString().substring(0, 10);
+    // add meal to history
+    if(history[KW] == undefined){
+      history[KW] = {};
+    }
+    if(history[KW][date] == undefined){
+      history[KW][date] = [];
+    }
+    history[KW][date].push(historyMeal);
+    console.log(history);
+    await this._storage?.set("history", history);
+    
   }
 
   /**Get a list of all canteens saved in storage
