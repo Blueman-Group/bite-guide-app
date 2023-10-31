@@ -24,6 +24,7 @@ export class SettingsPage implements OnInit {
   selectedDate: string = new Date().toISOString().substring(0, 10);
   updating = false;
   version = 'Web';
+  timeoutElement: NodeJS.Timeout | null = null;
 
   constructor(
     private router: Router,
@@ -65,6 +66,22 @@ export class SettingsPage implements OnInit {
     await this.presentChangeToast();
   }
 
+  presenceTimeout = (toast: HTMLIonToastElement, duration: number = 5000) => {
+    this.timeoutElement = setTimeout(() => {
+      duration -= 1000;
+
+      if (duration <= 0) {
+        window.location.reload();
+        this.timeoutElement = null;
+        return;
+      }
+      toast.message = `Deine Standardkantine wurde geändert! Die App wird in ${duration / 1000} ${
+        duration / 1000 == 1 ? 'Sekunde' : 'Sekunden'
+      } neu geladen, um die Änderungen zu übernehmen.`;
+      this.presenceTimeout(toast, duration);
+    }, 1000);
+  };
+
   async presentChangeToast() {
     let duration = 5000;
     const toast = await this.toastController.create({
@@ -76,22 +93,13 @@ export class SettingsPage implements OnInit {
       positionAnchor: 'bottom',
     });
 
+    if (this.timeoutElement) {
+      clearTimeout(this.timeoutElement);
+    }
+
     await toast.present();
-    const timeout = () =>
-      setTimeout(() => {
-        duration -= 1000;
 
-        if (duration <= 0) {
-          window.location.reload();
-          return;
-        }
-        toast.message = `Deine Standardkantine wurde geändert! Die App wird in ${duration / 1000} ${
-          duration / 1000 == 1 ? 'Sekunde' : 'Sekunden'
-        } neu geladen, um die Änderungen zu übernehmen.`;
-        timeout();
-      }, 1000);
-
-    timeout();
+    this.presenceTimeout(toast);
   }
 
   toggleDark() {
