@@ -26,6 +26,7 @@ export class Setup2Page implements OnInit, AfterViewChecked {
   }
 
   async ngAfterViewChecked() {
+
     //after view checked will be called a few times, so check if updating is already running because method is async
     if (!this.updating) {
       this.updating = true;

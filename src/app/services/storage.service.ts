@@ -61,7 +61,12 @@ export class StorageService {
 
   async checkHistory(): Promise<boolean> {
     const history = await this._storage?.get('history');
+    
     return history;
+  }
+  async setHistory(){
+    await this._storage?.set('history',{});
+    return;
   }
 
   /**
@@ -89,33 +94,12 @@ export class StorageService {
     await this._storage?.set(key, canteen);
   }
 
-  async setHistory() {
-    let historyMeal = {_key: "1", name: "Test", normalPrice: 1, studentPrice: 1, imageUrl: "https://sws2.maxmanager.xyz/assets/fotos/musikhochschule/Speisefotos/0-1/99149r53m_000154.jpg?v=1"};
-    let history = {"01-01-2023": [historyMeal] };
-    await this._storage?.set("history", { "KW3" : history });
+  async setupHistory() {
+    const history = await this._storage?.get("history");
     console.log(this.getHistory());
   }
 
-  async setMealToHistory() {
-    //adds a meal to the history of a specific date
-    let history = await this.getHistory();
-    let historyMeal = {_key: "1", name: "Test", normalPrice: 1, studentPrice: 1, imageUrl: "test"};
-    let date = "01-02-2032";
-    let week = getWeek(new Date());
-    let KW : string = "KW" + week;
-    let day :string = new Date().toISOString().substring(0, 10);
-    // add meal to history
-    if(history[KW] == undefined){
-      history[KW] = {};
-    }
-    if(history[KW][date] == undefined){
-      history[KW][date] = [];
-    }
-    history[KW][date].push(historyMeal);
-    console.log(history);
-    await this._storage?.set("history", history);
-    
-  }
+  
 
   /**Get a list of all canteens saved in storage
    * @returns List of all canteens saved in storage
@@ -147,15 +131,28 @@ export class StorageService {
    * @param meal Meal Object to save
    **/
 
-  async addMealToHistory(date: string, meal: HistoryMeal) {
-    const history = await this.getHistory();
-    let historyMeal= {_key: meal._key,name: meal.name, normalPrice: meal.normalPrice, studentPrice: meal.studentPrice, imageUrl: meal.imageUrl};
-    console.log(date);
-    console.log(meal);
-    let week = getWeek(new Date(date));
-    console.log(history);
-    
+  async addMealToHistory(date: string, meal: Meal) {
+    let history = await this.getHistory();
+    // asign the hMeal those values:{meal._key,meal.name,meal.normalPrice,meal.studentPrice,meal.imageUrl};
+    let hMeal = new  HistoryMeal(meal.name, meal.normalPrice,meal.studentPrice, meal.imageUrl);
+    let kw : number = getWeek(new Date(date));
+    if(history[kw] == undefined){
+      history[kw] = {};
+    }
+    if(history[kw][date] == undefined){
+      history[kw][date] = [];
+    }
+      history[kw][date].push(hMeal);
+      await this._storage?.set("history", history);
+      console.log(history);
   }
+  async getWeekplan(week: number){
+      const history = await this._storage?.get("history");
+      let kw = week;
+      console.log(history[kw])
+      return history[kw];
+  }
+
 
   /**Add the menu of a canteen to storage
    * @param canteen Canteen Object in which the menu should be saved

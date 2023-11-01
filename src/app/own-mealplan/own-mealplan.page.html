@@ -14,8 +14,9 @@
     </ion-toolbar>
   </ion-header>
 
-  <swiper-container slides-per-view="3" free-mode="true" (slidechange)="test($event.detail[0])" [modules]="swiperModules" #swiper>
-    <swiper-slide *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]">
+  <swiper-container slides-per-view="1"  (slidechange)="test($event.detail[0])" [modules]="swiperModules" #swiper>
+    <swiper-slide *ngFor="let i of [1,2]" fullscreen="true">
+
       <ion-card class="ownmeals">
         <ion-card-header>
           <ion-card-title>Card Title</ion-card-title>
@@ -23,10 +24,11 @@
         </ion-card-header>
 
         <ion-card-content> Here's a small text description for the card content. Nothing more, nothing less. </ion-card-content>
-      </ion-card></swiper-slide
+      </ion-card>
+    
+      </swiper-slide
     >
   </swiper-container>
 
   <ion-button (click)="set()">Setup</ion-button>
-  <ion-button (click)="add()">Add</ion-button>
 </ion-content>
