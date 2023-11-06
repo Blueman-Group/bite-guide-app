@@ -8,15 +8,7 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-refresher
-    id="refresher"
-    slot="fixed"
-    (ionRefresh)="this.handleRefresh($event)"
-    *ngIf="this.platform.is('mobile')"
-    [pullFactor]="0.5"
-    [pullMin]="100"
-    [pullMax]="200"
-  >
+  <ion-refresher id="refresher" slot="fixed" (ionRefresh)="this.handleRefresh($event)" *ngIf="this.platform.is('mobile')" [pullFactor]="0.5" [pullMin]="100" [pullMax]="200">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
   <ion-header collapse="condense">
@@ -36,7 +28,7 @@
         shape="round"
         [interfaceOptions]="{ cssClass: 'canteenSelect' }"
         [(ngModel)]="this.selectedCantine"
-        (ionChange)="this.onSelectChange()"
+        (ionChange)="this.onCanteenSelectChange()"
       >
         <ion-select-option *ngFor="let canteen of this.canteens" value="{{canteen._key}}">{{canteen.name.replace('MENSA ', '')}}</ion-select-option>
       </ion-select>
@@ -73,9 +65,7 @@
               <ion-list lines="none">
                 <ion-item class="ion-no-padding">
                   <ion-icon name="pricetag-outline" slot="start" aria-hidden="true"></ion-icon>
-                  <ion-label>
-                    Studenten: {{meal.studentPrice | number:'.2-2':'de-DE'}}€ / Gast: {{meal.normalPrice | number:'.2-2':'de-DE'}}€</ion-label
-                  >
+                  <ion-label> Studenten: {{meal.studentPrice | number:'.2-2':'de-DE'}}€ / Gast: {{meal.normalPrice | number:'.2-2':'de-DE'}}€</ion-label>
                 </ion-item>
                 <ion-item class="ion-no-padding">
                   <ion-icon name="leaf-outline" slot="start" aria-hidden="true" color="{{meal.co2ClassInfo}}"></ion-icon>

@@ -1,35 +1,34 @@
-import { IonicModule, ScrollCustomEvent } from '@ionic/angular';
+import { IonicModule } from '@ionic/angular';
 import { GestureController, GestureDetail, Platform, RefresherCustomEvent, ToastController } from '@ionic/angular/standalone';
-import { Router, RouterModule } from '@angular/router';
 import { CommonModule, formatDate } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, AfterContentChecked, AfterViewInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, AfterViewInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { StorageCanteen } from '../interfaces/storage-canteen';
 import { StorageService } from '../services/storage.service';
 import { Canteen } from '../interfaces/canteen';
 import { Meal } from '../classes/meal';
 import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component';
+import { EventAggregatorService } from '../services/event-aggregator.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, RouterModule, NavbarHeaderComponent],
+  imports: [IonicModule, CommonModule, FormsModule, NavbarHeaderComponent],
 })
-export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
+export class HomePage implements OnInit, AfterViewInit {
   selectedCantine: string = '';
   selectedCantineData: StorageCanteen | null = null;
   currentMeals: Meal[] = [];
   canteens: Canteen[] = [];
-  updating = false;
+  canteenDataSelected = false;
   // if selected date is weekend set to monday if its a weekday set to today
-  selectedDate: string = this.getDateAsString(
-    new Date().getDay() == 6 || new Date().getDay() == 0 ? new Date(new Date().getTime() + 24 * 60 * 60 * 1000) : new Date()
-  );
+  selectedDate: Date = new Date().getDay() == 6 || new Date().getDay() == 0 ? new Date(new Date().getTime() + 24 * 60 * 60 * 1000) : new Date();
 
   formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
-  loading = false;
+  loading = true;
 
   constructor(
     private router: Router,
@@ -37,14 +36,54 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     private gestureController: GestureController,
     private cdRef: ChangeDetectorRef,
     public platform: Platform,
-    private toastController: ToastController
-  ) {}
-
-  ngOnInit(): void {
-    if (!this.router.navigated) this.router.navigate(['/']);
+    private toastController: ToastController,
+    private eventAggregator: EventAggregatorService
+  ) {
+    console.log('main constructor');
   }
 
-  ngAfterViewInit(): void {
+  async ngOnInit(): Promise<void> {
+    if (!this.eventAggregator.appStarted.getValue()) {
+      this.router.navigate(['/'], { skipLocationChange: true });
+    }
+    await this.waitForStart().then(async () => {
+      this.loading = true;
+      await this.initCanteenData();
+      this.loading = false;
+    });
+  }
+
+  async waitForStart() {
+    while (!this.eventAggregator.appStarted.getValue()) {
+      await new Promise((resolve) => setTimeout(resolve, 300));
+    }
+  }
+
+  async initCanteenData(): Promise<void> {
+    this.canteens = await this.storageService.getCanteens();
+    if (this.canteens.length > 0) {
+      let canteenKey = await this.storageService.getFavoriteCanteenKey();
+      if (!canteenKey) {
+        canteenKey = this.canteens[0]._key;
+      }
+      this.select(canteenKey, this.selectedDate);
+    } else {
+      console.error('Could not initialize canteen data!');
+      this.toastController
+        .create({
+          message: 'Es konnten keine Kantinen gefunden werden. Bitte versuchen Sie die Seite neu zu laden!',
+          duration: 5000,
+          position: 'top',
+          color: 'danger',
+          icon: 'cloud-offline-outline',
+        })
+        .then(async (toast) => {
+          await toast.present();
+        });
+    }
+  }
+
+  async ngAfterViewInit(): Promise<void> {
     const gesture = this.gestureController.create({
       el: document.getElementById('menu-container')!,
       onStart: () => this.cdRef.detectChanges(),
@@ -68,36 +107,22 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     if (this.platform.is('mobile')) gesture.enable();
   }
 
-  async ngAfterContentChecked() {
-    if (!this.updating) {
-      this.updating = true;
-      this.loading = true;
-      if (!(await this.storageService.getFavoriteCanteen())) {
-        this.updating = false;
-        return;
-      }
-      this.selectedCantineData = await this.storageService.getFavoriteCanteen();
-      this.selectedCantine = this.selectedCantineData.canteen._key;
-      this.canteens = await this.storageService.getCanteens();
-      this.currentMeals = this.getMealsOfSelectedCanteenAt(this.selectedDate);
-      await this.checkNextDay();
-      await this.checkPrevDay();
-      this.loading = false;
-      if (this.currentMeals.length == 0) this.updating = false;
-    }
-  }
-
   // Update the canteen data for the selected canteen if the selected canteen changes
-  async onSelectChange() {
+  async onCanteenSelectChange() {
     this.loading = true;
     await this.storageService.updateMenus(this.selectedCantine);
-    this.selectedCantineData = await this.storageService.getCanteen(this.selectedCantine);
-    if (this.selectedCantineData) {
-      this.currentMeals = this.getMealsOfSelectedCanteenAt(this.selectedDate);
-    } else {
-      this.currentMeals = [];
-    }
+    await this.select(this.selectedCantine, this.selectedDate);
     this.loading = false;
+  }
+
+  async select(canteenKey: string, date: Date): Promise<void> {
+    this.selectedCantineData = await this.storageService.getCanteen(canteenKey);
+    this.selectedCantine = canteenKey;
+    this.currentMeals = this.getMealsOfSelectedCanteenAt(date);
+    this.selectedDate = date;
+    await this.updateNextMeals();
+    await this.updatePrevMeals();
+    this.cdRef.detectChanges();
   }
 
   // Update the canteen data for the selected date if the selected date changes
@@ -105,17 +130,17 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     document.getElementById('prevDay')?.classList.remove('disabled');
     let newDate;
     // if selected date is friday, increment by 3 days
-    if (new Date(this.selectedDate).getDay() == 5) {
-      newDate = new Date(new Date(this.selectedDate).getTime() + 3 * 24 * 60 * 60 * 1000);
+    if (this.selectedDate.getDay() == 5) {
+      newDate = new Date(this.selectedDate.getTime() + 3 * 24 * 60 * 60 * 1000);
     } else {
-      newDate = new Date(new Date(this.selectedDate).getTime() + 24 * 60 * 60 * 1000);
+      newDate = new Date(this.selectedDate.getTime() + 24 * 60 * 60 * 1000);
     }
-    let canteenMeals = this.getMealsOfSelectedCanteenAt(this.getDateAsString(newDate));
-    if (canteenMeals.length == 0 && new Date(this.selectedDate).getDay() == 5) {
+    let canteenMeals = this.getMealsOfSelectedCanteenAt(newDate);
+    if (canteenMeals.length == 0 && this.selectedDate.getDay() == 5) {
       return;
     }
-    this.selectedDate = this.getDateAsString(newDate);
-    await this.checkNextDay();
+    this.selectedDate = newDate;
+    await this.updateNextMeals();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.currentMeals = canteenMeals;
     document.getElementById('today')?.removeAttribute('fill');
@@ -125,45 +150,45 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
   async decrementDate() {
     document.getElementById('nextDay')?.classList.remove('disabled');
     let newDate;
-    if (new Date(this.selectedDate).getDay() == 1) {
-      newDate = new Date(new Date(this.selectedDate).getTime() - 3 * 24 * 60 * 60 * 1000);
+    if (this.selectedDate.getDay() == 1) {
+      newDate = new Date(this.selectedDate.getTime() - 3 * 24 * 60 * 60 * 1000);
     } else {
-      newDate = new Date(new Date(this.selectedDate).getTime() - 24 * 60 * 60 * 1000);
+      newDate = new Date(this.selectedDate.getTime() - 24 * 60 * 60 * 1000);
     }
-    let canteenMeals = this.getMealsOfSelectedCanteenAt(this.getDateAsString(newDate));
-    if (canteenMeals.length == 0 && new Date(this.selectedDate).getDay() == 1) {
+    let canteenMeals = this.getMealsOfSelectedCanteenAt(newDate);
+    if (canteenMeals.length == 0 && this.selectedDate.getDay() == 1) {
       return;
     }
-    this.selectedDate = this.getDateAsString(newDate);
-    await this.checkPrevDay();
+    this.selectedDate = newDate;
+    await this.updatePrevMeals();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.currentMeals = canteenMeals;
     document.getElementById('today')?.removeAttribute('fill');
     this.cdRef.detectChanges();
   }
 
-  async checkNextDay() {
+  async updateNextMeals() {
     let nextDay;
-    if (new Date(this.selectedDate).getDay() == 5) {
-      nextDay = new Date(new Date(this.selectedDate).getTime() + 3 * 24 * 60 * 60 * 1000);
+    if (this.selectedDate.getDay() == 5) {
+      nextDay = new Date(this.selectedDate.getTime() + 3 * 24 * 60 * 60 * 1000);
     } else {
-      nextDay = new Date(new Date(this.selectedDate).getTime() + 24 * 60 * 60 * 1000);
+      nextDay = new Date(this.selectedDate.getTime() + 24 * 60 * 60 * 1000);
     }
-    let nextCanteenMeals = this.getMealsOfSelectedCanteenAt(this.getDateAsString(nextDay));
-    if (nextCanteenMeals.length == 0 && new Date(nextDay).getDay() == 1) {
+    let nextCanteenMeals = this.getMealsOfSelectedCanteenAt(nextDay);
+    if (nextCanteenMeals.length == 0 && nextDay.getDay() == 1) {
       document.getElementById('nextDay')?.classList.add('disabled');
     }
   }
 
-  async checkPrevDay() {
+  async updatePrevMeals() {
     let prevDay;
-    if (new Date(this.selectedDate).getDay() == 1) {
-      prevDay = new Date(new Date(this.selectedDate).getTime() - 3 * 24 * 60 * 60 * 1000);
+    if (this.selectedDate.getDay() == 1) {
+      prevDay = new Date(this.selectedDate.getTime() - 3 * 24 * 60 * 60 * 1000);
     } else {
-      prevDay = new Date(new Date(this.selectedDate).getTime() - 24 * 60 * 60 * 1000);
+      prevDay = new Date(this.selectedDate.getTime() - 24 * 60 * 60 * 1000);
     }
-    let nextCanteenMeals = this.getMealsOfSelectedCanteenAt(this.getDateAsString(prevDay));
-    if (nextCanteenMeals.length == 0 && new Date(prevDay).getDay() == 5) {
+    let nextCanteenMeals = this.getMealsOfSelectedCanteenAt(prevDay);
+    if (nextCanteenMeals.length == 0 && prevDay.getDay() == 5) {
       document.getElementById('prevDay')?.classList.add('disabled');
     }
   }
@@ -173,9 +198,9 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     document.getElementById('nextDay')?.classList.remove('disabled');
     document.getElementById('today')?.setAttribute('fill', 'outline');
     // selected date to today
-    this.selectedDate = this.getDateAsString(new Date());
-    await this.checkNextDay();
-    await this.checkPrevDay();
+    this.selectedDate = new Date();
+    await this.updateNextMeals();
+    await this.updatePrevMeals();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.currentMeals = [];
     this.currentMeals = this.getMealsOfSelectedCanteenAt(this.selectedDate);
@@ -186,8 +211,8 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
     return date.toISOString().substring(0, 10);
   }
 
-  getMealsOfSelectedCanteenAt(date: string): Meal[] {
-    return this.selectedCantineData?.menu.find((menu) => menu.date === date)?.meals ?? [];
+  getMealsOfSelectedCanteenAt(date: Date): Meal[] {
+    return this.selectedCantineData?.menu.find((menu) => menu.date === this.getDateAsString(date))?.meals ?? [];
   }
 
   async handleRefresh(ev: Event) {
@@ -196,8 +221,7 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
       console.error('Could not refresh because of timeout!');
       this.toastController
         .create({
-          message:
-            'Es konnten keine Gerichte aktuallisiert werden. Möglicherweise besteht keine Verbindung zum Internet. Bitte versuche es später erneut.',
+          message: 'Es konnten keine Gerichte aktuallisiert werden. Möglicherweise besteht keine Verbindung zum Internet. Bitte versuche es später erneut.',
           duration: 5000,
           position: 'top',
           color: 'danger',
@@ -208,7 +232,7 @@ export class HomePage implements OnInit, AfterContentChecked, AfterViewInit {
         });
     }, 10000);
     await this.storageService.reloadMenuesOfCanteenFromDb(this.selectedCantine).then(() => event.target.complete());
-    this.cdRef.detectChanges();
+    await this.select(this.selectedCantine, this.selectedDate);
     clearTimeout(timeoutId);
   }
 }

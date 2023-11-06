@@ -236,8 +236,7 @@ export class StorageService {
       canteenFromStorage.menu = []; // clear menu of canteen
       // add meal plans to menu
       for (let mealPlan of mealPlans) {
-        let meals: Meal[] =
-          mealPlan.mealIds == undefined || mealPlan.mealIds.length == 0 ? [] : await this.databaseService.getMeals(mealPlan.mealIds);
+        let meals: Meal[] = mealPlan.mealIds == undefined || mealPlan.mealIds.length == 0 ? [] : await this.databaseService.getMeals(mealPlan.mealIds);
         canteenFromStorage.menu.push({ date: mealPlan.date, meals: meals });
       }
       this.storage?.set(canteenKey, canteenFromStorage);
@@ -258,6 +257,14 @@ export class StorageService {
    */
   public async getFavoriteCanteen(): Promise<StorageCanteen> {
     return await this.getCanteen(await this._storage?.get('favorite'));
+  }
+
+  /**
+   * Get the key of the favorite canteen
+   * @returns Key of the favorite canteen
+   */
+  public async getFavoriteCanteenKey(): Promise<string> {
+    return await this._storage?.get('favorite');
   }
 
   /**

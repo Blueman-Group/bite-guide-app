@@ -39,6 +39,6 @@ describe('HomePage', () => {
   it('should select today', () => {
     component.today();
     let date = new Date();
-    expect(component.selectedDate).toBe(date.toISOString().substring(0, 10));
+    expect(component.selectedDate).toBe(date);
   });
 });
