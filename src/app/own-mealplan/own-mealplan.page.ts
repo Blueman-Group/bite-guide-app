@@ -22,8 +22,22 @@ import { HistoryMeal } from '../classes/history';
 })
 export class OwnMealplanPage {
   swiperModules = [IonicSlides];
+  updating = false;
+  history = {};
   constructor(private storageService: StorageService) {
     register();
+  }
+
+  async ngAfterContentChecked() {
+    if (!this.updating) {
+    
+      this.updating = true;
+      await this.storageService.getHistory().then(history => {
+        this.history = history;
+        this.updating = false;
+      });
+      console.log(this.history);
+    }
   }
 
   test(swiper: Swiper) {

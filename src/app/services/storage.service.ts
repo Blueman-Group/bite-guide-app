@@ -80,7 +80,7 @@ export class StorageService {
   }
 
     async getHistory(){
-    const history = await this._storage?.get("history");
+    let history = await this._storage?.get("history");
     return history;
   }
 
@@ -146,6 +146,7 @@ export class StorageService {
       await this._storage?.set("history", history);
       console.log(history);
   }
+
   async getWeekplan(week: number){
       const history = await this._storage?.get("history");
       let kw = week;
