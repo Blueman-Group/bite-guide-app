@@ -33,7 +33,7 @@ describe('HomePage', () => {
     let navigateSpy = spyOn(router, 'navigate');
     router.navigated = false;
     component.ngOnInit();
-    expect(navigateSpy).toHaveBeenCalledWith(['/']);
+    expect(navigateSpy).toHaveBeenCalledWith(['/'], { skipLocationChange: true });
   });
 
   it('should select today', () => {
