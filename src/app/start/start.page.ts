@@ -49,7 +49,7 @@ export class StartPage implements OnInit {
     let favoriteCanteen = await this.storageService.getFavoriteCanteen();
     if (!(await this.storageService.reloadMenuesOfCanteenFromDb(favoriteCanteen.canteen._key))) {
       const toast = await this.toastController.create({
-        message: 'Wir konnten ihre Daten nicht aktualisieren. Möglicherweise haben Sie keine Internet-Verbindung.',
+        message: 'Es konnten keine Gerichte aktuallisiert werden. Möglicherweise besteht keine Verbindung zum Internet. Bitte versuche es später erneut.',
         duration: 5000,
         position: 'top',
         color: 'danger',

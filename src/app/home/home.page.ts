@@ -29,6 +29,7 @@ export class HomePage implements OnInit, AfterViewInit {
 
   formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
   loading = true;
+  refreshing = false;
 
   constructor(
     private router: Router,
@@ -213,10 +214,10 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   async handleRefresh(ev: Event) {
-    this.loading = true;
+    this.refreshing = true;
     let event: RefresherCustomEvent = ev as RefresherCustomEvent;
     let timeoutId = setTimeout(() => {
-      this.loading = false;
+      this.refreshing = false;
       this.toastController
         .create({
           message: 'Es konnten keine Gerichte aktuallisiert werden. Möglicherweise besteht keine Verbindung zum Internet. Bitte versuche es später erneut.',
@@ -229,16 +230,16 @@ export class HomePage implements OnInit, AfterViewInit {
           await toast.present();
         });
     }, 5000);
-    this.tryReload(1000).then(async () => {
-      this.loading = false;
+    this.tryRefresh(1000).then(async () => {
+      this.refreshing = false;
       await this.select(this.selectedCantine, this.selectedDate);
       clearTimeout(timeoutId);
       event.target.complete();
     });
   }
 
-  private async tryReload(intervalInMs: number): Promise<void> {
-    while (!(await this.storageService.reloadMenuesOfCanteenFromDb(this.selectedCantine)) && this.loading) {
+  private async tryRefresh(intervalInMs: number): Promise<void> {
+    while (!(await this.storageService.reloadMenuesOfCanteenFromDb(this.selectedCantine)) && this.refreshing) {
       await new Promise((resolve) => setTimeout(resolve, intervalInMs));
     }
   }
