@@ -39,6 +39,8 @@ describe('HomePage', () => {
   it('should select today', () => {
     component.today();
     let date = new Date();
-    expect(component.selectedDate).toEqual(date);
+    expect(component.selectedDate.getDate()).toBe(date.getDate());
+    expect(component.selectedDate.getMonth()).toBe(date.getMonth());
+    expect(component.selectedDate.getFullYear()).toBe(date.getFullYear());
   });
 });
