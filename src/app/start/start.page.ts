@@ -26,32 +26,48 @@ export class StartPage implements OnInit {
   ) {}
 
   async ngOnInit() {
-    // check if database is reachable
-    if (!(await this.checkDBConnection())) return;
     //wait until storage is ready
     await this.waitForStorage();
     if (!(await this.storageService.checkSetup())) {
-      //if not setup load canteens in storage and start setup
-      await this.storageService.updateCanteens();
-      this.router.navigate(['setup', '1']);
+      await this.initialStart();
     } else {
-      //if setup get favorite canteen, reload menus and go to home page
-      let favoriteCanteen = await this.storageService.getFavoriteCanteen();
-      await this.storageService.reloadMenuesOfCanteenFromDb(favoriteCanteen.canteen._key);
-      console.log('navigate to main');
-      this.router.navigate(['home/main']);
+      await this.reload();
     }
     this.eventAggregator.appStarted.next(true);
   }
 
-  private async checkDBConnection(): Promise<boolean> {
+  private async initialStart() {
+    // check if database is reachable
+    if (!(await this.ensureDBConnection())) return;
+    //if not setup load canteens in storage and start setup
+    await this.storageService.updateCanteens();
+    this.router.navigate(['setup', '1']);
+  }
+
+  private async reload() {
+    //if setup get favorite canteen, try to reload menus from db and go to home page
+    let favoriteCanteen = await this.storageService.getFavoriteCanteen();
+    if (!(await this.storageService.reloadMenuesOfCanteenFromDb(favoriteCanteen.canteen._key))) {
+      const toast = await this.toastController.create({
+        message: 'Wir konnten ihre Daten nicht aktualisieren. Möglicherweise haben Sie keine Internet-Verbindung.',
+        duration: 5000,
+        position: 'top',
+        color: 'danger',
+        icon: 'cloud-offline-outline',
+      });
+      toast.present();
+    }
+    this.router.navigate(['home/main']);
+  }
+
+  private async ensureDBConnection(): Promise<boolean> {
     if (!(await this.databaseService.checkArangoConnection())) {
       const toast = await this.toastController.create({
         message: 'Wir können keine Verbindung zur Datenbank aufbauen. Bitte versuche es später erneut.',
         duration: 5000,
         position: 'top',
         color: 'danger',
-        icon: 'wifi-outline',
+        icon: 'cloud-offline-outline',
       });
       toast.present();
       return false;

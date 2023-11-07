@@ -226,10 +226,12 @@ export class StorageService {
    * @param canteenKey Key of the canteen
    * @returns a promise which resolves when the meals are reloaded
    */
-  public async reloadMenuesOfCanteenFromDb(canteenKey: string): Promise<void> {
+  public async reloadMenuesOfCanteenFromDb(canteenKey: string): Promise<boolean> {
+    if (!(await this.databaseService.checkArangoConnection())) return false;
+
     let canteenFromStorage: StorageCanteen = await this._storage?.get(canteenKey);
     if (!canteenFromStorage) {
-      return;
+      return false;
     }
     let mealPlans = await this.databaseService.getAllMealPlansOfCanteen(canteenKey);
     if (mealPlans.length > 0) {
@@ -241,6 +243,7 @@ export class StorageService {
       }
       this.storage?.set(canteenKey, canteenFromStorage);
     }
+    return true;
   }
 
   /**

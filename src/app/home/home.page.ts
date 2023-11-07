@@ -38,9 +38,7 @@ export class HomePage implements OnInit, AfterViewInit {
     public platform: Platform,
     private toastController: ToastController,
     private eventAggregator: EventAggregatorService
-  ) {
-    console.log('main constructor');
-  }
+  ) {}
 
   async ngOnInit(): Promise<void> {
     if (!this.eventAggregator.appStarted.getValue()) {
@@ -68,7 +66,6 @@ export class HomePage implements OnInit, AfterViewInit {
       }
       this.select(canteenKey, this.selectedDate);
     } else {
-      console.error('Could not initialize canteen data!');
       this.toastController
         .create({
           message: 'Es konnten keine Kantinen gefunden werden. Bitte versuchen Sie die Seite neu zu laden!',
@@ -120,8 +117,8 @@ export class HomePage implements OnInit, AfterViewInit {
     this.selectedCantine = canteenKey;
     this.currentMeals = this.getMealsOfSelectedCanteenAt(date);
     this.selectedDate = date;
-    await this.updateNextMeals();
-    await this.updatePrevMeals();
+    await this.updateNextDayButtonState();
+    await this.updatePrevDayButtonState();
     this.cdRef.detectChanges();
   }
 
@@ -140,7 +137,7 @@ export class HomePage implements OnInit, AfterViewInit {
       return;
     }
     this.selectedDate = newDate;
-    await this.updateNextMeals();
+    await this.updateNextDayButtonState();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.currentMeals = canteenMeals;
     document.getElementById('today')?.removeAttribute('fill');
@@ -160,14 +157,14 @@ export class HomePage implements OnInit, AfterViewInit {
       return;
     }
     this.selectedDate = newDate;
-    await this.updatePrevMeals();
+    await this.updatePrevDayButtonState();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.currentMeals = canteenMeals;
     document.getElementById('today')?.removeAttribute('fill');
     this.cdRef.detectChanges();
   }
 
-  async updateNextMeals() {
+  async updateNextDayButtonState() {
     let nextDay;
     if (this.selectedDate.getDay() == 5) {
       nextDay = new Date(this.selectedDate.getTime() + 3 * 24 * 60 * 60 * 1000);
@@ -180,7 +177,7 @@ export class HomePage implements OnInit, AfterViewInit {
     }
   }
 
-  async updatePrevMeals() {
+  async updatePrevDayButtonState() {
     let prevDay;
     if (this.selectedDate.getDay() == 1) {
       prevDay = new Date(this.selectedDate.getTime() - 3 * 24 * 60 * 60 * 1000);
@@ -199,8 +196,8 @@ export class HomePage implements OnInit, AfterViewInit {
     document.getElementById('today')?.setAttribute('fill', 'outline');
     // selected date to today
     this.selectedDate = new Date();
-    await this.updateNextMeals();
-    await this.updatePrevMeals();
+    await this.updateNextDayButtonState();
+    await this.updatePrevDayButtonState();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     this.currentMeals = [];
     this.currentMeals = this.getMealsOfSelectedCanteenAt(this.selectedDate);
@@ -216,9 +213,10 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   async handleRefresh(ev: Event) {
+    this.loading = true;
     let event: RefresherCustomEvent = ev as RefresherCustomEvent;
-    const timeoutId = setTimeout(() => {
-      console.error('Could not refresh because of timeout!');
+    let timeoutId = setTimeout(() => {
+      this.loading = false;
       this.toastController
         .create({
           message: 'Es konnten keine Gerichte aktuallisiert werden. Möglicherweise besteht keine Verbindung zum Internet. Bitte versuche es später erneut.',
@@ -230,9 +228,18 @@ export class HomePage implements OnInit, AfterViewInit {
         .then(async (toast) => {
           await toast.present();
         });
-    }, 10000);
-    await this.storageService.reloadMenuesOfCanteenFromDb(this.selectedCantine).then(() => event.target.complete());
-    await this.select(this.selectedCantine, this.selectedDate);
-    clearTimeout(timeoutId);
+    }, 5000);
+    this.tryReload(1000).then(async () => {
+      this.loading = false;
+      await this.select(this.selectedCantine, this.selectedDate);
+      clearTimeout(timeoutId);
+      event.target.complete();
+    });
+  }
+
+  private async tryReload(intervalInMs: number): Promise<void> {
+    while (!(await this.storageService.reloadMenuesOfCanteenFromDb(this.selectedCantine)) && this.loading) {
+      await new Promise((resolve) => setTimeout(resolve, intervalInMs));
+    }
   }
 }
