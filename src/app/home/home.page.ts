@@ -220,7 +220,7 @@ export class HomePage implements OnInit, AfterViewInit {
       this.refreshing = false;
       this.toastController
         .create({
-          message: 'Es konnten keine Gerichte aktuallisiert werden. Möglicherweise besteht keine Verbindung zum Internet. Bitte versuche es später erneut.',
+          message: 'Es konnten keine Gerichte aktualisiert werden. Möglicherweise besteht keine Verbindung zum Internet. Bitte versuche es später erneut.',
           duration: 5000,
           position: 'top',
           color: 'danger',
