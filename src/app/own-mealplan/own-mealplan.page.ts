@@ -1,16 +1,12 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { AfterContentChecked, Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, IonicSlides } from '@ionic/angular';
 import { register } from 'swiper/element/bundle';
 import Swiper from 'swiper';
-import {StorageService} from '../services/storage.service';
-import { Meal } from '../classes/meal';
+import { StorageService } from '../services/storage.service';
 
 import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component';
-import swiper from 'swiper';
-import { StorageHistory } from '../interfaces/storage-history';
-import { HistoryMeal } from '../classes/history';
 
 @Component({
   selector: 'app-own-mealplan',
@@ -20,19 +16,19 @@ import { HistoryMeal } from '../classes/history';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [IonicModule, CommonModule, FormsModule, NavbarHeaderComponent],
 })
-export class OwnMealplanPage {
+export class OwnMealplanPage implements AfterContentChecked {
   swiperModules = [IonicSlides];
   updating = false;
   history = {};
+
   constructor(private storageService: StorageService) {
     register();
   }
 
   async ngAfterContentChecked() {
     if (!this.updating) {
-    
       this.updating = true;
-      await this.storageService.getHistory().then(history => {
+      await this.storageService.getHistory().then((history) => {
         this.history = history;
         this.updating = false;
       });
@@ -52,7 +48,4 @@ export class OwnMealplanPage {
   async set() {
     await this.storageService.setHistory();
   }
-
 }
-
-
