@@ -33,12 +33,14 @@ describe('HomePage', () => {
     let navigateSpy = spyOn(router, 'navigate');
     router.navigated = false;
     component.ngOnInit();
-    expect(navigateSpy).toHaveBeenCalledWith(['/']);
+    expect(navigateSpy).toHaveBeenCalledWith(['/'], { skipLocationChange: true });
   });
 
   it('should select today', () => {
     component.today();
     let date = new Date();
-    expect(component.selectedDate).toBe(date.toISOString().substring(0, 10));
+    expect(component.selectedDate.getDate()).toBe(date.getDate());
+    expect(component.selectedDate.getMonth()).toBe(date.getMonth());
+    expect(component.selectedDate.getFullYear()).toBe(date.getFullYear());
   });
 });

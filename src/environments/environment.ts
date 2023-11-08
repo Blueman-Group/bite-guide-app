@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   arangoUrl: 'https://arango.envyz.de',
-  arangoDatabaseName: 'dhbw',
+  arangoDatabaseName: 'dhbw_test',
   arangoDatabaseUser: 'dhbw',
   arangoDatabasePassword: '5fBjsWvtEBDQMt#!k6jtE6fSca^&$2fn',
 };

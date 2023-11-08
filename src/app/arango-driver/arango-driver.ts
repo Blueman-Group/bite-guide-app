@@ -39,7 +39,7 @@ export class ArangoDriver {
     return this._db.collection<Additive>('additive');
   }
 
-  public getAllergyCollection() {
+  public getAllergenCollection() {
     return this._db.collection<Allergen>('allergen');
   }
 
