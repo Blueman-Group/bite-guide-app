@@ -64,7 +64,6 @@ export class StorageService {
   }
   async setHistory() {
     await this._storage?.set('history', {});
-    return;
   }
 
   /**
@@ -92,7 +91,6 @@ export class StorageService {
   }
 
   async setupHistory() {
-    const history = await this._storage?.get('history');
     console.log(this.getHistory());
   }
 
@@ -126,21 +124,46 @@ export class StorageService {
    * @param meal Meal Object to save
    **/
 
-  async addMealToHistory(date: Date, meal: Meal) {
+  async addMealToHistory(date: Date, meal: Meal, canteenKey: string) {
     let dateString = date.toISOString().substring(0, 10);
     let history = await this.getHistory();
-    // asign the hMeal those values:{meal._key,meal.name,meal.normalPrice,meal.studentPrice,meal.imageUrl};
-    let hMeal = new HistoryMeal(meal.name, meal.normalPrice, meal.studentPrice, meal.imageUrl);
+    let hMeal = new HistoryMeal(meal.name, meal.normalPrice, meal.studentPrice, meal.imageUrl, canteenKey);
     let kw: number = getWeek(new Date(date));
     if (history[kw] == undefined) {
       history[kw] = {};
     }
     if (history[kw][dateString] == undefined) {
-      history[kw][dateString] = [];
+      history[kw][dateString] = {};
     }
-    history[kw][dateString].push(hMeal);
+    //add hmeal to history with key meal._key
+    history[kw][dateString][meal._key] = hMeal;
     await this._storage?.set('history', history);
     console.log(history);
+
+    //set the pinnedkey to true for the canteenkey in the storage
+    let storageCanteen = await this.getCanteen(canteenKey);
+    for (let menu of storageCanteen.menu) {
+      for (let i of menu.meals) {
+        if (i._key == meal._key) {
+          meal.pinned = true;
+        }
+      }
+    }
+    await this.setCanteen(canteenKey, storageCanteen);
+  }
+
+  async deleteMealFromHistory(date: Date, meal_key: string, canteenKey: string) {
+    let history = await this.getHistory();
+    //delete meal from history using the date where you get the week from and key
+    let kw: number = getWeek(new Date(date));
+    let dateString = date.toISOString().substring(0, 10);
+    delete history[kw][dateString][meal_key];
+    await this._storage?.set('history', history);
+    //set the pinnedkey to false
+    let storageCanteen = await this.getCanteen(canteenKey);
+    //set the pinnedkey to false at the date in storageCanteen
+    console.log(storageCanteen);
+    console.log('deleted meal from history');
   }
 
   async getWeekplan(week: number) {

@@ -19,16 +19,9 @@ export class Meal implements MealInterface {
   additives: Additive[];
   allergens: Allergen[];
   imageUrl: string;
+  pinned: boolean;
 
-  constructor(
-    _key: string,
-    name: string,
-    mealCategory: string,
-    additives: Additive[],
-    allergens: Allergen[],
-    imageUrl: string,
-    mealInformation: MealInformation
-  ) {
+  constructor(_key: string, name: string, mealCategory: string, additives: Additive[], allergens: Allergen[], imageUrl: string, mealInformation: MealInformation) {
     this._key = _key;
     this.name = name;
     this.mealCategory = mealCategory;
@@ -45,5 +38,6 @@ export class Meal implements MealInterface {
     this.additives = additives;
     this.allergens = allergens;
     this.imageUrl = imageUrl;
+    this.pinned = false;
   }
 }
