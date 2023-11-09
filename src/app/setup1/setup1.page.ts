@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterContentChecked } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
@@ -16,7 +16,6 @@ import { EventAggregatorService } from '../services/event-aggregator.service';
 })
 export class Setup1Page implements OnInit {
   public canteens: Canteen[] = [];
-  updating = false;
   document = document;
 
   constructor(private router: Router, public storageService: StorageService, private eventAggregator: EventAggregatorService) {}
@@ -28,7 +27,6 @@ export class Setup1Page implements OnInit {
     await this.waitForStart().then(() => {
       this.storageService.getCanteens().then((canteens) => {
         this.canteens = canteens;
-        this.updating = false;
       });
     });
   }
