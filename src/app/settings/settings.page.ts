@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { IonicModule, Platform, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { StorageCanteen } from '../interfaces/storage-canteen';
