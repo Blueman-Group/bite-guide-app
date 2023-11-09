@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, fakeAsync, tick, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { Setup1Page } from './setup1.page';
 import { IonicStorageModule, Storage } from '@ionic/storage-angular';
 import { Router, RouterModule } from '@angular/router';
