@@ -126,14 +126,16 @@ export class StorageService {
     let menu = storageCanteen.menu.find((m: { date: string; meals: Meal[] }) => m.date === date.toISOString().substring(0, 10) && m.meals.length > 0);
     if (menu) {
       return menu.meals;
+    } else if (await this.databaseService.checkArangoConnection()) {
+      let databaseMeals = await this.databaseService.getMealsAtDate(date, canteen);
+      await this.addMenu(canteen, {
+        date: date.toISOString().substring(0, 10),
+        meals: databaseMeals,
+      });
+      return databaseMeals;
+    } else {
+      return [];
     }
-
-    let databaseMeals = await this.databaseService.getMealsAtDate(date, canteen);
-    await this.addMenu(canteen, {
-      date: date.toISOString().substring(0, 10),
-      meals: databaseMeals,
-    });
-    return databaseMeals;
   }
 
   /**Update the menus of a specific canteen on all dates in the next 2 weeks
@@ -147,6 +149,7 @@ export class StorageService {
       return;
     }
 
+    //sort out menus before the actual week
     storageCanteen.menu
       .filter((m: { date: string; meals: Meal[] }) => getWeek(new Date(m.date)) < getWeek(today))
       .forEach((m: { date: string; meals: Meal[] }) => {
@@ -155,6 +158,10 @@ export class StorageService {
 
     await this.setCanteen(canteenKey, storageCanteen);
 
+    this._updateWeeks(storageCanteen, today);
+  }
+
+  private async _updateWeeks(storageCanteen: StorageCanteen, today: Date) {
     let itDate = new Date();
     let toUpdateCurrentWeek = false;
     let filteredCurrentWeek = storageCanteen.menu.filter((m: { date: string; meals: Meal[] }) => getWeek(new Date(m.date)) === getWeek(today));
@@ -207,10 +214,12 @@ export class StorageService {
    * Updates the existing canteens in the local storage with the actual ones from the datbase
    */
   public async updateCanteens(): Promise<void> {
-    let canteens = await this.databaseService.getCanteens();
-    for (let canteen of canteens) {
-      if (!(await this.checkCanteen(canteen._key))) {
-        await this.addCanteen(canteen._key, canteen);
+    if (await this.databaseService.checkArangoConnection()) {
+      let canteens = await this.databaseService.getCanteens();
+      for (let canteen of canteens) {
+        if (!(await this.checkCanteen(canteen._key))) {
+          await this.addCanteen(canteen._key, canteen);
+        }
       }
     }
   }
