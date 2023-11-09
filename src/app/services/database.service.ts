@@ -18,8 +18,7 @@ export class DatabaseService {
    */
   public async checkArangoConnection(): Promise<boolean> {
     try {
-      await this._arango.getDatabase().listCollections();
-      return true;
+      return await this._arango.getDatabase().exists();
     } catch (error) {
       return false;
     }
@@ -67,15 +66,7 @@ export class DatabaseService {
           co2PerPortion: meal.meal.co2PerPortion,
         };
         mealList.push(
-          new Meal(
-            meal.meal._key,
-            meal.meal.name,
-            meal.meal.mealCategory,
-            meal.additives as Additive[],
-            meal.allergens as Allergen[],
-            meal.meal.imageUrl,
-            mealInformation
-          )
+          new Meal(meal.meal._key, meal.meal.name, meal.meal.mealCategory, meal.additives as Additive[], meal.allergens as Allergen[], meal.meal.imageUrl, mealInformation)
         );
       }
     }
