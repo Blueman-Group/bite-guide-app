@@ -5,6 +5,7 @@ import { Canteen } from '../interfaces/canteen';
 import { Meal } from '../classes/meal';
 import { DatabaseService } from './database.service';
 import { HistoryMeal } from '../classes/history';
+import { HomePage } from '../home/home.page';
 
 @Injectable({
   providedIn: 'root',
@@ -124,7 +125,7 @@ export class StorageService {
    * @param meal Meal Object to save
    **/
 
-  async addMealToHistory(date: Date, meal: Meal, canteenKey: string) {
+  async addMealToHistory(date: Date, meal: Meal, canteenKey: string){
     let dateString = date.toISOString().substring(0, 10);
     let history = await this.getHistory();
     let hMeal = new HistoryMeal(meal.name, meal.normalPrice, meal.studentPrice, meal.imageUrl, canteenKey);
@@ -138,14 +139,13 @@ export class StorageService {
     //add hmeal to history with key meal._key
     history[kw][dateString][meal._key] = hMeal;
     await this._storage?.set('history', history);
-    console.log(history);
 
     //set the pinnedkey to true for the canteenkey in the storage
     let storageCanteen = await this.getCanteen(canteenKey);
     for (let menu of storageCanteen.menu) {
       for (let i of menu.meals) {
         if (i._key == meal._key) {
-          meal.pinned = true;
+          i.pinned = true;
         }
       }
     }
@@ -162,8 +162,17 @@ export class StorageService {
     //set the pinnedkey to false
     let storageCanteen = await this.getCanteen(canteenKey);
     //set the pinnedkey to false at the date in storageCanteen
-    console.log(storageCanteen);
-    console.log('deleted meal from history');
+    for (let menu in storageCanteen.menu) {
+      // go to the date which equals dateString and delete the meal with the key meal_key
+      if (storageCanteen.menu[menu].date == dateString) {
+        for (let meal in storageCanteen.menu[menu].meals) {
+          if (storageCanteen.menu[menu].meals[meal]._key == meal_key) {
+            storageCanteen.menu[menu].meals[meal].pinned = false;
+          }
+        }
+      }
+    }
+    await this.setCanteen(canteenKey, storageCanteen);
   }
 
   async getWeekplan(week: number) {

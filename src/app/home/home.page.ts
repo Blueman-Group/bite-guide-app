@@ -26,7 +26,6 @@ export class HomePage implements OnInit, AfterViewInit {
   canteenDataSelected = false;
   // if selected date is weekend set to monday if its a weekday set to today
   selectedDate: Date = new Date().getDay() == 6 || new Date().getDay() == 0 ? new Date(new Date().getTime() + 24 * 60 * 60 * 1000) : new Date();
-
   formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
   loading = true;
   refreshing = false;
@@ -246,9 +245,15 @@ export class HomePage implements OnInit, AfterViewInit {
 
   async addMeal(meal: Meal) {
     await this.storageService.addMealToHistory(this.selectedDate, meal, this.selectedCantine);
+    console.log(this.currentMeals);
   }
 
   async delMeal(meal: Meal) {
+    console.log("delMeal");
     await this.storageService.deleteMealFromHistory(this.selectedDate, meal._key, this.selectedCantine);
+    console.log(this.currentMeals);
+  }
+  async updateMeals() {
+    this.currentMeals = this.getMealsOfSelectedCanteenAt(this.selectedDate);
   }
 }

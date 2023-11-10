@@ -68,4 +68,8 @@ export class OwnMealplanPage implements OnInit {
   async set() {
     await this.storageService.setHistory();
   }
+
+  async update(){
+    
+  }
 }
