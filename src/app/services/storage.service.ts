@@ -120,14 +120,10 @@ export class StorageService {
     await this._storage?.set(key, { canteen, menu: [] });
   }
 
-  /**Add a menu to to the history on a specific date with the canteenkey where the meal was eaten
-   * @param date Date of the meal
-   * @param meal Meal Object to save
-   **/
-
-  async addMealToHistory(date: Date, meal: Meal, canteenKey: string){
+  async addMealToHistory(date: Date, meal: Meal, canteenKey: string) {
     let dateString = date.toISOString().substring(0, 10);
     let history = await this.getHistory();
+
     let hMeal = new HistoryMeal(meal.name, meal.normalPrice, meal.studentPrice, meal.imageUrl, canteenKey);
     let kw: number = getWeek(new Date(date));
     if (history[kw] == undefined) {
@@ -139,17 +135,6 @@ export class StorageService {
     //add hmeal to history with key meal._key
     history[kw][dateString][meal._key] = hMeal;
     await this._storage?.set('history', history);
-
-    //set the pinnedkey to true for the canteenkey in the storage
-    let storageCanteen = await this.getCanteen(canteenKey);
-    for (let menu of storageCanteen.menu) {
-      for (let i of menu.meals) {
-        if (i._key == meal._key) {
-          i.pinned = true;
-        }
-      }
-    }
-    await this.setCanteen(canteenKey, storageCanteen);
   }
 
   async deleteMealFromHistory(date: Date, meal_key: string, canteenKey: string) {
@@ -159,20 +144,6 @@ export class StorageService {
     let dateString = date.toISOString().substring(0, 10);
     delete history[kw][dateString][meal_key];
     await this._storage?.set('history', history);
-    //set the pinnedkey to false
-    let storageCanteen = await this.getCanteen(canteenKey);
-    //set the pinnedkey to false at the date in storageCanteen
-    for (let menu in storageCanteen.menu) {
-      // go to the date which equals dateString and delete the meal with the key meal_key
-      if (storageCanteen.menu[menu].date == dateString) {
-        for (let meal in storageCanteen.menu[menu].meals) {
-          if (storageCanteen.menu[menu].meals[meal]._key == meal_key) {
-            storageCanteen.menu[menu].meals[meal].pinned = false;
-          }
-        }
-      }
-    }
-    await this.setCanteen(canteenKey, storageCanteen);
   }
 
   async getWeekplan(week: number) {
