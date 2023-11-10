@@ -3,7 +3,7 @@ import { GestureController, GestureDetail, Platform, RefresherCustomEvent, Toast
 import { CommonModule, formatDate } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, AfterViewInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterEvent } from '@angular/router';
 import { StorageCanteen } from '../interfaces/storage-canteen';
 import { StorageService } from '../services/storage.service';
 import { Canteen } from '../interfaces/canteen';
@@ -42,8 +42,17 @@ export class HomePage implements OnInit, AfterViewInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
+    console.log('init');
     if (!this.eventAggregator.appStarted.getValue()) {
       this.router.navigate(['/'], { skipLocationChange: true });
+      let eventSubscribtion = this.router.events.subscribe(async (event) => {
+        if (event instanceof RouterEvent) {
+          if (event.url.includes('home') && event.url.includes('reload=true')) {
+            await this.initCanteenData();
+            eventSubscribtion.unsubscribe();
+          }
+        }
+      });
     }
     await this.waitForStart().then(async () => {
       this.loading = true;
@@ -62,6 +71,7 @@ export class HomePage implements OnInit, AfterViewInit {
     this.canteens = await this.storageService.getCanteens();
     if (this.canteens.length > 0) {
       let canteenKey = await this.storageService.getFavoriteCanteenKey();
+      console.log(canteenKey);
       if (!canteenKey) {
         canteenKey = this.canteens[0]._key;
       }

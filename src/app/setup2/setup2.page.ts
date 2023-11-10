@@ -64,7 +64,7 @@ export class Setup2Page implements OnInit {
       return;
     }
     await this.doAnimations(startTime);
-    this.router.navigate(['/home/main']);
+    this.router.navigate(['/home/main', { reload: true }]);
   }
 
   /**
