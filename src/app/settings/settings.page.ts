@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { IonicModule, Platform, ToastController } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { StorageCanteen } from '../interfaces/storage-canteen';
 import { StorageService } from '../services/storage.service';
 import { Canteen } from '../interfaces/canteen';
@@ -16,7 +16,7 @@ import { EventAggregatorService } from '../services/event-aggregator.service';
   templateUrl: './settings.page.html',
   styleUrls: ['./settings.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, NavbarHeaderComponent],
+  imports: [IonicModule, CommonModule, FormsModule, NavbarHeaderComponent, RouterModule],
 })
 export class SettingsPage implements OnInit {
   selectedCantine: string = '';
@@ -31,7 +31,7 @@ export class SettingsPage implements OnInit {
     private router: Router,
     private storageService: StorageService,
     public colorModeService: ColorModeService,
-    private platform: Platform,
+    public platform: Platform,
     private toastController: ToastController,
     private eventAggregator: EventAggregatorService
   ) {}

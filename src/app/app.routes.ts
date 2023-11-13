@@ -40,6 +40,18 @@ export const routes: Routes = [
     ],
   },
   {
+    path: 'impressum',
+    loadComponent: () => import('./impressum/impressum.page').then((m) => m.ImpressumPage),
+  },
+  {
+    path: 'privacy',
+    loadComponent: () => import('./privacy/privacy.page').then((m) => m.PrivacyPage),
+  },
+  {
+    path: 'about',
+    loadComponent: () => import('./about/about.page').then((m) => m.AboutPage),
+  },
+  {
     path: '404',
     loadComponent: () => import('./error-page/error-page.page').then((m) => m.ErrorPagePage),
   },
