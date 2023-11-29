@@ -31,6 +31,8 @@ export class HomePage implements OnInit, AfterViewInit {
   loading = true;
   refreshing = false;
 
+  programSlide = false;
+
   swiperModules = [IonicSlides];
 
   @ViewChild('swiper')
@@ -76,7 +78,6 @@ export class HomePage implements OnInit, AfterViewInit {
     this.canteens = await this.storageService.getCanteens();
     if (this.canteens.length > 0) {
       let canteenKey = await this.storageService.getFavoriteCanteenKey();
-      console.log(canteenKey);
       if (!canteenKey) {
         canteenKey = this.canteens[0]._key;
       }
@@ -94,19 +95,30 @@ export class HomePage implements OnInit, AfterViewInit {
           await toast.present();
         });
     }
-    console.log(new Date().getTime() - time + 'ms');
   }
 
-  slideChanged(event: any) {
+  slideChanged() {
     let swiper = this.swiperRef?.nativeElement.swiper;
-    console.log(swiper.activeIndex);
-    let direction: 'prev' | 'next' = swiper.swipeDirection;
-    if (direction == 'next') {
+    let activeIndex = swiper.activeIndex;
+    let prevIndex = swiper.previousIndex;
+    if (activeIndex == prevIndex || this.programSlide) {
+      this.programSlide = false;
+      return;
+    } else if (activeIndex > prevIndex) {
       this.incrementDate();
     } else {
       this.decrementDate();
     }
-    if (event) console.log(this.swiperRef?.nativeElement.swiper.slides);
+  }
+
+  handleBack() {
+    let swiper = this.swiperRef?.nativeElement.swiper;
+    swiper.slidePrev(500);
+  }
+
+  handleNext() {
+    let swiper = this.swiperRef?.nativeElement.swiper;
+    swiper.slideNext(500);
   }
 
   async ngAfterViewInit(): Promise<void> {
@@ -143,19 +155,22 @@ export class HomePage implements OnInit, AfterViewInit {
     this.loading = false;
   }
 
-  async select(canteenKey: string, date: Date): Promise<void> {
-    this.selectedCantineData = await this.storageService.getCanteen(canteenKey);
-    this.selectedCantine = canteenKey;
+  async select(canteenKey: string, date: Date, initialize = true): Promise<void> {
+    if (initialize) {
+      this.selectedCantineData = await this.storageService.getCanteen(canteenKey);
+      this.selectedCantine = canteenKey;
+    }
     this.selectedDate = date;
     await this.updateNextDayButtonState();
     await this.updatePrevDayButtonState();
     this.cdRef.detectChanges();
-    this.swiperRef!.nativeElement.initialize();
-    let indexOfTodaysMenu = this.selectedCantineData.menu.findIndex((menu) => menu.date === this.getDateAsString(this.selectedDate));
+    if (initialize) this.swiperRef!.nativeElement.initialize();
+    let indexOfTodaysMenu = this.selectedCantineData?.menu.findIndex((menu) => menu.date === this.getDateAsString(this.selectedDate));
+    this.programSlide = true;
     if (indexOfTodaysMenu != -1) {
-      this.swiperRef!.nativeElement.swiper.slideTo(indexOfTodaysMenu, 0, false);
+      this.swiperRef!.nativeElement.swiper.slideTo(indexOfTodaysMenu, 300);
     } else {
-      this.swiperRef!.nativeElement.swiper.slideTo(0, 0, false);
+      this.swiperRef!.nativeElement.swiper.slideTo(0, 300);
     }
   }
 
@@ -170,16 +185,14 @@ export class HomePage implements OnInit, AfterViewInit {
       newDate = new Date(this.selectedDate.getTime() + 24 * 60 * 60 * 1000);
     }
     let canteenMeals = this.getMealsOfSelectedCanteenAt(newDate);
-    let nextCanteenMeals = this.getMealsOfSelectedCanteenAt(new Date(newDate.getTime() + 24 * 60 * 60 * 1000));
     if (canteenMeals.length == 0 && this.selectedDate.getDay() == 5) {
       return;
     }
     this.selectedDate = newDate;
     await this.updateNextDayButtonState();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
-    //this.currentMeals = canteenMeals;
-    //this.nextMeals = nextCanteenMeals;
-    document.getElementById('today')?.removeAttribute('fill');
+    if (this.selectedDate.toDateString() != new Date().toDateString()) document.getElementById('today')?.removeAttribute('fill');
+    else document.getElementById('today')?.setAttribute('fill', 'outline');
   }
 
   async decrementDate() {
@@ -197,8 +210,8 @@ export class HomePage implements OnInit, AfterViewInit {
     this.selectedDate = newDate;
     await this.updatePrevDayButtonState();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
-    //this.currentMeals = canteenMeals;
-    document.getElementById('today')?.removeAttribute('fill');
+    if (this.selectedDate.toDateString() != new Date().toDateString()) document.getElementById('today')?.removeAttribute('fill');
+    else document.getElementById('today')?.setAttribute('fill', 'outline');
   }
 
   async updateNextDayButtonState() {
@@ -236,9 +249,7 @@ export class HomePage implements OnInit, AfterViewInit {
     await this.updateNextDayButtonState();
     await this.updatePrevDayButtonState();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
-    //this.currentMeals = [];
-    //this.currentMeals = this.getMealsOfSelectedCanteenAt(this.selectedDate);
-    this.cdRef.detectChanges();
+    this.select(this.selectedCantine, this.selectedDate, false);
   }
 
   getDateAsString(date: Date): string {
