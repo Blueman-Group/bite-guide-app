@@ -225,7 +225,10 @@ export class StorageService {
    * @returns a promise which resolves when the meals are reloaded
    */
   public async reloadMenuesOfCanteenFromDb(canteenKey: string): Promise<boolean> {
-    if (!(await this.databaseService.checkArangoConnection())) return false;
+    if (!(await this.databaseService.checkArangoConnection())) {
+      console.log('no db conn');
+      return false;
+    }
 
     let canteenFromStorage: StorageCanteen = await this._storage?.get(canteenKey);
     if (!canteenFromStorage) {

@@ -2,6 +2,11 @@
   --offset-top: 300px !important;
 }
 
+swiper-container {
+  margin: 10px 10px;
+  max-width: 100%;
+}
+
 #container {
   text-align: center;
   position: absolute;
@@ -50,7 +55,6 @@ ion-modal {
 }
 
 ion-card {
-  width: 100%;
   display: flex;
   flex-direction: column;
   margin: 16px 16px;
