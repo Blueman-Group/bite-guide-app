@@ -43,7 +43,7 @@
     </ion-item>
   </ion-list>
   <swiper-container [slidesPerView]="1" [modules]="swiperModules" [virtual]="true" [init]="false" (swiperslidechange)="slideChanged()" #swiper>
-    <swiper-slide *ngFor="let menu of this.selectedCantineData?.menu">
+    <swiper-slide *ngFor="let menu of this.selectedCantineData?.menu" class="menu-container">
       <ion-card *ngFor="let meal of menu.meals" class="meal-card">
         <ng-template [ngIf]="meal.imageUrl" [ngIfElse]="hideImage">
           <img class="meal-img" src="{{meal.imageUrl}}" alt="Kein Bild verfügbar" />
