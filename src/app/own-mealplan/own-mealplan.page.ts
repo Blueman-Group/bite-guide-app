@@ -29,7 +29,10 @@ export class OwnMealplanPage implements OnInit {
   swiperModules = [IonicSlides];
   updating = false;
   history = {};
+  wholeHistory = {};
   historyArray: HistoryItem[]=[];
+  thisWeek = this.getWeek(new Date());
+  nextWeek = this.getWeek(new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000));
 
   constructor(private storageService: StorageService, private eventAggregator: EventAggregatorService, private router: Router) {
     register();
@@ -40,7 +43,10 @@ export class OwnMealplanPage implements OnInit {
       this.router.navigate(['/'], { skipLocationChange: true });
     }
     await this.waitForStart().then(async () => {
+      this.wholeHistory = this.storageService.getHistory();
+      console.log(this.wholeHistory);
       await this.storageService.getHistory().then((history) => {
+        
         this.history = history[this.getWeek(new Date())];
         this.historyArray = Object.entries(this.history).map(([date, data]) => ({ date, data: data as { meal: HistoryMeal; } }));      });
       console.log(this.historyArray);
@@ -91,4 +97,16 @@ export class OwnMealplanPage implements OnInit {
   getKeys(obj: object): string[] {
   return Object.keys(obj);
 }
+
+  async delMeal(date: string, mealkey: string, cantine: string) {
+    await this.storageService.deleteMealFromHistory(new Date(date), mealkey, cantine);
+    await this.updateHistory();
+  }
+
+  async updateHistory() {
+    await this.storageService.getHistory().then((history) => {
+        this.history = history[this.getWeek(new Date())];
+        this.historyArray = Object.entries(this.history).map(([date, data]) => ({ date, data: data as { meal: HistoryMeal; } }));      
+      });
+  }
 }
