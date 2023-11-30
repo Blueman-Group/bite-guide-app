@@ -74,7 +74,6 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   async initCanteenData(): Promise<void> {
-    const time = new Date().getTime();
     this.canteens = await this.storageService.getCanteens();
     if (this.canteens.length > 0) {
       let canteenKey = await this.storageService.getFavoriteCanteenKey();
