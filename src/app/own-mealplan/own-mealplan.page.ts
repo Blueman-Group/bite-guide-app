@@ -109,4 +109,8 @@ export class OwnMealplanPage implements OnInit {
         this.historyArray = Object.entries(this.history).map(([date, data]) => ({ date, data: data as { meal: HistoryMeal; } }));      
       });
   }
+
+  allDataEmpty(): boolean {
+  return this.historyArray.every(item => this.getKeys(item.data).length === 0);
+}
 }

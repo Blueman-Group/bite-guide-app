@@ -1,6 +1,6 @@
 <ion-header translucent="true">
   <ion-toolbar>
-    <ion-title size="large">Einstellungen</ion-title>
+    <ion-title size="large">Wochenplan</ion-title>
     <app-navbar-header slot="end"></app-navbar-header>
   </ion-toolbar>
 </ion-header>
@@ -16,6 +16,10 @@
 
   <swiper-container slides-per-view="1" (slidechange)="test($event.detail[0])" [modules]="swiperModules" #swiper>
     <swiper-slide *ngFor="let i of [1,2]" fullscreen="true">
+      <div class="no_Meals" *ngIf="allDataEmpty()">
+        <p>Du musst erst Speisen anpinnen um diese hier zu sehen...</p>
+        <img src="assets/hungry.png" alt="Kein Essen" />
+      </div>
       <ng-container *ngFor="let item of this.historyArray">
         <ion-card class="ownmeals" *ngIf="item.data && getKeys(item.data).length > 0">
           <ion-card-header>
