@@ -19,7 +19,7 @@ import { EventAggregatorService } from '../services/event-aggregator.service';
   imports: [IonicModule, CommonModule, FormsModule, NavbarHeaderComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class HomePage implements OnInit, AfterViewInit {
+export class HomePage implements OnInit {
   selectedCantine: string = '';
   selectedCantineData: StorageCanteen | null = null;
   canteens: Canteen[] = [];
@@ -35,13 +35,14 @@ export class HomePage implements OnInit, AfterViewInit {
 
   swiperModules = [IonicSlides];
 
+  swiperInitialized = false;
+
   @ViewChild('swiper')
   swiperRef: ElementRef | undefined;
 
   constructor(
     private router: Router,
     private storageService: StorageService,
-    private gestureController: GestureController,
     private cdRef: ChangeDetectorRef,
     public platform: Platform,
     private toastController: ToastController,
@@ -98,6 +99,7 @@ export class HomePage implements OnInit, AfterViewInit {
 
   slideChanged() {
     let swiper = this.swiperRef?.nativeElement.swiper;
+    console.log(swiper.slides);
     let activeIndex = swiper.activeIndex;
     let prevIndex = swiper.previousIndex;
     if (activeIndex == prevIndex || this.programSlide) {
@@ -120,56 +122,44 @@ export class HomePage implements OnInit, AfterViewInit {
     swiper.slideNext(500);
   }
 
-  async ngAfterViewInit(): Promise<void> {
-    const gesture = this.gestureController.create({
-      el: document.getElementById('menu-container')!,
-      onStart: () => this.cdRef.detectChanges(),
-      onMove: (ev: GestureDetail) => {
-        let deltaX = ev.deltaX;
-        if (deltaX < -50) {
-          gesture.enable(false);
-          this.incrementDate().then(() => {
-            gesture.enable();
-          });
-        } else if (deltaX > 50) {
-          gesture.enable(false);
-          this.decrementDate().then(() => {
-            gesture.enable();
-          });
-        }
-      },
-      onEnd: () => this.cdRef.detectChanges(),
-      gestureName: 'swipeOnMenu',
-    });
-    if (this.platform.is('mobile')) {
-      //gesture.enable();
-    }
-  }
-
   // Update the canteen data for the selected canteen if the selected canteen changes
   async onCanteenSelectChange() {
     this.loading = true;
     await this.storageService.updateMenus(this.selectedCantine);
-    await this.select(this.selectedCantine, this.selectedDate);
+    await this.select(this.selectedCantine, new Date(), true);
     this.loading = false;
   }
 
   async select(canteenKey: string, date: Date, initialize = true): Promise<void> {
     if (initialize) {
       this.selectedCantineData = await this.storageService.getCanteen(canteenKey);
+      if (this.swiperInitialized) {
+        this.swiperRef!.nativeElement.swiper.removeAllSlides();
+        console.log(this.swiperRef!.nativeElement.swiper.slides);
+        this.swiperRef!.nativeElement.swiper.update(true);
+      }
       this.selectedCantine = canteenKey;
     }
     this.selectedDate = date;
     await this.updateNextDayButtonState();
     await this.updatePrevDayButtonState();
-    this.cdRef.detectChanges();
-    if (initialize) this.swiperRef!.nativeElement.initialize();
+    if (initialize && !this.swiperInitialized) {
+      this.swiperInitialized = true;
+      this.cdRef.detectChanges();
+      this.swiperRef!.nativeElement.initialize();
+    } else if (initialize && this.swiperInitialized) {
+      //xxsthis.cdRef.detectChanges();
+      //this.swiperRef!.nativeElement.initialize();
+      this.swiperRef!.nativeElement.swiper.update(true);
+    }
     let indexOfTodaysMenu = this.selectedCantineData?.menu.findIndex((menu) => menu.date === this.getDateAsString(this.selectedDate));
-    this.programSlide = true;
-    if (indexOfTodaysMenu != -1) {
-      this.swiperRef!.nativeElement.swiper.slideTo(indexOfTodaysMenu, 300);
-    } else {
-      this.swiperRef!.nativeElement.swiper.slideTo(0, 300);
+    if (this.swiperRef?.nativeElement.swiper.activeIndex != indexOfTodaysMenu) {
+      this.programSlide = true;
+      if (indexOfTodaysMenu != -1) {
+        this.swiperRef!.nativeElement.swiper.slideTo(indexOfTodaysMenu, 300);
+      } else {
+        this.swiperRef!.nativeElement.swiper.slideTo(0, 300);
+      }
     }
   }
 
@@ -288,5 +278,9 @@ export class HomePage implements OnInit, AfterViewInit {
     while (!(await this.storageService.reloadMenuesOfCanteenFromDb(this.selectedCantine)) && this.refreshing) {
       await new Promise((resolve) => setTimeout(resolve, intervalInMs));
     }
+  }
+
+  public trackItem(index: number, item: { date: string; meals: Meal[] }) {
+    return item.date + item.meals.length;
   }
 }

@@ -45,12 +45,15 @@
   <swiper-container [slidesPerView]="1" [modules]="swiperModules" [virtual]="true" [init]="false" (swiperslidechange)="slideChanged()" #swiper>
     <swiper-slide *ngFor="let menu of this.selectedCantineData?.menu">
       <div class="menu-container" id="menu-container">
-        <ng-template [ngIf]="!this.loading" [ngIfElse]="showLoading">
-          <div class="no_meals" *ngIf="menu.meals.length === 0">
+        <ng-template [ngIf]="menu.meals.length === 0" [ngIfElse]="mealCard">
+          <div class="no_meals">
             <p>Leider hat die Mensa an diesem Tag nichts für dich zu bieten...</p>
             <img src="assets/hungry.png" alt="Kein Essen" />
           </div>
-          <ion-card *ngFor="let meal of menu.meals" class="meal-card">
+        </ng-template>
+
+        <ng-template #mealCard>
+          <ion-card *ngFor="let meal of menu.meals" class="meal-card" #mealCard>
             <ng-template [ngIf]="meal.imageUrl" [ngIfElse]="hideImage">
               <img class="meal-img" src="{{meal.imageUrl}}" alt="Kein Bild verfügbar" />
             </ng-template>
