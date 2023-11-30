@@ -24,8 +24,7 @@
       <ion-select label="Mensa" labelPlacement="floating" interface="popover" placeholder="Mensa auswählen"
         shape="round" [interfaceOptions]="{ cssClass: 'canteenSelect' }" [(ngModel)]="this.selectedCantine"
         (ionChange)="this.onCanteenSelectChange()">
-        <ion-select-option *ngFor="let canteen of this.canteens" value="{{canteen._key}}">{{canteen.name.replace('MENSA
-          ', '')}}</ion-select-option>
+        <ion-select-option *ngFor="let canteen of this.canteens" value="{{canteen._key}}">{{canteen.name.replace('MENSA', '')}}</ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item>

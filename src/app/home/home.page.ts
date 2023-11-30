@@ -218,8 +218,9 @@ export class HomePage implements OnInit, AfterViewInit {
     await this.updateNextDayButtonState();
     await this.updatePrevDayButtonState();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
-    this.currentMeals = [];
+    
     this.kw = this.getWeek(this.selectedDate);
+    this.currentMeals = [];
     this.currentMeals = this.getMealsOfSelectedCanteenAt(this.selectedDate);
     this.cdRef.detectChanges();
   }
@@ -266,6 +267,7 @@ export class HomePage implements OnInit, AfterViewInit {
   async addMeal(meal: Meal) {
     await this.storageService.addMealToHistory(this.selectedDate, meal, this.selectedCantine);
     await this.updateHistory();
+    console.log(this.currentMeals);
   }
 
   async delMeal(meal: Meal) {

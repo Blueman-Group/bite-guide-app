@@ -14,20 +14,37 @@
     </ion-toolbar>
   </ion-header>
 
-  <swiper-container slides-per-view="1"  (slidechange)="test($event.detail[0])" [modules]="swiperModules" #swiper>
+  <swiper-container slides-per-view="1" (slidechange)="test($event.detail[0])" [modules]="swiperModules" #swiper>
     <swiper-slide *ngFor="let i of [1,2]" fullscreen="true">
-
-      <ion-card class="ownmeals">
+      <ion-card *ngFor="let item of this.historyArray" class="ownmeals">
         <ion-card-header>
-          <ion-card-title>Card Title</ion-card-title>
-          <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
+          <ion-card-title size="small">{{item.date}}</ion-card-title>
         </ion-card-header>
 
-        <ion-card-content> Here's a small text description for the card content. Nothing more, nothing less. </ion-card-content>
+
+        <ion-card-content class="card-content">
+
+          <div *ngFor="let mealId of getKeys(item.data)">
+            <ion-card>
+              <div class="background-image" [style.background-image]="'url(' + item.data[mealId].imageUrl + ')'">
+              </div>
+              <ion-card-header>
+                <ion-card-title size="small">{{item.data[mealId].name}}</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-icon name="pricetag-outline" slot="start" aria-hidden="true"></ion-icon>
+                <ion-label> Studenten: {{item.data[mealId].studentPrice | number:'.2-2':'de-DE'}}€ / Gast:
+                  {{item.data[mealId].normalPrice |
+                  number:'.2-2':'de-DE'}}€</ion-label>
+              </ion-card-content>
+            </ion-card>
+          </div>
+
+        </ion-card-content>
+
       </ion-card>
-    
-      </swiper-slide
-    >
+
+    </swiper-slide>
   </swiper-container>
 
   <ion-button (click)="set()">Setup</ion-button>
