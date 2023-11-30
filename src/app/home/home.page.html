@@ -43,7 +43,7 @@
     </ion-item>
   </ion-list>
   <swiper-container [slidesPerView]="1" [modules]="swiperModules" [virtual]="true" [init]="false" (swiperslidechange)="slideChanged()" #swiper>
-    <swiper-slide *ngFor="let menu of this.selectedCantineData?.menu">
+    <swiper-slide *ngFor="let menu of this.selectedCantineData?.menu" class="swiper-slide">
       <div class="menu-container" id="menu-container">
         <ng-template [ngIf]="menu.meals.length === 0" [ngIfElse]="mealCard">
           <div class="no_meals">
