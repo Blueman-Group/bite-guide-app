@@ -1,10 +1,11 @@
-import { Component, OnInit, AfterContentChecked } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { StorageService } from '../services/storage.service';
 import { Canteen } from '../interfaces/canteen';
+import { EventAggregatorService } from '../services/event-aggregator.service';
 
 @Component({
   selector: 'app-setup1',
@@ -13,28 +14,26 @@ import { Canteen } from '../interfaces/canteen';
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule, RouterModule],
 })
-export class Setup1Page implements OnInit, AfterContentChecked {
+export class Setup1Page implements OnInit {
   public canteens: Canteen[] = [];
-  updating = false;
   document = document;
 
-  constructor(private router: Router, public storageService: StorageService) {}
+  constructor(private router: Router, public storageService: StorageService, private eventAggregator: EventAggregatorService) {}
 
-  ngOnInit() {
-    //if not navigated go back to startup
-    let navigated = this.router.navigated;
-    if (!navigated) {
+  async ngOnInit() {
+    if (!this.eventAggregator.appStarted.getValue()) {
       this.router.navigate(['']);
     }
-  }
-
-  ngAfterContentChecked() {
-    if (this.canteens.length == 0 && !this.updating) {
-      this.updating = true;
+    await this.waitForStart().then(() => {
       this.storageService.getCanteens().then((canteens) => {
         this.canteens = canteens;
-        this.updating = false;
       });
+    });
+  }
+
+  async waitForStart() {
+    while (!this.eventAggregator.appStarted.getValue()) {
+      await new Promise((resolve) => setTimeout(resolve, 300));
     }
   }
 

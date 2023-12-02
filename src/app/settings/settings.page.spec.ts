@@ -3,6 +3,7 @@ import { SettingsPage } from './settings.page';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { Router, RouterModule } from '@angular/router';
 import { StorageService } from '../services/storage.service';
+import { EventAggregatorService } from '../services/event-aggregator.service';
 
 describe('SettingsPage', () => {
   let component: SettingsPage;
@@ -24,10 +25,10 @@ describe('SettingsPage', () => {
 
   it('should navigate to startup if not navigated', () => {
     let router = TestBed.inject(Router);
-    router.navigated = false;
+    TestBed.inject(EventAggregatorService);
     let navigatedSpy = spyOn(router, 'navigate');
     component.ngOnInit();
-    expect(navigatedSpy).toHaveBeenCalledWith(['']);
+    expect(navigatedSpy).toHaveBeenCalledWith([''], { skipLocationChange: true });
   });
 
   it('should update dark mode on toggle', async () => {

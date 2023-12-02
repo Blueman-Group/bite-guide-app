@@ -3,10 +3,12 @@ import { Setup1Page } from './setup1.page';
 import { IonicStorageModule, Storage } from '@ionic/storage-angular';
 import { Router, RouterModule } from '@angular/router';
 import { StorageService } from '../services/storage.service';
+import { EventAggregatorService } from '../services/event-aggregator.service';
 
 describe('Setup1Page', () => {
   let component: Setup1Page;
   let fixture: ComponentFixture<Setup1Page>;
+  let eventAggregatorService: EventAggregatorService;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -14,6 +16,8 @@ describe('Setup1Page', () => {
       providers: [Storage],
     }).compileComponents();
 
+    eventAggregatorService = TestBed.inject(EventAggregatorService);
+    eventAggregatorService.appStarted.next(true);
     fixture = TestBed.createComponent(Setup1Page);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -23,22 +27,22 @@ describe('Setup1Page', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should navigate to startup if not navigated', () => {
+  it('should navigate to startup if app not started', () => {
+    eventAggregatorService.appStarted.next(false);
     let router = TestBed.inject(Router);
-    router.navigated = false;
     let navigatedSpy = spyOn(router, 'navigate');
     component.ngOnInit();
     expect(navigatedSpy).toHaveBeenCalledWith(['']);
+    eventAggregatorService.appStarted.next(true);
   });
 
-  it('should update canteens if empty', () => {
+  it('should update canteens if empty', async () => {
     component.canteens = [];
-    component.updating = false;
     let storageService = TestBed.inject(StorageService);
     let getCanteensSpy = spyOn(storageService, 'getCanteens').and.returnValue(Promise.resolve([]));
-    component.ngAfterContentChecked();
+    component.ngOnInit();
+    await fixture.whenStable();
     expect(getCanteensSpy).toHaveBeenCalled();
-    expect(component.updating).toBeTrue();
   });
 
   it('should set favorite canteen on select change', () => {

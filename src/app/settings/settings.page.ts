@@ -1,21 +1,22 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { IonicModule, Platform, ToastController } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { StorageCanteen } from '../interfaces/storage-canteen';
 import { StorageService } from '../services/storage.service';
 import { Canteen } from '../interfaces/canteen';
 import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component';
 import { ColorModeService } from '../services/colormode.service';
 import { App } from '@capacitor/app';
+import { EventAggregatorService } from '../services/event-aggregator.service';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.page.html',
   styleUrls: ['./settings.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, NavbarHeaderComponent],
+  imports: [IonicModule, CommonModule, FormsModule, NavbarHeaderComponent, RouterModule],
 })
 export class SettingsPage implements OnInit {
   selectedCantine: string = '';
@@ -30,14 +31,14 @@ export class SettingsPage implements OnInit {
     private router: Router,
     private storageService: StorageService,
     public colorModeService: ColorModeService,
-    private platform: Platform,
-    private toastController: ToastController
+    public platform: Platform,
+    private toastController: ToastController,
+    private eventAggregator: EventAggregatorService
   ) {}
 
-  ngOnInit(): void {
-    if (!this.router.navigated) {
-      this.router.navigate(['']);
-      return;
+  async ngOnInit(): Promise<void> {
+    if (!this.eventAggregator.appStarted.getValue()) {
+      this.router.navigate([''], { skipLocationChange: true });
     }
     if (this.platform.is('capacitor')) {
       App.getInfo().then((info) => {
@@ -46,15 +47,19 @@ export class SettingsPage implements OnInit {
     } else {
       this.version = 'Web';
     }
+    await this.waitForStart().then(async () => {
+      await this.initPage();
+    });
   }
 
-  async ngAfterContentChecked() {
-    if (!this.updating) {
-      this.updating = true;
-      if ((await this.storageService.getFavoriteCanteen()) == null) {
-        this.updating = false;
-        return;
-      }
+  async waitForStart() {
+    while (!this.eventAggregator.appStarted.getValue()) {
+      await new Promise((resolve) => setTimeout(resolve, 300));
+    }
+  }
+
+  async initPage() {
+    if (this.storageService.getFavoriteCanteen() != null) {
       this.selectedCantineData = await this.storageService.getFavoriteCanteen();
       this.selectedCantine = this.selectedCantineData.canteen._key;
       this.canteens = await this.storageService.getCanteens();
