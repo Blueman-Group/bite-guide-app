@@ -10,11 +10,11 @@ import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component'
 import { EventAggregatorService } from '../services/event-aggregator.service';
 import { Router } from '@angular/router';
 import { get } from 'http';
-import {HistoryMeal} from '../classes/history';
+import { HistoryMeal } from '../classes/history';
 
 interface HistoryItem {
   date: string;
-  data: Record<string, HistoryMeal>;// Replace 'string' with the actual type of 'meal' if known
+  data: Record<string, HistoryMeal>; // Replace 'string' with the actual type of 'meal' if known
 }
 
 @Component({
@@ -29,27 +29,35 @@ export class OwnMealplanPage implements OnInit {
   swiperModules = [IonicSlides];
   updating = false;
   history = {};
-  wholeHistory = {};
-  historyArray: HistoryItem[]=[];
-  thisWeek = this.getWeek(new Date());
-  nextWeek = this.getWeek(new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000));
+  thisWeekArray: HistoryItem[] = [];
+  nextWeekArray: HistoryItem[] = [];
+  date = new Date();
+  thisWeek = '0';
+  nextWeek = '0';
 
   constructor(private storageService: StorageService, private eventAggregator: EventAggregatorService, private router: Router) {
     register();
+  }
+
+  ionViewWillEnter() {
+    this.updateHistory();
   }
 
   async ngOnInit(): Promise<void> {
     if (!this.eventAggregator.appStarted.getValue()) {
       this.router.navigate(['/'], { skipLocationChange: true });
     }
+  
+    if (this.date.getDay() === 0) {
+      this.date.setDate(this.date.getDate() + 1);
+    }
+    if (this.date.getDay() === 6) {
+      this.date.setDate(this.date.getDate() + 2);
+    }
+    this.thisWeek = this.getWeek(this.date);
+    this.nextWeek = (parseInt(this.thisWeek) + 1).toString();
     await this.waitForStart().then(async () => {
-      this.wholeHistory = this.storageService.getHistory();
-      console.log(this.wholeHistory);
-      await this.storageService.getHistory().then((history) => {
-        
-        this.history = history[this.getWeek(new Date())];
-        this.historyArray = Object.entries(this.history).map(([date, data]) => ({ date, data: data as { meal: HistoryMeal; } }));      });
-      console.log(this.historyArray);
+      this.updateHistory();
     });
   }
 
@@ -62,7 +70,6 @@ export class OwnMealplanPage implements OnInit {
   test(swiper: Swiper) {
     if (swiper.swipeDirection === 'next') {
       console.log('next');
-      console.log(this.history);
     } else {
       console.log('prev');
     }
@@ -95,8 +102,8 @@ export class OwnMealplanPage implements OnInit {
     return weeknum.toString();
   }
   getKeys(obj: object): string[] {
-  return Object.keys(obj);
-}
+    return Object.keys(obj);
+  }
 
   async delMeal(date: string, mealkey: string, cantine: string) {
     await this.storageService.deleteMealFromHistory(new Date(date), mealkey, cantine);
@@ -105,12 +112,18 @@ export class OwnMealplanPage implements OnInit {
 
   async updateHistory() {
     await this.storageService.getHistory().then((history) => {
-        this.history = history[this.getWeek(new Date())];
-        this.historyArray = Object.entries(this.history).map(([date, data]) => ({ date, data: data as { meal: HistoryMeal; } }));      
-      });
+      this.history = history[this.thisWeek];
+      this.thisWeekArray = Object.entries(this.history).map(([date, data]) => ({ date, data: data as { meal: HistoryMeal } }));
+      this.history = history[this.nextWeek];
+      this.nextWeekArray = Object.entries(this.history).map(([date, data]) => ({ date, data: data as { meal: HistoryMeal } }));
+    });
   }
 
-  allDataEmpty(): boolean {
-  return this.historyArray.every(item => this.getKeys(item.data).length === 0);
-}
+  thisDataEmpty(): boolean {
+    return this.thisWeekArray.every((item) => this.getKeys(item.data).length === 0);
+  }
+
+  nextDataEmpty(): boolean {
+    return this.nextWeekArray.every((item) => this.getKeys(item.data).length === 0);
+  }
 }

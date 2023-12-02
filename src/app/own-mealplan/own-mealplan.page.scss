@@ -23,7 +23,7 @@ ion-card {
   position: relative;
 }
 @media screen and (min-width: 500px) {
-  ion-card {
+  ion-card  ion-card{
     max-width: 25rem;
     min-width: 15rem;
   }
@@ -65,6 +65,7 @@ ion-card-subtitle {
 .no_meals img {
   width: 200px;
 }
-.no_meals{
-  
+
+swiper-slide ion-title{
+  margin-top: 1em;
 }

@@ -42,6 +42,10 @@ export class Setup2Page implements OnInit, AfterViewChecked {
       }
       //update menus of favorite canteen
       await this.storageService.updateMenus(canteen.canteen._key);
+      //check setup of history
+      if(!(await this.storageService.checkHistory())){
+        await this.storageService.setHistory();
+      }
       //set setup to true to save that the app was setup
       await this.storageService.setSetup();
       //if the menu is empty there have to be a problem with the connection to the database

@@ -59,9 +59,11 @@ export class StorageService {
   }
 
   async checkHistory(): Promise<boolean> {
-    const history = await this._storage?.get('history');
-
-    return history;
+    if(await this._storage?.get('history')){
+      return true;
+    }else{
+      return false;
+    };
   }
   async setHistory() {
     await this._storage?.set('history', {});

@@ -15,12 +15,58 @@
   </ion-header>
 
   <swiper-container slides-per-view="1" (slidechange)="test($event.detail[0])" [modules]="swiperModules" #swiper>
-    <swiper-slide *ngFor="let i of [1,2]" fullscreen="true">
-      <div class="no_Meals" *ngIf="allDataEmpty()">
-        <p>Du musst erst Speisen anpinnen um diese hier zu sehen...</p>
+    <swiper-slide fullscreen="true">
+      <ion-title>KW {{this.thisWeek}}</ion-title>
+
+      <div class="no_Meals" *ngIf="thisDataEmpty()">
+        <p>Du hast dir für diese Woche noch keine Speisen vorgemerkt...</p>
         <img src="assets/hungry.png" alt="Kein Essen" />
       </div>
-      <ng-container *ngFor="let item of this.historyArray">
+
+      <ng-container *ngFor="let item of this.thisWeekArray">
+        <ion-card class="ownmeals" *ngIf="item.data && getKeys(item.data).length > 0">
+
+          <ion-card-header>
+            <ion-card-title size="small">{{item.date}}</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content class="card-content">
+            <div *ngFor="let mealId of getKeys(item.data)">
+
+              <ion-card>
+                <div class="background-image" [style.background-image]="'url(' + item.data[mealId].imageUrl + ')'">
+                </div>
+
+                <ion-card-header>
+                  <img class="pin" src="assets/icon/bookmark_filled.svg"
+                    (click)="delMeal(item.date ,mealId,item.data[mealId].canteenId)" alt="Speichern" />
+                  <ion-card-title size="small">{{item.data[mealId].name}}</ion-card-title>
+                </ion-card-header>
+
+                <ion-card-content>
+                  <ion-icon name="pricetag-outline" slot="start" aria-hidden="true"></ion-icon>
+                  <ion-label> Studenten: {{item.data[mealId].studentPrice | number:'.2-2':'de-DE'}}€ / Gast:
+                    {{item.data[mealId].normalPrice |
+                    number:'.2-2':'de-DE'}}€</ion-label>
+                </ion-card-content>
+              </ion-card>
+
+            </div>
+          </ion-card-content>
+
+        </ion-card>
+      </ng-container>
+
+    </swiper-slide>
+
+
+    <swiper-slide fullscreen="true">
+      <ion-title>KW {{this.nextWeek}}</ion-title>
+      <div class="no_Meals" *ngIf="nextDataEmpty()">
+        <p>Du hast dir für nächste Woche noch keine Speisen vorgemerkt...</p>
+        <img src="assets/hungry.png" alt="Kein Essen" />
+      </div>
+      <ng-container *ngFor="let item of this.nextWeekArray">
         <ion-card class="ownmeals" *ngIf="item.data && getKeys(item.data).length > 0">
           <ion-card-header>
             <ion-card-title size="small">{{item.date}}</ion-card-title>
@@ -55,8 +101,4 @@
 
     </swiper-slide>
   </swiper-container>
-
-  <ion-button (click)="set()">Setup</ion-button>
-
-
 </ion-content>

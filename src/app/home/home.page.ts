@@ -10,6 +10,7 @@ import { Canteen } from '../interfaces/canteen';
 import { Meal } from '../classes/meal';
 import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component';
 import { EventAggregatorService } from '../services/event-aggregator.service';
+import { OwnMealplanPage } from '../own-mealplan/own-mealplan.page';
 
 @Component({
   selector: 'app-home',
@@ -43,6 +44,10 @@ export class HomePage implements OnInit, AfterViewInit {
     private toastController: ToastController,
     private eventAggregator: EventAggregatorService
   ) {}
+
+  ionViewWillEnter() {
+    this.updateHistory();
+  }
 
   async ngOnInit(): Promise<void> {
     if (!this.eventAggregator.appStarted.getValue()) {
