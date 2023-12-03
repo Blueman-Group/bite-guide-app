@@ -27,7 +27,6 @@ interface HistoryItem {
 export class OwnMealplanPage implements OnInit {
   swiperModules = [IonicSlides];
   updating = false;
-  history = {};
   thisWeekArray: HistoryItem[] = [];
   nextWeekArray: HistoryItem[] = [];
   date = new Date();
@@ -74,10 +73,6 @@ export class OwnMealplanPage implements OnInit {
     }
   }
 
-  async set() {
-    await this.storageService.setHistory();
-  }
-
   getWeek(date: Date): string {
     let dowOffset = 1; //start week on monday
     let newYear = new Date(date.getFullYear(), 0, 1);
@@ -111,10 +106,14 @@ export class OwnMealplanPage implements OnInit {
 
   async updateHistory() {
     await this.storageService.getHistory().then((history) => {
-      this.history = history[this.thisWeek];
-      this.thisWeekArray = Object.entries(this.history).map(([date, data]) => ({ date, data: data as { meal: HistoryMeal } }));
-      this.history = history[this.nextWeek];
-      this.nextWeekArray = Object.entries(this.history).map(([date, data]) => ({ date, data: data as { meal: HistoryMeal } }));
+      let thisWeek = history[this.thisWeek];
+      if (thisWeek) {
+        this.thisWeekArray = Object.entries(thisWeek).map(([date, data]) => ({ date, data: data as { meal: HistoryMeal } }));
+      }
+      let nextWeek = history[this.nextWeek];
+      if (nextWeek) {
+        this.nextWeekArray = Object.entries(nextWeek).map(([date, data]) => ({ date, data: data as { meal: HistoryMeal } }));
+      }
     });
   }
 

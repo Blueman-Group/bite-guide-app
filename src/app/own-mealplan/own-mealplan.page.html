@@ -14,11 +14,10 @@
     </ion-toolbar>
   </ion-header>
 
-  <swiper-container slides-per-view="1" (slidechange)="test($event.detail[0])" [modules]="swiperModules" #swiper>
+  <swiper-container pagination="true" slides-per-view="1" (slidechange)="test($event.detail[0])" [modules]="swiperModules" #swiper>
     <swiper-slide fullscreen="true">
       <ion-title>KW {{this.thisWeek}}</ion-title>
-
-      <div class="no_Meals" *ngIf="thisDataEmpty()">
+      <div class="no_meals" *ngIf="thisDataEmpty()">
         <p>Du hast dir für diese Woche noch keine Speisen vorgemerkt...</p>
         <img src="assets/hungry.png" alt="Kein Essen" />
       </div>
@@ -52,7 +51,7 @@
 
     <swiper-slide fullscreen="true">
       <ion-title>KW {{this.nextWeek}}</ion-title>
-      <div class="no_Meals" *ngIf="nextDataEmpty()">
+      <div class="no_meals" *ngIf="nextDataEmpty()">
         <p>Du hast dir für nächste Woche noch keine Speisen vorgemerkt...</p>
         <img src="assets/hungry.png" alt="Kein Essen" />
       </div>

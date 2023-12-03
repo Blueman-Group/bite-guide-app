@@ -29,6 +29,10 @@ export class StorageService {
     if ((await this._storage.get('readyTest')) === 'ready') {
       this._storageReady = true;
       await this._storage.remove('readyTest');
+      // check if history exists in storage, else create it
+      if (!(await this.checkHistory())) {
+        await this._storage?.set('history', {});
+      }
     }
   }
 
@@ -57,15 +61,16 @@ export class StorageService {
     return canteen;
   }
 
+  /**
+   * Check if history exists in storage
+   * @returns true if history exists in storage
+   */
   async checkHistory(): Promise<boolean> {
     if (await this._storage?.get('history')) {
       return true;
     } else {
       return false;
     }
-  }
-  async setHistory() {
-    await this._storage?.set('history', {});
   }
 
   /**
@@ -78,6 +83,9 @@ export class StorageService {
     return canteen;
   }
 
+  /** Get history object from storage
+   * @returns History object from storage
+   */
   async getHistory() {
     let history = await this._storage?.get('history');
     return history;
@@ -90,10 +98,6 @@ export class StorageService {
    */
   async setCanteen(key: string, canteen: StorageCanteen) {
     await this._storage?.set(key, canteen);
-  }
-
-  async setupHistory() {
-    console.log(this.getHistory());
   }
 
   /**Get a list of all canteens saved in storage
