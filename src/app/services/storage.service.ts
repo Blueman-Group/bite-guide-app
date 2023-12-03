@@ -57,8 +57,7 @@ export class StorageService {
    * @returns true if canteen exists in storage
    */
   async checkCanteen(key: string): Promise<boolean> {
-    const canteen = await this._storage?.get(key);
-    return canteen;
+    return await this._storage?.get(key);
   }
 
   /**
@@ -79,16 +78,14 @@ export class StorageService {
    * @returns StorageCanteen object of canteen
    */
   async getCanteen(key: string): Promise<StorageCanteen> {
-    const canteen = await this._storage?.get(key);
-    return canteen;
+    return await this._storage?.get(key);
   }
 
   /** Get history object from storage
    * @returns History object from storage
    */
   async getHistory() {
-    let history = await this._storage?.get('history');
-    return history;
+    return await this._storage?.get('history');
   }
 
   /**
