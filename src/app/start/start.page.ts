@@ -7,6 +7,8 @@ import { Router } from '@angular/router';
 import { DatabaseService } from '../services/database.service';
 import { ColorModeService } from '../services/colormode.service';
 import { EventAggregatorService } from '../services/event-aggregator.service';
+import { timeout } from 'rxjs';
+import { time } from 'console';
 
 @Component({
   selector: 'app-start',
@@ -47,7 +49,36 @@ export class StartPage implements OnInit {
   private async reload() {
     //if setup get favorite canteen, try to reload menus from db and go to home page
     let favoriteCanteen = await this.storageService.getFavoriteCanteen();
-    if (!(await this.storageService.reloadMenuesOfCanteenFromDb(favoriteCanteen.canteen._key))) {
+    console.log('start update');
+    let updatePromise = new Promise((resolve, reject) => {
+      let timeout: NodeJS.Timeout | undefined = setTimeout(() => {
+        timeout = undefined;
+        reject(new Error('Timeout'));
+      }, 10000);
+
+      this.storageService.reloadMenuesOfCanteenFromDb(favoriteCanteen.canteen._key).then(
+        (result) => {
+          if (timeout) {
+            console.log(result);
+            clearTimeout(timeout);
+            resolve(result);
+          }
+        },
+        (error) => {
+          if (timeout) {
+            clearTimeout(timeout);
+            reject(error);
+          }
+        }
+      );
+    });
+
+    let updateResult = await updatePromise.catch((error) => {
+      console.log(error);
+      return false;
+    });
+
+    if (!updateResult) {
       const toast = await this.toastController.create({
         message: 'Es konnten keine Gerichte aktualisiert werden. Möglicherweise besteht keine Verbindung zum Internet. Bitte versuche es später erneut.',
         duration: 5000,
@@ -57,6 +88,7 @@ export class StartPage implements OnInit {
       });
       toast.present();
     }
+    console.log('updated');
     this.router.navigate(['home/main']);
   }
 

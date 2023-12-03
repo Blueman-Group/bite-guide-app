@@ -2,8 +2,33 @@ swiper-container {
   max-width: 100%;
 }
 
+app-mealcard {
+  margin: 0px 10px;
+  width: 100%;
+}
+
+@media screen and (min-width: 500px) {
+  app-mealcard {
+    max-width: 25rem;
+    min-width: 15rem;
+  }
+}
+
 .menu-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+}
+
+.no_meals {
+  padding: 0 12px;
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.no_meals img {
+  width: 200px;
 }

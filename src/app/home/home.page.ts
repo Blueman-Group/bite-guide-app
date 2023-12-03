@@ -27,7 +27,7 @@ export class HomePage implements OnInit {
   canteens: Canteen[] = [];
   canteenDataSelected = false;
   // if selected date is weekend set to monday if its a weekday set to today
-  selectedDate: Date = new Date().getDay() == 6 || new Date().getDay() == 0 ? new Date(new Date().getTime() + 24 * 60 * 60 * 1000) : new Date();
+  selectedDate: Date = this.getActualDate();
   formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
 
   loading = true;
@@ -44,6 +44,10 @@ export class HomePage implements OnInit {
     private toastController: ToastController,
     private eventAggregator: EventAggregatorService
   ) {}
+
+  getActualDate(): Date {
+    return new Date().getDay() == 6 || new Date().getDay() == 0 ? new Date(new Date().getTime() + 24 * 60 * 60 * 1000) : new Date();
+  }
 
   async ngOnInit(): Promise<void> {
     if (!this.eventAggregator.appStarted.getValue()) {
@@ -122,12 +126,12 @@ export class HomePage implements OnInit {
     console.log('change canteen');
     this.loading = true;
     await this.storageService.updateMenus(this.selectedCantine);
-    this.select(this.selectedCantine, new Date());
+    this.select(this.selectedCantine, this.getActualDate());
     this.loading = false;
   }
 
-  async select(canteenKey: string, date: Date): Promise<void> {
-    if (this.selectedCantineData?.canteen._key != canteenKey) {
+  async select(canteenKey: string, date: Date, refresh = false): Promise<void> {
+    if (this.selectedCantineData?.canteen._key != canteenKey || refresh) {
       this.eventAggregator.mealPlanInjected.next(false);
       this.selectedCantineData = await this.storageService.getCanteen(canteenKey);
       console.log('set data');
@@ -141,12 +145,12 @@ export class HomePage implements OnInit {
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     await this.updateNextDayButtonState();
     await this.updatePrevDayButtonState();
-    let indexOfTodaysMenu = this.selectedCantineData!.menu.findIndex((menu) => menu.date === this.getDateAsString(this.selectedDate));
+    let indexOfTodaysMenu = this.selectedCantineData!.menu.findIndex((menu) => menu.date === this.getDateAsString(date));
     console.log(indexOfTodaysMenu);
     let swiper = document.querySelector('swiper-container')!.swiper;
     if (swiper.activeIndex != indexOfTodaysMenu) {
-      this.programSlide = true;
       if (indexOfTodaysMenu != -1) {
+        this.programSlide = true;
         console.log('slide to ' + indexOfTodaysMenu);
         swiper.slideTo(indexOfTodaysMenu, 300);
       } else {
@@ -228,7 +232,7 @@ export class HomePage implements OnInit {
     document.getElementById('nextDay')?.classList.remove('disabled');
     document.getElementById('today')?.setAttribute('fill', 'outline');
     // selected date to today
-    this.selectedDate = new Date();
+    this.selectedDate = this.getActualDate();
     await this.updateNextDayButtonState();
     await this.updatePrevDayButtonState();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
@@ -262,7 +266,7 @@ export class HomePage implements OnInit {
     }, 5000);
     this.tryRefresh(1000).then(async () => {
       this.refreshing = false;
-      await this.select(this.selectedCantine, this.selectedDate);
+      await this.select(this.selectedCantine, this.selectedDate, true);
       clearTimeout(timeoutId);
       event.target.complete();
     });

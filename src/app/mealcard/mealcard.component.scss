@@ -17,15 +17,8 @@ ion-modal {
 ion-card {
   display: flex;
   flex-direction: column;
-  margin: 16px 16px;
-  max-width: 100%;
 }
-@media screen and (min-width: 500px) {
-  ion-card {
-    max-width: 25rem;
-    min-width: 15rem;
-  }
-}
+
 .meal-img,
 .no-meal-img {
   aspect-ratio: 16 / 9;
