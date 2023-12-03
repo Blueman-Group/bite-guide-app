@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, IonicSlides } from '@ionic/angular';
 import { register } from 'swiper/element/bundle';
-import Swiper from 'swiper';
 import { StorageService } from '../services/storage.service';
 
 import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component';
 import { EventAggregatorService } from '../services/event-aggregator.service';
 import { Router } from '@angular/router';
 import { HistoryMeal } from '../classes/history-meal';
+
+register();
 
 interface HistoryItem {
   date: string;
@@ -33,12 +34,10 @@ export class OwnMealplanPage implements OnInit {
   thisWeek = '0';
   nextWeek = '0';
 
-  constructor(private storageService: StorageService, private eventAggregator: EventAggregatorService, private router: Router) {
-    register();
-  }
+  constructor(private storageService: StorageService, private eventAggregator: EventAggregatorService, private router: Router) {}
 
-  ionViewWillEnter() {
-    this.updateHistory();
+  async ionViewWillEnter() {
+    await this.updateHistory();
   }
 
   async ngOnInit(): Promise<void> {
@@ -62,14 +61,6 @@ export class OwnMealplanPage implements OnInit {
   async waitForStart() {
     while (!this.eventAggregator.appStarted.getValue()) {
       await new Promise((resolve) => setTimeout(resolve, 300));
-    }
-  }
-
-  test(swiper: Swiper) {
-    if (swiper.swipeDirection === 'next') {
-      console.log('next');
-    } else {
-      console.log('prev');
     }
   }
 

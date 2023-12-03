@@ -14,7 +14,7 @@
     </ion-toolbar>
   </ion-header>
 
-  <swiper-container pagination="true" slides-per-view="1" (slidechange)="test($event.detail[0])" [modules]="swiperModules" #swiper>
+  <swiper-container pagination="true" slides-per-view="1" [modules]="swiperModules" #swiper>
     <swiper-slide fullscreen="true">
       <ion-title>KW {{this.thisWeek}}</ion-title>
       <div class="no_meals" *ngIf="thisDataEmpty()">
