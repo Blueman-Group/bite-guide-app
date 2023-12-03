@@ -151,7 +151,6 @@ export class StorageService {
   async getWeekplan(week: number) {
     const history = await this._storage?.get('history');
     let kw = week;
-    console.log(history[kw]);
     return history[kw];
   }
 
