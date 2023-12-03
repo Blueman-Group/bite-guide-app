@@ -164,7 +164,6 @@ export class HomePage implements OnInit, AfterViewInit {
     this.kw = this.getWeek(this.selectedDate);
     await this.updateNextDayButtonState();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
-    this.kw = this.getWeek(this.selectedDate);
     this.currentMeals = canteenMeals;
     document.getElementById('today')?.removeAttribute('fill');
     this.cdRef.detectChanges();
@@ -188,7 +187,6 @@ export class HomePage implements OnInit, AfterViewInit {
     this.kw = this.getWeek(this.selectedDate);
     await this.updatePrevDayButtonState();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
-    this.kw = this.getWeek(this.selectedDate);
     this.currentMeals = canteenMeals;
     document.getElementById('today')?.removeAttribute('fill');
     this.cdRef.detectChanges();
@@ -233,7 +231,6 @@ export class HomePage implements OnInit, AfterViewInit {
     await this.updatePrevDayButtonState();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
 
-    this.kw = this.getWeek(this.selectedDate);
     this.currentMeals = [];
     this.currentMeals = this.getMealsOfSelectedCanteenAt(this.selectedDate);
     this.cdRef.detectChanges();
