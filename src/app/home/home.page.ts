@@ -24,7 +24,7 @@ export class HomePage implements OnInit, AfterViewInit {
   currentMeals: Meal[] = [];
   canteens: Canteen[] = [];
   canteenDataSelected = false;
-  history = this.storageService.getHistory();
+  history = undefined;
   kw: string = this.getWeek(new Date());
   // if selected date is weekend set to monday if its a weekday set to today
   selectedDate: Date = new Date().getDay() == 6 || new Date().getDay() == 0 ? new Date(new Date().getTime() + 24 * 60 * 60 * 1000) : new Date();
@@ -49,7 +49,6 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   async ngOnInit(): Promise<void> {
-    console.log('init');
     if (!this.eventAggregator.appStarted.getValue()) {
       this.router.navigate(['/'], { skipLocationChange: true });
       let eventSubscribtion = this.router.events.subscribe(async (event) => {
@@ -63,7 +62,7 @@ export class HomePage implements OnInit, AfterViewInit {
     }
     await this.waitForStart().then(async () => {
       this.loading = true;
-      await this.initCanteenData();
+      await this.init();
       this.loading = false;
     });
   }
@@ -74,11 +73,15 @@ export class HomePage implements OnInit, AfterViewInit {
     }
   }
 
+  async init() {
+    this.history = await this.storageService.getHistory();
+    await this.initCanteenData();
+  }
+
   async initCanteenData(): Promise<void> {
     this.canteens = await this.storageService.getCanteens();
     if (this.canteens.length > 0) {
       let canteenKey = await this.storageService.getFavoriteCanteenKey();
-      console.log(canteenKey);
       if (!canteenKey) {
         canteenKey = this.canteens[0]._key;
       }
@@ -285,7 +288,7 @@ export class HomePage implements OnInit, AfterViewInit {
     await this.updateHistory();
   }
   async updateHistory() {
-    this.history = this.storageService.getHistory();
+    this.history = await this.storageService.getHistory();
   }
 
   getWeek(date: Date): string {

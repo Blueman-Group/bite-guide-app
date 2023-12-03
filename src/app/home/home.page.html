@@ -56,7 +56,7 @@
           <img class="no-meal-img" alt="Kein Bild verfügbar" />
         </ng-template>
         <ion-card-header>
-          <div *ngIf="(history | async)?.[kw]?.[stringDate]?.[meal._key]; else noHistory">
+          <div *ngIf="history?.[kw]?.[stringDate]?.[meal._key]; else noHistory">
             <!-- Content to show if the key is in the history -->
             <img class="pin" src="assets/icon/bookmark_filled.svg" (click)="delMealInHistory(meal)" alt="Vorgemerkt" />
           </div>
