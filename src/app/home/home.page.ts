@@ -10,7 +10,6 @@ import { Canteen } from '../interfaces/canteen';
 import { Meal } from '../classes/meal';
 import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component';
 import { EventAggregatorService } from '../services/event-aggregator.service';
-import { OwnMealplanPage } from '../own-mealplan/own-mealplan.page';
 
 @Component({
   selector: 'app-home',
@@ -233,7 +232,7 @@ export class HomePage implements OnInit, AfterViewInit {
     await this.updateNextDayButtonState();
     await this.updatePrevDayButtonState();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
-    
+
     this.kw = this.getWeek(this.selectedDate);
     this.currentMeals = [];
     this.currentMeals = this.getMealsOfSelectedCanteenAt(this.selectedDate);

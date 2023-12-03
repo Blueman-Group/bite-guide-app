@@ -4,8 +4,7 @@ import { StorageCanteen } from '../interfaces/storage-canteen';
 import { Canteen } from '../interfaces/canteen';
 import { Meal } from '../classes/meal';
 import { DatabaseService } from './database.service';
-import { HistoryMeal } from '../classes/history';
-import { HomePage } from '../home/home.page';
+import { HistoryMeal } from '../classes/history-meal';
 
 @Injectable({
   providedIn: 'root',
@@ -59,11 +58,11 @@ export class StorageService {
   }
 
   async checkHistory(): Promise<boolean> {
-    if(await this._storage?.get('history')){
+    if (await this._storage?.get('history')) {
       return true;
-    }else{
+    } else {
       return false;
-    };
+    }
   }
   async setHistory() {
     await this._storage?.set('history', {});

@@ -9,8 +9,7 @@ import { StorageService } from '../services/storage.service';
 import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component';
 import { EventAggregatorService } from '../services/event-aggregator.service';
 import { Router } from '@angular/router';
-import { get } from 'http';
-import { HistoryMeal } from '../classes/history';
+import { HistoryMeal } from '../classes/history-meal';
 
 interface HistoryItem {
   date: string;
@@ -47,7 +46,7 @@ export class OwnMealplanPage implements OnInit {
     if (!this.eventAggregator.appStarted.getValue()) {
       this.router.navigate(['/'], { skipLocationChange: true });
     }
-  
+
     if (this.date.getDay() === 0) {
       this.date.setDate(this.date.getDate() + 1);
     }

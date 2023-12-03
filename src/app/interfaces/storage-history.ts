@@ -1,4 +1,4 @@
-import { HistoryMeal } from '../classes/history';
+import { HistoryMeal } from '../classes/history-meal';
 
 export interface StorageHistory {
   date: {
