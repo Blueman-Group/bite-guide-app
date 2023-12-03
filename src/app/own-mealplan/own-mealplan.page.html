@@ -1,6 +1,6 @@
 <ion-header translucent="true">
   <ion-toolbar>
-    <ion-title size="large">Wochenplan</ion-title>
+    <ion-title size="large">Mein Plan</ion-title>
     <app-navbar-header slot="end"></app-navbar-header>
   </ion-toolbar>
 </ion-header>
@@ -25,40 +25,30 @@
 
       <ng-container *ngFor="let item of this.thisWeekArray">
         <ion-card class="ownmeals" *ngIf="item.data && getKeys(item.data).length > 0">
-
           <ion-card-header>
             <ion-card-title size="small">{{item.date}}</ion-card-title>
           </ion-card-header>
 
           <ion-card-content class="card-content">
             <div *ngFor="let mealId of getKeys(item.data)">
-
               <ion-card>
-                <div class="background-image" [style.background-image]="'url(' + item.data[mealId].imageUrl + ')'">
-                </div>
+                <div class="background-image" [style.background-image]="'url(' + item.data[mealId].imageUrl + ')'"></div>
 
                 <ion-card-header>
-                  <img class="pin" src="assets/icon/bookmark_filled.svg"
-                    (click)="delMeal(item.date ,mealId,item.data[mealId].canteenId)" alt="Speichern" />
+                  <img class="pin" src="assets/icon/bookmark_filled.svg" (click)="delMeal(item.date ,mealId,item.data[mealId].canteenId)" alt="Speichern" />
                   <ion-card-title size="small">{{item.data[mealId].name}}</ion-card-title>
                 </ion-card-header>
 
                 <ion-card-content>
                   <ion-icon name="pricetag-outline" slot="start" aria-hidden="true"></ion-icon>
-                  <ion-label> Studenten: {{item.data[mealId].studentPrice | number:'.2-2':'de-DE'}}€ / Gast:
-                    {{item.data[mealId].normalPrice |
-                    number:'.2-2':'de-DE'}}€</ion-label>
+                  <ion-label> Studenten: {{item.data[mealId].studentPrice | number:'.2-2':'de-DE'}}€ / Gast: {{item.data[mealId].normalPrice | number:'.2-2':'de-DE'}}€</ion-label>
                 </ion-card-content>
               </ion-card>
-
             </div>
           </ion-card-content>
-
         </ion-card>
       </ng-container>
-
     </swiper-slide>
-
 
     <swiper-slide fullscreen="true">
       <ion-title>KW {{this.nextWeek}}</ion-title>
@@ -72,33 +62,24 @@
             <ion-card-title size="small">{{item.date}}</ion-card-title>
           </ion-card-header>
 
-
           <ion-card-content class="card-content">
-
             <div *ngFor="let mealId of getKeys(item.data)">
               <ion-card>
-                <div class="background-image" [style.background-image]="'url(' + item.data[mealId].imageUrl + ')'">
-                </div>
+                <div class="background-image" [style.background-image]="'url(' + item.data[mealId].imageUrl + ')'"></div>
                 <ion-card-header>
-                  <img class="pin" src="assets/icon/bookmark_filled.svg"
-                    (click)="delMeal(item.date ,mealId,item.data[mealId].canteenId)" alt="Speichern" />
+                  <img class="pin" src="assets/icon/bookmark_filled.svg" (click)="delMeal(item.date ,mealId,item.data[mealId].canteenId)" alt="Speichern" />
 
                   <ion-card-title size="small">{{item.data[mealId].name}}</ion-card-title>
                 </ion-card-header>
                 <ion-card-content>
                   <ion-icon name="pricetag-outline" slot="start" aria-hidden="true"></ion-icon>
-                  <ion-label> Studenten: {{item.data[mealId].studentPrice | number:'.2-2':'de-DE'}}€ / Gast:
-                    {{item.data[mealId].normalPrice |
-                    number:'.2-2':'de-DE'}}€</ion-label>
+                  <ion-label> Studenten: {{item.data[mealId].studentPrice | number:'.2-2':'de-DE'}}€ / Gast: {{item.data[mealId].normalPrice | number:'.2-2':'de-DE'}}€</ion-label>
                 </ion-card-content>
               </ion-card>
             </div>
-
           </ion-card-content>
-
         </ion-card>
       </ng-container>
-
     </swiper-slide>
   </swiper-container>
 </ion-content>
