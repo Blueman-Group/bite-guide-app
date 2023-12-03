@@ -100,7 +100,7 @@ export class OwnMealplanPage implements OnInit {
   }
 
   async delMeal(date: string, mealkey: string, cantine: string) {
-    await this.storageService.deleteMealFromHistory(new Date(date), mealkey, cantine);
+    await this.storageService.deleteMealInHistory(new Date(date), mealkey, cantine);
     await this.updateHistory();
   }
 

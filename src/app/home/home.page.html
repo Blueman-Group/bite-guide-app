@@ -58,11 +58,11 @@
         <ion-card-header>
           <div *ngIf="(history | async)?.[kw]?.[stringDate]?.[meal._key]; else noHistory">
             <!-- Content to show if the key is in the history -->
-            <img class="pin" src="assets/icon/bookmark_filled.svg" (click)="delMeal(meal)" alt="Vorgemerkt" />
+            <img class="pin" src="assets/icon/bookmark_filled.svg" (click)="delMealInHistory(meal)" alt="Vorgemerkt" />
           </div>
           <ng-template #noHistory>
             <!-- Content to show if the key is not in the history -->
-            <img class="pin" src="assets/icon/bookmark_clear.svg" (click)="addMeal(meal)" alt="Nicht vorgemerkt" />
+            <img class="pin" src="assets/icon/bookmark_clear.svg" (click)="addMealToHistory(meal)" alt="Nicht vorgemerkt" />
           </ng-template>
 
           <ion-card-title size="small">{{meal.name}}</ion-card-title>

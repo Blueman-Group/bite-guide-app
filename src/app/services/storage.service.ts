@@ -142,7 +142,7 @@ export class StorageService {
     await this._storage?.set('history', history);
   }
 
-  async deleteMealFromHistory(date: Date, meal_key: string, canteenKey: string) {
+  async deleteMealInHistory(date: Date, meal_key: string, canteenKey: string) {
     let history = await this.getHistory();
     //delete meal from history using the date where you get the week from and key
     let kw: number = getWeek(new Date(date));

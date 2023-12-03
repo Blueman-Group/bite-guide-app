@@ -134,7 +134,7 @@ export class HomePage implements OnInit, AfterViewInit {
     this.selectedCantineData = await this.storageService.getCanteen(canteenKey);
     this.selectedCantine = canteenKey;
     this.kw = this.getWeek(date);
-    this.history = this.storageService.getHistory();
+    this.history = await this.storageService.getHistory();
     this.currentMeals = this.getMealsOfSelectedCanteenAt(date);
     this.selectedDate = date;
     this.stringDate = this.selectedDate.toISOString().substring(0, 10);
@@ -275,13 +275,13 @@ export class HomePage implements OnInit, AfterViewInit {
     }
   }
 
-  async addMeal(meal: Meal) {
+  async addMealToHistory(meal: Meal) {
     await this.storageService.addMealToHistory(this.selectedDate, meal, this.selectedCantine);
     await this.updateHistory();
   }
 
-  async delMeal(meal: Meal) {
-    await this.storageService.deleteMealFromHistory(this.selectedDate, meal._key, this.selectedCantine);
+  async delMealInHistory(meal: Meal) {
+    await this.storageService.deleteMealInHistory(this.selectedDate, meal._key, this.selectedCantine);
     await this.updateHistory();
   }
   async updateHistory() {
