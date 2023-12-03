@@ -90,7 +90,7 @@ export class OwnMealplanPage implements OnInit {
     return Object.keys(obj);
   }
 
-  async delMeal(date: string, mealkey: string, cantine: string) {
+  async delMealInHistory(date: string, mealkey: string, cantine: string) {
     await this.storageService.deleteMealInHistory(new Date(date), mealkey, cantine);
     await this.updateHistory();
   }
