@@ -1,6 +1,6 @@
 <ion-header translucent="true">
   <ion-toolbar>
-    <ion-title size="large">Mein Plan</ion-title>
+    <ion-title size="medium">Mein Plan</ion-title>
     <app-navbar-header slot="end"></app-navbar-header>
   </ion-toolbar>
 </ion-header>
@@ -16,7 +16,11 @@
 
   <swiper-container pagination="true" slides-per-view="1" [modules]="swiperModules" #swiper>
     <swiper-slide fullscreen="true">
-      <ion-title>KW {{this.thisWeek}}</ion-title>
+      <ion-item>
+        <h4>KW {{this.thisWeek}}</h4>
+      </ion-item>
+
+
       <div class="no_meals" *ngIf="thisDataEmpty()">
         <p>Du hast dir für diese Woche noch keine Speisen vorgemerkt...</p>
         <img src="assets/hungry.png" alt="Kein Essen" />
@@ -25,23 +29,26 @@
       <ng-container *ngFor="let item of this.thisWeekArray">
         <ion-card class="ownmeals" *ngIf="item.data && getKeys(item.data).length > 0">
           <ion-card-header>
-            <ion-card-title size="small">{{item.date}}</ion-card-title>
+            <ion-card-title size="small">{{item.date | date:'EE dd.MM.YY':'':'de'}}</ion-card-title>
           </ion-card-header>
 
-          <ion-card-content class="card-content">
+          <ion-card-content class="content">
             <div *ngFor="let mealId of getKeys(item.data)">
               <ion-card>
                 <ng-template [ngIf]="item.data[mealId].imageUrl">
-                  <div class="background-image" [style.background-image]="'url(' + item.data[mealId].imageUrl + ')'"></div>
+                  <div class="background-image" [style.background-image]="'url(' + item.data[mealId].imageUrl + ')'">
+                  </div>
                 </ng-template>
                 <ion-card-header>
-                  <img class="pin" src="assets/icon/bookmark_filled.svg" (click)="delMealInHistory(item.date ,mealId,item.data[mealId].canteenId)" alt="Vorgemerkt" />
+                  <img class="pin" src="assets/icon/bookmark_filled.svg"
+                    (click)="delMealInHistory(item.date ,mealId,item.data[mealId].canteenId)" alt="Vorgemerkt" />
                   <ion-card-title size="small">{{item.data[mealId].name}}</ion-card-title>
                 </ion-card-header>
 
-                <ion-card-content>
+                <ion-card-content class="card-content">
                   <ion-icon name="pricetag-outline" slot="start" aria-hidden="true"></ion-icon>
-                  <ion-label> Studenten: {{item.data[mealId].studentPrice | number:'.2-2':'de-DE'}}€ / Gast: {{item.data[mealId].normalPrice | number:'.2-2':'de-DE'}}€</ion-label>
+                  <ion-label> Studenten: {{item.data[mealId].studentPrice | number:'.2-2':'de-DE'}}€ / Gast:
+                    {{item.data[mealId].normalPrice | number:'.2-2':'de-DE'}}€</ion-label>
                 </ion-card-content>
               </ion-card>
             </div>
@@ -51,7 +58,9 @@
     </swiper-slide>
 
     <swiper-slide fullscreen="true">
-      <ion-title>KW {{this.nextWeek}}</ion-title>
+      <ion-item>
+        <h4>KW {{this.nextWeek}}</h4>
+      </ion-item>
       <div class="no_meals" *ngIf="nextDataEmpty()">
         <p>Du hast dir für nächste Woche noch keine Speisen vorgemerkt...</p>
         <img src="assets/hungry.png" alt="Kein Essen" />
@@ -59,21 +68,24 @@
       <ng-container *ngFor="let item of this.nextWeekArray">
         <ion-card class="ownmeals" *ngIf="item.data && getKeys(item.data).length > 0">
           <ion-card-header>
-            <ion-card-title size="small">{{item.date}}</ion-card-title>
+            <ion-card-title size="small">{{item.date | date:'EE dd.MM.YY':'':'de'}}</ion-card-title>
           </ion-card-header>
 
-          <ion-card-content class="card-content">
+          <ion-card-content class="content">
             <div *ngFor="let mealId of getKeys(item.data)">
-              <ion-card>
-                <div class="background-image" [style.background-image]="'url(' + item.data[mealId].imageUrl + ')'"></div>
+              <ion-card class="meal-card">
+                <div class="background-image" [style.background-image]="'url(' + item.data[mealId].imageUrl + ')'">
+                </div>
                 <ion-card-header>
-                  <img class="pin" src="assets/icon/bookmark_filled.svg" (click)="delMealInHistory(item.date ,mealId,item.data[mealId].canteenId)" alt="Vorgemerkt" />
+                  <img class="pin" src="assets/icon/bookmark_filled.svg"
+                    (click)="delMealInHistory(item.date ,mealId,item.data[mealId].canteenId)" alt="Vorgemerkt" />
 
                   <ion-card-title size="small">{{item.data[mealId].name}}</ion-card-title>
                 </ion-card-header>
-                <ion-card-content>
+                <ion-card-content class="card-content">
                   <ion-icon name="pricetag-outline" slot="start" aria-hidden="true"></ion-icon>
-                  <ion-label> Studenten: {{item.data[mealId].studentPrice | number:'.2-2':'de-DE'}}€ / Gast: {{item.data[mealId].normalPrice | number:'.2-2':'de-DE'}}€</ion-label>
+                  <ion-label> Studenten: {{item.data[mealId].studentPrice | number:'.2-2':'de-DE'}}€ / Gast:
+                    {{item.data[mealId].normalPrice | number:'.2-2':'de-DE'}}€</ion-label>
                 </ion-card-content>
               </ion-card>
             </div>

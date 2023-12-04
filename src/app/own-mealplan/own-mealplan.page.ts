@@ -9,7 +9,9 @@ import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component'
 import { EventAggregatorService } from '../services/event-aggregator.service';
 import { Router } from '@angular/router';
 import { HistoryMeal } from '../classes/history-meal';
-
+import { registerLocaleData } from '@angular/common';
+import localeDe from '@angular/common/locales/de';
+registerLocaleData(localeDe);
 register();
 
 interface HistoryItem {
