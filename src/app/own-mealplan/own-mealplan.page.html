@@ -43,12 +43,14 @@
                   <img class="pin" src="assets/icon/bookmark_filled.svg"
                     (click)="delMealInHistory(item.date ,mealId,item.data[mealId].canteenId)" alt="Vorgemerkt" />
                   <ion-card-title size="small">{{item.data[mealId].name}}</ion-card-title>
+                  <ion-card-subtitle>{{getCanteenName(item.data[mealId].canteenId)}}</ion-card-subtitle>
                 </ion-card-header>
 
                 <ion-card-content class="card-content">
                   <ion-icon name="pricetag-outline" slot="start" aria-hidden="true"></ion-icon>
                   <ion-label> Studenten: {{item.data[mealId].studentPrice | number:'.2-2':'de-DE'}}€ / Gast:
                     {{item.data[mealId].normalPrice | number:'.2-2':'de-DE'}}€</ion-label>
+
                 </ion-card-content>
               </ion-card>
             </div>
@@ -79,8 +81,8 @@
                 <ion-card-header>
                   <img class="pin" src="assets/icon/bookmark_filled.svg"
                     (click)="delMealInHistory(item.date ,mealId,item.data[mealId].canteenId)" alt="Vorgemerkt" />
-
                   <ion-card-title size="small">{{item.data[mealId].name}}</ion-card-title>
+                  <ion-card-subtitle>{{getCanteenName(item.data[mealId].canteenId)}}</ion-card-subtitle>
                 </ion-card-header>
                 <ion-card-content class="card-content">
                   <ion-icon name="pricetag-outline" slot="start" aria-hidden="true"></ion-icon>

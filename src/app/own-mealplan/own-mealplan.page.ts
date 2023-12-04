@@ -117,4 +117,29 @@ export class OwnMealplanPage implements OnInit {
   nextDataEmpty(): boolean {
     return this.nextWeekArray.every((item) => this.getKeys(item.data).length === 0);
   }
+
+  getCanteenName(canteen: string): string {
+    switch (canteen) {
+      case '1':
+        return 'Mensa Ludwigsburg';
+      case '2':
+        return 'Mensa Vaihingen';
+      case '4':
+        return 'Mensa Musikhochschule';
+      case '6':
+        return 'Mensa Flandernstraße';
+      case '7':
+        return 'Mensa Kunstakademie';
+      case '9':
+        return 'Mensa Esslingen';
+      case '12':
+        return 'Mensa Horb';
+      case '13':
+        return 'Mensa Göppingen';
+      case '16':
+        return 'Mensa Central';
+      default:
+        return 'Mensa';
+    }
+  }
 }
