@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { DynamiccontentComponent } from './dynamiccontent.component';
+import { DynamicContentComponent } from './dynamiccontent.component';
 
 describe('DynamiccontentComponent', () => {
-  let component: DynamiccontentComponent;
-  let fixture: ComponentFixture<DynamiccontentComponent>;
+  let component: DynamicContentComponent;
+  let fixture: ComponentFixture<DynamicContentComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ DynamiccontentComponent ],
-      imports: [IonicModule.forRoot()]
+      imports: [IonicModule.forRoot()],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(DynamiccontentComponent);
+    fixture = TestBed.createComponent(DynamicContentComponent);
     component = fixture.componentInstance;
+    component.data = {};
     fixture.detectChanges();
   }));
 

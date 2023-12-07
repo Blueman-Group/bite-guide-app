@@ -2,6 +2,11 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { MealcardComponent } from './mealcard.component';
+import { RouterModule } from '@angular/router';
+import { registerLocaleData } from '@angular/common';
+
+import localeDe from '@angular/common/locales/de';
+import localeDeExtra from '@angular/common/locales/extra/de';
 
 describe('MealcardComponent', () => {
   let component: MealcardComponent;
@@ -9,12 +14,26 @@ describe('MealcardComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ MealcardComponent ],
-      imports: [IonicModule.forRoot()]
+      imports: [IonicModule.forRoot(), RouterModule.forRoot([])],
     }).compileComponents();
+
+    registerLocaleData(localeDe, 'de-DE', localeDeExtra);
 
     fixture = TestBed.createComponent(MealcardComponent);
     component = fixture.componentInstance;
+    component.date = new Date().toDateString().substring(0, 10);
+    component.meal = {
+      _key: 'test',
+      name: 'test',
+      mealCategory: 'test',
+      normalPrice: 1,
+      studentPrice: 0,
+      co2ClassInfo: 'test',
+      co2PerPortion: 1,
+      additives: [{ description: 'test', _key: 'test', identifier: 'test' }],
+      allergens: [{ description: 'test', _key: 'test', identifier: 'test' }],
+      imageUrl: 'test',
+    };
     fixture.detectChanges();
   }));
 
