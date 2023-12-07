@@ -65,17 +65,13 @@ export class StorageService {
    * @returns true if history exists in storage
    */
   async checkHistory(): Promise<boolean> {
-    if (await this._storage?.get('history')) {
-      return true;
-    } else {
-      return false;
-    }
+    return await this._storage?.get('history');
   }
 
   /**
    * Get canteen object from storage
    * @param key Canteen key
-   * @returns StorageCanteen object of canteen
+   * @returns StorageCanteen object of‚ canteen
    */
   async getCanteen(key: string): Promise<StorageCanteen> {
     return await this._storage?.get(key);
