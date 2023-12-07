@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, registerLocaleData } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, IonicSlides } from '@ionic/angular';
@@ -10,7 +10,6 @@ import { EventAggregatorService } from '../services/event-aggregator.service';
 import { Router } from '@angular/router';
 import { HistoryMeal } from '../classes/history-meal';
 import localeDe from '@angular/common/locales/de';
-import { ChangeDetectorRef } from '@angular/core';
 
 registerLocaleData(localeDe);
 register();
@@ -45,6 +44,7 @@ class HistoryMealView {
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [IonicModule, CommonModule, FormsModule, NavbarHeaderComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OwnMealplanPage implements OnInit {
   swiperModules = [IonicSlides];
@@ -59,7 +59,6 @@ export class OwnMealplanPage implements OnInit {
 
   async ionViewWillEnter() {
     await this.updateHistory();
-    this.cd.detectChanges();
   }
 
   async ngOnInit(): Promise<void> {
@@ -76,7 +75,6 @@ export class OwnMealplanPage implements OnInit {
     this.thisWeek = this.getWeek(this.date);
     this.nextWeek = (parseInt(this.thisWeek) + 1).toString();
     await this.waitForStart();
-    await this.updateHistory();
   }
 
   async waitForStart() {
@@ -139,14 +137,15 @@ export class OwnMealplanPage implements OnInit {
     let history = await this.storageService.getHistory();
     this.thisWeekArray = await this.updateHistroyWeek(history, this.thisWeek);
     this.nextWeekArray = await this.updateHistroyWeek(history, this.nextWeek);
+    this.cd.markForCheck();
   }
 
   thisDataEmpty(): boolean {
     console.log(this.thisWeekArray);
-    return this.thisWeekArray.every((item) => item.data.keys.length === 0);
+    return this.thisWeekArray.every((item) => item.data.size === 0);
   }
 
   nextDataEmpty(): boolean {
-    return this.nextWeekArray.every((item) => item.data.keys.length === 0);
+    return this.nextWeekArray.every((item) => item.data.size === 0);
   }
 }

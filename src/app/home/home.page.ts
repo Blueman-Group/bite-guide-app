@@ -44,8 +44,8 @@ export class HomePage implements OnInit, AfterViewInit {
     private eventAggregator: EventAggregatorService
   ) {}
 
-  ionViewWillEnter() {
-    this.updateHistory();
+  async ionViewWillEnter(): Promise<void> {
+    await this.updateHistory();
   }
 
   async ngOnInit(): Promise<void> {
