@@ -106,11 +106,9 @@ export class OwnMealplanPage implements OnInit {
     return weeknum.toString();
   }
 
-  async delMealInHistory(date: string, mealkey: string, cantine: string | undefined) {
-    if (cantine) {
-      await this.storageService.deleteMealInHistory(new Date(date), mealkey, cantine);
-      await this.updateHistory();
-    }
+  async delMealInHistory(date: string, historyMealKey: string) {
+    await this.storageService.deleteMealInHistory(new Date(date), historyMealKey);
+    await this.updateHistory();
   }
 
   async updateHistroyWeek(history: any, weekNum: string): Promise<HistoryItem[]> {
@@ -141,7 +139,6 @@ export class OwnMealplanPage implements OnInit {
   }
 
   thisDataEmpty(): boolean {
-    console.log(this.thisWeekArray);
     return this.thisWeekArray.every((item) => item.data.size === 0);
   }
 

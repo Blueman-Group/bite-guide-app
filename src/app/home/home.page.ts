@@ -284,7 +284,7 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   async delMealInHistory(meal: Meal) {
-    await this.storageService.deleteMealInHistory(this.selectedDate, meal._key, this.selectedCantine);
+    await this.storageService.deleteMealInHistory(this.selectedDate, meal._key + '-' + this.selectedCantine);
     await this.updateHistory();
   }
   async updateHistory() {

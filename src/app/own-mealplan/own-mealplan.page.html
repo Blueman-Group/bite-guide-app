@@ -32,21 +32,22 @@
           </ion-card-header>
 
           <ion-card-content class="content">
-            <div *ngFor="let mealId of item.data.keys()">
+            <div *ngFor="let historyMealId of item.data.keys()">
               <ion-card>
-                <ng-template [ngIf]="item.data.get(mealId)?.imageUrl">
-                  <div class="background-image" [style.background-image]="'url(' + item.data.get(mealId)?.imageUrl + ')'"></div>
+                <ng-template [ngIf]="item.data.get(historyMealId)?.imageUrl">
+                  <div class="background-image" [style.background-image]="'url(' + item.data.get(historyMealId)?.imageUrl + ')'"></div>
                 </ng-template>
                 <ion-card-header>
-                  <img class="pin" src="assets/icon/bookmark_filled.svg" (click)="delMealInHistory(item.date ,mealId, item.data.get(mealId)?.canteenId)" alt="Vorgemerkt" />
-                  <ion-card-title size="small">{{item.data.get(mealId)?.name}}</ion-card-title>
-                  <ion-card-subtitle>{{item.data.get(mealId)?.canteenName}}</ion-card-subtitle>
+                  <img class="pin" src="assets/icon/bookmark_filled.svg" (click)="delMealInHistory(item.date ,historyMealId)" alt="Vorgemerkt" />
+                  <ion-card-title size="small">{{item.data.get(historyMealId)?.name}}</ion-card-title>
+                  <ion-card-subtitle>{{item.data.get(historyMealId)?.canteenName}}</ion-card-subtitle>
                 </ion-card-header>
 
                 <ion-card-content class="card-content">
                   <ion-icon name="pricetag-outline" slot="start" aria-hidden="true"></ion-icon>
                   <ion-label>
-                    Studenten: {{item.data.get(mealId)?.studentPrice | number:'.2-2':'de-DE'}}€ / Gast: {{item.data.get(mealId)?.normalPrice | number:'.2-2':'de-DE'}}€</ion-label
+                    Studenten: {{item.data.get(historyMealId)?.studentPrice | number:'.2-2':'de-DE'}}€ / Gast: {{item.data.get(historyMealId)?.normalPrice |
+                    number:'.2-2':'de-DE'}}€</ion-label
                   >
                 </ion-card-content>
               </ion-card>
@@ -71,18 +72,19 @@
           </ion-card-header>
 
           <ion-card-content class="content">
-            <div *ngFor="let mealId of item.data.keys()">
+            <div *ngFor="let historyMealId of item.data.keys()">
               <ion-card class="meal-card">
-                <div class="background-image" [style.background-image]="'url(' + item.data.get(mealId)?.imageUrl + ')'"></div>
+                <div class="background-image" [style.background-image]="'url(' + item.data.get(historyMealId)?.imageUrl + ')'"></div>
                 <ion-card-header>
-                  <img class="pin" src="assets/icon/bookmark_filled.svg" (click)="delMealInHistory(item.date ,mealId, item.data.get(mealId)?.canteenId)" alt="Vorgemerkt" />
-                  <ion-card-title size="small">{{item.data.get(mealId)?.name}}</ion-card-title>
-                  <ion-card-subtitle>{{item.data.get(mealId)?.canteenName}}</ion-card-subtitle>
+                  <img class="pin" src="assets/icon/bookmark_filled.svg" (click)="delMealInHistory(item.date ,historyMealId)" alt="Vorgemerkt" />
+                  <ion-card-title size="small">{{item.data.get(historyMealId)?.name}}</ion-card-title>
+                  <ion-card-subtitle>{{item.data.get(historyMealId)?.canteenName}}</ion-card-subtitle>
                 </ion-card-header>
                 <ion-card-content class="card-content">
                   <ion-icon name="pricetag-outline" slot="start" aria-hidden="true"></ion-icon>
                   <ion-label>
-                    Studenten: {{item.data.get(mealId)?.studentPrice | number:'.2-2':'de-DE'}}€ / Gast: {{item.data.get(mealId)?.normalPrice | number:'.2-2':'de-DE'}}€</ion-label
+                    Studenten: {{item.data.get(historyMealId)?.studentPrice | number:'.2-2':'de-DE'}}€ / Gast: {{item.data.get(historyMealId)?.normalPrice |
+                    number:'.2-2':'de-DE'}}€</ion-label
                   >
                 </ion-card-content>
               </ion-card>
