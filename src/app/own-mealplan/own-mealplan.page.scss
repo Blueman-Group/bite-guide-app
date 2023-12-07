@@ -6,6 +6,7 @@ ion-card {
 
 .card-content {
   position: relative;
+  padding-top: 10px;
 }
 
 .background-image {
@@ -21,9 +22,10 @@ ion-card {
 
 .content {
   position: relative;
+  padding: 0;
 }
 @media screen and (min-width: 500px) {
-  ion-card  ion-card{
+  ion-card ion-card {
     max-width: 25rem;
     min-width: 15rem;
   }
@@ -33,16 +35,13 @@ ion-card-title {
   font-size: 1.3rem;
 }
 
-.card-content {
-  padding-top: 10px;
-}
-
 ion-card-header {
   padding-bottom: 0px;
 }
 
 ion-card-subtitle {
   font-size: 0.7rem;
+  margin-top: 0;
 }
 
 .pin {
@@ -66,15 +65,7 @@ ion-card-subtitle {
   width: 200px;
 }
 
-.content {
-  padding:0 ;
-}
-
 .meal-card {
   margin-bottom: 0.5rem;
   margin-top: 0.5rem;
-}
-
-ion-card-subtitle {
-  margin-top: 0;
 }

@@ -1,5 +1,5 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, registerLocaleData } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, IonicSlides } from '@ionic/angular';
 import { register } from 'swiper/element/bundle';
@@ -9,14 +9,33 @@ import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component'
 import { EventAggregatorService } from '../services/event-aggregator.service';
 import { Router } from '@angular/router';
 import { HistoryMeal } from '../classes/history-meal';
-import { registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
+import { ChangeDetectorRef } from '@angular/core';
+
 registerLocaleData(localeDe);
 register();
 
 interface HistoryItem {
   date: string;
-  data: Record<string, HistoryMeal>; // Replace 'string' with the actual type of 'meal' if known
+  data: Map<string, HistoryMealView>;
+}
+
+class HistoryMealView {
+  name: string;
+  normalPrice: number;
+  studentPrice: number;
+  imageUrl: string;
+  canteenId: string;
+  canteenName: string;
+
+  constructor(name: string, normalPrice: number, studentPrice: number, imageUrl: string, canteenId: string, canteenName: string) {
+    this.name = name;
+    this.normalPrice = normalPrice;
+    this.studentPrice = studentPrice;
+    this.imageUrl = imageUrl;
+    this.canteenId = canteenId;
+    this.canteenName = canteenName;
+  }
 }
 
 @Component({
@@ -36,10 +55,11 @@ export class OwnMealplanPage implements OnInit {
   thisWeek = '0';
   nextWeek = '0';
 
-  constructor(private storageService: StorageService, private eventAggregator: EventAggregatorService, private router: Router) {}
+  constructor(private storageService: StorageService, private eventAggregator: EventAggregatorService, private router: Router, private cd: ChangeDetectorRef) {}
 
   async ionViewWillEnter() {
     await this.updateHistory();
+    this.cd.detectChanges();
   }
 
   async ngOnInit(): Promise<void> {
@@ -55,9 +75,8 @@ export class OwnMealplanPage implements OnInit {
     }
     this.thisWeek = this.getWeek(this.date);
     this.nextWeek = (parseInt(this.thisWeek) + 1).toString();
-    await this.waitForStart().then(async () => {
-      this.updateHistory();
-    });
+    await this.waitForStart();
+    await this.updateHistory();
   }
 
   async waitForStart() {
@@ -88,60 +107,46 @@ export class OwnMealplanPage implements OnInit {
     }
     return weeknum.toString();
   }
-  getKeys(obj: object): string[] {
-    return Object.keys(obj);
+
+  async delMealInHistory(date: string, mealkey: string, cantine: string | undefined) {
+    if (cantine) {
+      await this.storageService.deleteMealInHistory(new Date(date), mealkey, cantine);
+      await this.updateHistory();
+    }
   }
 
-  async delMealInHistory(date: string, mealkey: string, cantine: string) {
-    await this.storageService.deleteMealInHistory(new Date(date), mealkey, cantine);
-    await this.updateHistory();
+  async updateHistroyWeek(history: any, weekNum: string): Promise<HistoryItem[]> {
+    let weekArray: HistoryItem[] = [];
+    let week = history[weekNum];
+    if (week) {
+      for (let [date, data] of Object.entries(week)) {
+        let historyMeals: Map<string, HistoryMeal> = new Map(Object.entries(data as { [mealKey: string]: HistoryMeal }));
+        let histroyMealViews: Map<string, HistoryMealView> = new Map();
+        for (let [mealKey, historyMeal] of historyMeals.entries()) {
+          let canteenName = (await this.storageService.getCanteen(historyMeal.canteenId))?.canteen?.name;
+          histroyMealViews.set(
+            mealKey,
+            new HistoryMealView(historyMeal.name, historyMeal.normalPrice, historyMeal.studentPrice, historyMeal.imageUrl, historyMeal.canteenId, canteenName)
+          );
+        }
+        weekArray.push({ date: date, data: histroyMealViews });
+      }
+    }
+    return weekArray;
   }
 
   async updateHistory() {
-    await this.storageService.getHistory().then((history) => {
-      if (history) {
-        let thisWeek = history[this.thisWeek];
-        if (thisWeek) {
-          this.thisWeekArray = Object.entries(thisWeek).map(([date, data]) => ({ date, data: data as { meal: HistoryMeal } }));
-        }
-        let nextWeek = history[this.nextWeek];
-        if (nextWeek) {
-          this.nextWeekArray = Object.entries(nextWeek).map(([date, data]) => ({ date, data: data as { meal: HistoryMeal } }));
-        }
-      }
-    });
+    let history = await this.storageService.getHistory();
+    this.thisWeekArray = await this.updateHistroyWeek(history, this.thisWeek);
+    this.nextWeekArray = await this.updateHistroyWeek(history, this.nextWeek);
   }
 
   thisDataEmpty(): boolean {
-    return this.thisWeekArray.every((item) => this.getKeys(item.data).length === 0);
+    console.log(this.thisWeekArray);
+    return this.thisWeekArray.every((item) => item.data.keys.length === 0);
   }
 
   nextDataEmpty(): boolean {
-    return this.nextWeekArray.every((item) => this.getKeys(item.data).length === 0);
-  }
-
-  getCanteenName(canteen: string): string {
-    switch (canteen) {
-      case '1':
-        return 'Mensa Ludwigsburg';
-      case '2':
-        return 'Mensa Vaihingen';
-      case '4':
-        return 'Mensa Musikhochschule';
-      case '6':
-        return 'Mensa Flandernstraße';
-      case '7':
-        return 'Mensa Kunstakademie';
-      case '9':
-        return 'Mensa Esslingen';
-      case '12':
-        return 'Mensa Horb';
-      case '13':
-        return 'Mensa Göppingen';
-      case '16':
-        return 'Mensa Central';
-      default:
-        return 'Mensa';
-    }
+    return this.nextWeekArray.every((item) => item.data.keys.length === 0);
   }
 }
