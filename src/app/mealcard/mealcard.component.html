@@ -24,43 +24,13 @@
         </ion-list>
       </ion-row>
       <ion-row class="ion-margin-top">
-        <ion-button *ngIf="meal!.additives.length > 0" id="{{ meal!._key }}-{{ date! }}-additives" size="small">
+        <ion-button *ngIf="meal!.additives.length > 0" size="small" (click)="openAdditivesModal()">
           <ion-icon name="information-circle-outline" slot="start" aria-hidden="true"></ion-icon>
           <ion-label>Zusatzstoffe</ion-label>
-          <ion-modal trigger="{{ meal!._key }}-{{ date! }}-additives" [initialBreakpoint]="1" [breakpoints]="[0, 1]">
-            <div class="ion-padding block">
-              <h2>Zusatzstoffe</h2>
-              <ion-item lines="none">
-                <ion-icon name="pizza-outline" slot="start" aria-hidden="true"></ion-icon>
-                <ion-label class="ion-text-wrap">{{ meal!.name }}</ion-label>
-              </ion-item>
-              <hr />
-              <ion-list class="list">
-                <ion-item *ngFor="let additive of meal!.additives">
-                  <ion-label class="ion-text-wrap">{{ additive.description }}</ion-label>
-                </ion-item>
-              </ion-list>
-            </div>
-          </ion-modal>
         </ion-button>
-        <ion-button *ngIf="meal!.allergens.length > 0" id="{{ meal!._key }}-{{ date! }}-allergens" class="allergens-button" size="small">
+        <ion-button *ngIf="meal!.allergens.length > 0" class="allergens-button" size="small" (click)="openAllergensModal()">
           <ion-icon name="information-circle-outline" slot="start" aria-hidden="true"></ion-icon>
           <ion-label>Allergene</ion-label>
-          <ion-modal trigger="{{ meal!._key }}-{{ date! }}-allergens" [initialBreakpoint]="1" [breakpoints]="[0, 1]">
-            <div class="ion-padding block">
-              <h2>Allergene</h2>
-              <ion-item lines="none">
-                <ion-icon name="pizza-outline" slot="start" aria-hidden="true"></ion-icon>
-                <ion-label class="ion-text-wrap">{{ meal!.name }}</ion-label>
-              </ion-item>
-              <hr />
-              <ion-list class="list">
-                <ion-item *ngFor="let allergen of meal!.allergens">
-                  <ion-label class="ion-text-wrap">{{ allergen.description }}</ion-label>
-                </ion-item>
-              </ion-list>
-            </div>
-          </ion-modal>
         </ion-button>
       </ion-row>
     </ion-grid>

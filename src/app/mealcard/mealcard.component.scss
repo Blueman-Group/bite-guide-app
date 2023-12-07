@@ -8,12 +8,6 @@ ion-card ion-item {
   --ion-item-background: var(--ion-card-background);
 }
 
-ion-modal ion-item {
-  --ion-item-background: var(--ion-background-color);
-}
-ion-modal {
-  --height: auto;
-}
 ion-card {
   display: flex;
   flex-direction: column;

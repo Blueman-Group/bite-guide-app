@@ -1,0 +1,13 @@
+<div class="ion-padding block">
+  <h2>{{ title }}</h2>
+  <ion-item lines="none">
+    <ion-icon name="pizza-outline" slot="start" aria-hidden="true"></ion-icon>
+    <ion-label class="ion-text-wrap">{{ name }}</ion-label>
+  </ion-item>
+  <hr />
+  <ion-list class="list">
+    <ion-item *ngFor="let info of infos">
+      <ion-label class="ion-text-wrap">{{ info.description }}</ion-label>
+    </ion-item>
+  </ion-list>
+</div>

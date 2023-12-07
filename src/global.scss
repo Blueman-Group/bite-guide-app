@@ -65,3 +65,7 @@ body.dark .btn_indicator {
 body.dark .btn_icon {
   color: var(--ion-color-dark);
 }
+
+ion-modal {
+  --height: auto;
+}
