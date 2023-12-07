@@ -105,7 +105,7 @@ export class StorageService {
       if (key === 'colormode') break;
       if (key === 'history') break;
       const canteen = await this.getCanteen(key);
-      canteens.push(canteen.canteen);
+      if (canteen) canteens.push(canteen.canteen);
     }
     return canteens;
   }

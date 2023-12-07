@@ -99,13 +99,15 @@ export class OwnMealplanPage implements OnInit {
 
   async updateHistory() {
     await this.storageService.getHistory().then((history) => {
-      let thisWeek = history[this.thisWeek];
-      if (thisWeek) {
-        this.thisWeekArray = Object.entries(thisWeek).map(([date, data]) => ({ date, data: data as { meal: HistoryMeal } }));
-      }
-      let nextWeek = history[this.nextWeek];
-      if (nextWeek) {
-        this.nextWeekArray = Object.entries(nextWeek).map(([date, data]) => ({ date, data: data as { meal: HistoryMeal } }));
+      if (history) {
+        let thisWeek = history[this.thisWeek];
+        if (thisWeek) {
+          this.thisWeekArray = Object.entries(thisWeek).map(([date, data]) => ({ date, data: data as { meal: HistoryMeal } }));
+        }
+        let nextWeek = history[this.nextWeek];
+        if (nextWeek) {
+          this.nextWeekArray = Object.entries(nextWeek).map(([date, data]) => ({ date, data: data as { meal: HistoryMeal } }));
+        }
       }
     });
   }
