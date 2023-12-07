@@ -123,7 +123,7 @@ export class StorageService {
     let history = await this.getHistory();
 
     let hMeal = new HistoryMeal(meal.name, meal.normalPrice, meal.studentPrice, meal.imageUrl, canteenKey);
-    let kw: number = getWeek(new Date(date));
+    let kw: number = getWeek(date);
     if (history[kw] == undefined) {
       history[kw] = {};
     }
@@ -138,7 +138,7 @@ export class StorageService {
   async deleteMealInHistory(date: Date, historyMealKey: string) {
     let history = await this.getHistory();
     //delete meal from history using the date where you get the week from and key
-    let kw: number = getWeek(new Date(date));
+    let kw: number = getWeek(date);
     let dateString = date.toISOString().substring(0, 10);
     delete history[kw][dateString][historyMealKey];
     await this._storage?.set('history', history);
