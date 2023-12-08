@@ -169,9 +169,9 @@ export class HomePage implements OnInit {
       if (indexOfTodaysMenu != -1) {
         this.programSlide = true;
         console.log('slide to ' + indexOfTodaysMenu);
-        swiper.slideTo(indexOfTodaysMenu, 300);
+        swiper.slideTo(indexOfTodaysMenu, 0);
       } else {
-        swiper.slideTo(0, 300);
+        swiper.slideTo(0, 0);
       }
     }
   }
