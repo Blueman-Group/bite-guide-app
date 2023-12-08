@@ -6,6 +6,14 @@
     <img class="no-meal-img" alt="Kein Bild verfügbar" />
   </ng-template>
   <ion-card-header>
+    <div *ngIf="history?.[kw!]?.[date!]?.[meal!._key + '-' + canteenKey!]; else noHistory">
+      <!-- Content to show if the key is in the history -->
+      <img class="pin" src="assets/icon/bookmark_filled.svg" (click)="delMealInHistory(meal!)" alt="Vorgemerkt" />
+    </div>
+    <ng-template #noHistory>
+      <!-- Content to show if the key is not in the history -->
+      <img class="pin" src="assets/icon/bookmark_clear.svg" (click)="addMealToHistory(meal!)" alt="Nicht vorgemerkt" />
+    </ng-template>
     <ion-card-title size="small">{{ meal!.name }}</ion-card-title>
     <ion-card-subtitle>{{ meal!.mealCategory }}</ion-card-subtitle>
   </ion-card-header>

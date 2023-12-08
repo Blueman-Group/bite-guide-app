@@ -31,6 +31,4 @@ export class MeallistComponent implements OnInit {
     console.log('meallist init');
     this.eventAggregator.mealPlanInjected.next(true);
   }
-
-  
 }

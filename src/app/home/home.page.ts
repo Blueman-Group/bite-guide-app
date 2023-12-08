@@ -305,15 +305,6 @@ export class HomePage implements OnInit {
     return item.date + item.meals.length;
   }
 
-  async addMealToHistory(meal: Meal) {
-    await this.storageService.addMealToHistory(this.selectedDate, meal, this.selectedCantine);
-    await this.updateHistory();
-  }
-
-  async delMealInHistory(meal: Meal) {
-    await this.storageService.deleteMealInHistory(this.selectedDate, meal._key + '-' + this.selectedCantine);
-    await this.updateHistory();
-  }
   async updateHistory() {
     this.history = await this.storageService.getHistory();
   }

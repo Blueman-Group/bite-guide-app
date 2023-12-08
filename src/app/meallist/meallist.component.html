@@ -9,7 +9,7 @@
       </ng-template>
 
       <ng-template #mealCard>
-        <app-mealcard [meal]="meal" [date]="menu.date" *ngFor="let meal of menu.meals"></app-mealcard>
+        <app-mealcard [meal]="meal" [date]="menu.date" [canteenKey]="homePageInstance?.selectedCantine" *ngFor="let meal of menu.meals"></app-mealcard>
       </ng-template>
     </div>
   </swiper-slide>
