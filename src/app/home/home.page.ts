@@ -164,8 +164,8 @@ export class HomePage implements OnInit {
     await this.updatePrevDayButtonState();
     let indexOfTodaysMenu = this.selectedCantineData!.menu.findIndex((menu) => menu.date === this.getDateAsString(date));
     console.log(indexOfTodaysMenu);
-    let swiper = document.querySelector('swiper-container')!.swiper;
-    if (swiper.activeIndex != indexOfTodaysMenu) {
+    let swiper = document.querySelector('swiper-container')?.swiper;
+    if (swiper && swiper.activeIndex != indexOfTodaysMenu) {
       if (indexOfTodaysMenu != -1) {
         this.programSlide = true;
         console.log('slide to ' + indexOfTodaysMenu);
