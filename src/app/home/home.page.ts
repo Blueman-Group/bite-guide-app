@@ -1,7 +1,7 @@
-import { IonicModule, IonicSlides } from '@ionic/angular';
-import { GestureController, GestureDetail, Platform, RefresherCustomEvent, ToastController } from '@ionic/angular/standalone';
+import { IonicModule } from '@ionic/angular';
+import { Platform, RefresherCustomEvent, ToastController } from '@ionic/angular/standalone';
 import { CommonModule, formatDate } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, AfterViewInit, CUSTOM_ELEMENTS_SCHEMA, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterEvent } from '@angular/router';
 import { StorageCanteen } from '../interfaces/storage-canteen';
@@ -116,7 +116,6 @@ export class HomePage implements OnInit {
     let prevIndex = swiper.previousIndex;
     if (activeIndex == prevIndex || this.programSlide) {
       this.programSlide = false;
-      return;
     } else if (activeIndex > prevIndex) {
       this.incrementDate();
     } else {
@@ -158,7 +157,7 @@ export class HomePage implements OnInit {
 
     await this.updateNextDayButtonState();
     await this.updatePrevDayButtonState();
-    let indexOfTodaysMenu = this.selectedCantineData!.menu.findIndex((menu) => menu.date === this.getDateAsString(date));
+    let indexOfTodaysMenu = this.selectedCantineData.menu.findIndex((menu) => menu.date === this.getDateAsString(date));
     let swiper = document.querySelector('swiper-container')?.swiper;
     if (swiper && swiper.activeIndex != indexOfTodaysMenu) {
       if (indexOfTodaysMenu != -1) {
