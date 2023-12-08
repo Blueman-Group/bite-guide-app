@@ -7,6 +7,8 @@ import { registerLocaleData } from '@angular/common';
 
 import localeDe from '@angular/common/locales/de';
 import localeDeExtra from '@angular/common/locales/extra/de';
+import { StorageService } from '../services/storage.service';
+import { IonicStorageModule } from '@ionic/storage-angular';
 
 describe('MealcardComponent', () => {
   let component: MealcardComponent;
@@ -14,7 +16,8 @@ describe('MealcardComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [IonicModule.forRoot(), RouterModule.forRoot([])],
+      imports: [IonicModule.forRoot(), RouterModule.forRoot([]), IonicStorageModule.forRoot()],
+      providers: [Storage],
     }).compileComponents();
 
     registerLocaleData(localeDe, 'de-DE', localeDeExtra);
