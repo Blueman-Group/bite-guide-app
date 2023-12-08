@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ErrorPagePage } from './error-page.page';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 describe('ErrorPagePage', () => {
   let component: ErrorPagePage;

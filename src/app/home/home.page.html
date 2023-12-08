@@ -34,103 +34,17 @@
       </ion-select>
     </ion-item>
     <ion-item>
-      <ion-icon id="prevDay" name="chevron-back-outline" (click)="decrementDate()" class="icon"></ion-icon>
+      <ion-icon id="prevDay" name="chevron-back-outline" (click)="handleBack()" class="icon"></ion-icon>
       <ion-label type="date" class="select">
         <h2>{{this.formattedDate}} &nbsp;</h2>
         <ion-button (click)="today()" id="today" fill="outline">Heute</ion-button>
       </ion-label>
-      <ion-icon id="nextDay" class="button" name="chevron-forward-outline" (click)="incrementDate()" class="icon"> </ion-icon>
+      <ion-icon id="nextDay" class="button" name="chevron-forward-outline" (click)="handleNext()" class="icon"></ion-icon>
     </ion-item>
   </ion-list>
-  <div class="menu-container" id="menu-container">
-    <ng-template [ngIf]="!this.loading" [ngIfElse]="showLoading">
-      <div class="no_meals" *ngIf="this.currentMeals.length === 0">
-        <p>Leider hat die Mensa an diesem Tag nichts für dich zu bieten...</p>
-        <img src="assets/hungry.png" alt="Kein Essen" />
-      </div>
-      <ion-card *ngFor="let meal of this.currentMeals" class="meal-card">
-        <ng-template [ngIf]="meal.imageUrl" [ngIfElse]="hideImage">
-          <img class="meal-img" src="{{meal.imageUrl}}" alt="Kein Bild verfügbar" />
-        </ng-template>
-        <ng-template #hideImage>
-          <img class="no-meal-img" alt="Kein Bild verfügbar" />
-        </ng-template>
-        <ion-card-header>
-          <div *ngIf="history?.[kw]?.[stringDate]?.[meal._key + '-' + selectedCantine]; else noHistory">
-            <!-- Content to show if the key is in the history -->
-            <img class="pin" src="assets/icon/bookmark_filled.svg" (click)="delMealInHistory(meal)" alt="Vorgemerkt" />
-          </div>
-          <ng-template #noHistory>
-            <!-- Content to show if the key is not in the history -->
-            <img class="pin" src="assets/icon/bookmark_clear.svg" (click)="addMealToHistory(meal)" alt="Nicht vorgemerkt" />
-          </ng-template>
-
-          <ion-card-title size="small">{{meal.name}}</ion-card-title>
-          <ion-card-subtitle>{{meal.mealCategory}}</ion-card-subtitle>
-        </ion-card-header>
-        <ion-card-content>
-          <ion-grid>
-            <ion-row>
-              <ion-list lines="none">
-                <ion-item class="ion-no-padding">
-                  <ion-icon name="pricetag-outline" slot="start" aria-hidden="true"></ion-icon>
-                  <ion-label> Studenten: {{meal.studentPrice | number:'.2-2':'de-DE'}}€ / Gast: {{meal.normalPrice | number:'.2-2':'de-DE'}}€</ion-label>
-                </ion-item>
-                <ion-item class="ion-no-padding">
-                  <ion-icon name="leaf-outline" slot="start" aria-hidden="true" color="{{meal.co2ClassInfo}}"></ion-icon>
-                  <ion-label>CO<sub>2</sub>/Portion: {{meal.co2PerPortion}}g</ion-label>
-                </ion-item>
-              </ion-list>
-            </ion-row>
-            <ion-row class="ion-margin-top">
-              <ion-button *ngIf="meal.additives.length > 0" id="{{meal._key}}-additives" size="small">
-                <ion-icon name="information-circle-outline" slot="start" aria-hidden="true"></ion-icon>
-                <ion-label>Zusatzstoffe</ion-label>
-                <ion-modal trigger="{{meal._key}}-additives" [initialBreakpoint]="1" [breakpoints]="[0, 1]">
-                  <ng-template>
-                    <div class="ion-padding block">
-                      <h2>Zusatzstoffe</h2>
-                      <ion-item lines="none">
-                        <ion-icon name="pizza-outline" slot="start" aria-hidden="true"></ion-icon>
-                        <ion-label class="ion-text-wrap">{{meal.name}}</ion-label>
-                      </ion-item>
-                      <hr />
-                      <ion-list class="list">
-                        <ion-item *ngFor="let additive of meal.additives">
-                          <ion-label class="ion-text-wrap">{{additive.description}}</ion-label>
-                        </ion-item>
-                      </ion-list>
-                    </div>
-                  </ng-template>
-                </ion-modal>
-              </ion-button>
-              <ion-button *ngIf="meal.allergens.length > 0" id="{{meal._key}}-allergens" class="allergens-button" size="small">
-                <ion-icon name="information-circle-outline" slot="start" aria-hidden="true"></ion-icon>
-                <ion-label>Allergene</ion-label>
-                <ion-modal trigger="{{meal._key}}-allergens" [initialBreakpoint]="1" [breakpoints]="[0, 1]">
-                  <ng-template>
-                    <div class="ion-padding block">
-                      <h2>Allergene</h2>
-                      <ion-item lines="none">
-                        <ion-icon name="pizza-outline" slot="start" aria-hidden="true"></ion-icon>
-                        <ion-label class="ion-text-wrap">{{meal.name}}</ion-label>
-                      </ion-item>
-                      <hr />
-                      <ion-list class="list">
-                        <ion-item *ngFor="let allergen of meal.allergens">
-                          <ion-label class="ion-text-wrap">{{allergen.description}}</ion-label>
-                        </ion-item>
-                      </ion-list>
-                    </div>
-                  </ng-template>
-                </ion-modal>
-              </ion-button>
-            </ion-row>
-          </ion-grid>
-        </ion-card-content>
-      </ion-card>
-    </ng-template>
-  </div>
+  <ng-template [ngIf]="!this.loading" [ngIfElse]="showLoading">
+    <app-dynamic-content [component]="MealList" [data]="{menu: this.selectedCantineData?.menu, homePageInstance: this}"></app-dynamic-content>
+  </ng-template>
   <ng-template #showLoading>
     <div class="loading_data">
       <span class="loader"></span>

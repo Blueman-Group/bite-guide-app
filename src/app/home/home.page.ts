@@ -1,7 +1,7 @@
 import { IonicModule } from '@ionic/angular';
-import { GestureController, GestureDetail, Platform, RefresherCustomEvent, ToastController } from '@ionic/angular/standalone';
+import { Platform, RefresherCustomEvent, ToastController } from '@ionic/angular/standalone';
 import { CommonModule, formatDate } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterEvent } from '@angular/router';
 import { StorageCanteen } from '../interfaces/storage-canteen';
@@ -10,39 +10,47 @@ import { Canteen } from '../interfaces/canteen';
 import { Meal } from '../classes/meal';
 import { NavbarHeaderComponent } from '../navbar-header/navbar-header.component';
 import { EventAggregatorService } from '../services/event-aggregator.service';
+import { MeallistComponent } from '../meallist/meallist.component';
+import { DynamicContentComponent } from '../dynamiccontent/dynamiccontent.component';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, NavbarHeaderComponent],
+  imports: [IonicModule, CommonModule, FormsModule, NavbarHeaderComponent, DynamicContentComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class HomePage implements OnInit, AfterViewInit {
+export class HomePage implements OnInit {
   selectedCantine: string = '';
   selectedCantineData: StorageCanteen | null = null;
-  currentMeals: Meal[] = [];
   canteens: Canteen[] = [];
   canteenDataSelected = false;
   history = undefined;
   kw: string = this.getWeek(new Date());
   // if selected date is weekend set to monday if its a weekday set to today
-  selectedDate: Date = new Date().getDay() == 6 || new Date().getDay() == 0 ? new Date(new Date().getTime() + 24 * 60 * 60 * 1000) : new Date();
+  selectedDate: Date = this.getActualDate();
   stringDate: string = this.selectedDate.toISOString().substring(0, 10);
   formattedDate: string = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
 
   loading = true;
   refreshing = false;
 
+  programSlide = false;
+
+  MealList = MeallistComponent;
+
   constructor(
     private router: Router,
     private storageService: StorageService,
-    private gestureController: GestureController,
-    private cdRef: ChangeDetectorRef,
     public platform: Platform,
     private toastController: ToastController,
     private eventAggregator: EventAggregatorService
   ) {}
+
+  getActualDate(): Date {
+    return new Date().getDay() == 6 || new Date().getDay() == 0 ? new Date(new Date().getTime() + 24 * 60 * 60 * 1000) : new Date();
+  }
 
   async ionViewWillEnter(): Promise<void> {
     await this.updateHistory();
@@ -82,6 +90,7 @@ export class HomePage implements OnInit, AfterViewInit {
     this.canteens = await this.storageService.getCanteens();
     if (this.canteens.length > 0) {
       let canteenKey = await this.storageService.getFavoriteCanteenKey();
+
       if (!canteenKey) {
         canteenKey = this.canteens[0]._key;
       }
@@ -101,50 +110,63 @@ export class HomePage implements OnInit, AfterViewInit {
     }
   }
 
-  async ngAfterViewInit(): Promise<void> {
-    const gesture = this.gestureController.create({
-      el: document.getElementById('menu-container')!,
-      onStart: () => this.cdRef.detectChanges(),
-      onMove: (ev: GestureDetail) => {
-        let deltaX = ev.deltaX;
-        if (deltaX < -50) {
-          gesture.enable(false);
-          this.incrementDate().then(() => {
-            gesture.enable();
-          });
-        } else if (deltaX > 50) {
-          gesture.enable(false);
-          this.decrementDate().then(() => {
-            gesture.enable();
-          });
-        }
-      },
-      onEnd: () => this.cdRef.detectChanges(),
-      gestureName: 'swipeOnMenu',
-    });
-    if (this.platform.is('mobile')) gesture.enable();
+  slideChanged() {
+    let swiper = document.querySelector('swiper-container')?.swiper!;
+    let activeIndex = swiper.activeIndex;
+    let prevIndex = swiper.previousIndex;
+    if (activeIndex == prevIndex || this.programSlide) {
+      this.programSlide = false;
+    } else if (activeIndex > prevIndex) {
+      this.incrementDate();
+    } else {
+      this.decrementDate();
+    }
+  }
+
+  handleBack() {
+    let swiper = document.querySelector('swiper-container')!.swiper;
+    swiper.slidePrev(500);
+  }
+
+  handleNext() {
+    let swiper = document.querySelector('swiper-container')!.swiper;
+    swiper.slideNext(500);
   }
 
   // Update the canteen data for the selected canteen if the selected canteen changes
   async onCanteenSelectChange() {
     this.loading = true;
     await this.storageService.updateMenus(this.selectedCantine);
-    await this.select(this.selectedCantine, this.selectedDate);
+    this.select(this.selectedCantine, this.getActualDate());
     this.loading = false;
   }
 
-  async select(canteenKey: string, date: Date): Promise<void> {
-    this.selectedCantineData = await this.storageService.getCanteen(canteenKey);
-    this.selectedCantine = canteenKey;
-    this.kw = this.getWeek(date);
-    this.history = await this.storageService.getHistory();
-    this.currentMeals = this.getMealsOfSelectedCanteenAt(date);
+  async select(canteenKey: string, date: Date, refresh = false): Promise<void> {
+    if (this.selectedCantineData?.canteen._key != canteenKey || refresh) {
+      this.eventAggregator.mealPlanInjected.next(false);
+      this.selectedCantineData = await this.storageService.getCanteen(canteenKey);
+      while (!this.eventAggregator.mealPlanInjected.getValue()) {
+        await new Promise((resolve) => setTimeout(resolve, 300));
+      }
+      this.selectedCantine = canteenKey;
+    }
     this.selectedDate = date;
     this.stringDate = this.selectedDate.toISOString().substring(0, 10);
+    this.kw = this.getWeek(date);
+    this.history = await this.storageService.getHistory();
 
     await this.updateNextDayButtonState();
     await this.updatePrevDayButtonState();
-    this.cdRef.detectChanges();
+    let indexOfTodaysMenu = this.selectedCantineData.menu.findIndex((menu) => menu.date === this.getDateAsString(date));
+    let swiper = document.querySelector('swiper-container')?.swiper;
+    if (swiper && swiper.activeIndex != indexOfTodaysMenu) {
+      if (indexOfTodaysMenu != -1) {
+        this.programSlide = true;
+        swiper.slideTo(indexOfTodaysMenu, 0);
+      } else {
+        swiper.slideTo(0, 0);
+      }
+    }
   }
 
   // Update the canteen data for the selected date if the selected date changes
@@ -167,9 +189,8 @@ export class HomePage implements OnInit, AfterViewInit {
     this.kw = this.getWeek(this.selectedDate);
     await this.updateNextDayButtonState();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
-    this.currentMeals = canteenMeals;
-    document.getElementById('today')?.removeAttribute('fill');
-    this.cdRef.detectChanges();
+    if (this.selectedDate.toDateString() != new Date().toDateString()) document.getElementById('today')?.removeAttribute('fill');
+    else document.getElementById('today')?.setAttribute('fill', 'outline');
   }
 
   async decrementDate() {
@@ -190,9 +211,8 @@ export class HomePage implements OnInit, AfterViewInit {
     this.kw = this.getWeek(this.selectedDate);
     await this.updatePrevDayButtonState();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
-    this.currentMeals = canteenMeals;
-    document.getElementById('today')?.removeAttribute('fill');
-    this.cdRef.detectChanges();
+    if (this.selectedDate.toDateString() != new Date().toDateString()) document.getElementById('today')?.removeAttribute('fill');
+    else document.getElementById('today')?.setAttribute('fill', 'outline');
   }
 
   async updateNextDayButtonState() {
@@ -226,17 +246,11 @@ export class HomePage implements OnInit, AfterViewInit {
     document.getElementById('nextDay')?.classList.remove('disabled');
     document.getElementById('today')?.setAttribute('fill', 'outline');
     // selected date to today
-    this.selectedDate = new Date();
-    this.stringDate = this.selectedDate.toISOString().substring(0, 10);
-
-    this.kw = this.getWeek(this.selectedDate);
+    this.selectedDate = this.getActualDate();
     await this.updateNextDayButtonState();
     await this.updatePrevDayButtonState();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
-
-    this.currentMeals = [];
-    this.currentMeals = this.getMealsOfSelectedCanteenAt(this.selectedDate);
-    this.cdRef.detectChanges();
+    this.select(this.selectedCantine, this.selectedDate);
   }
 
   getDateAsString(date: Date): string {
@@ -266,7 +280,7 @@ export class HomePage implements OnInit, AfterViewInit {
     }, 5000);
     this.tryRefresh(1000).then(async () => {
       this.refreshing = false;
-      await this.select(this.selectedCantine, this.selectedDate);
+      await this.select(this.selectedCantine, this.selectedDate, true);
       clearTimeout(timeoutId);
       event.target.complete();
     });
@@ -278,15 +292,10 @@ export class HomePage implements OnInit, AfterViewInit {
     }
   }
 
-  async addMealToHistory(meal: Meal) {
-    await this.storageService.addMealToHistory(this.selectedDate, meal, this.selectedCantine);
-    await this.updateHistory();
+  public trackItem(index: number, item: { date: string; meals: Meal[] }) {
+    return item.date + item.meals.length;
   }
 
-  async delMealInHistory(meal: Meal) {
-    await this.storageService.deleteMealInHistory(this.selectedDate, meal._key + '-' + this.selectedCantine);
-    await this.updateHistory();
-  }
   async updateHistory() {
     this.history = await this.storageService.getHistory();
   }

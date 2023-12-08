@@ -2,6 +2,10 @@ import { Component, EnvironmentInjector } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { MenuComponent } from './menu/menu.component';
 
+import { register } from 'swiper/element/bundle';
+
+register();
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',

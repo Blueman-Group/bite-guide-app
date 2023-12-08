@@ -2,6 +2,11 @@
   --offset-top: 300px !important;
 }
 
+swiper-container {
+  margin: 10px 10px;
+  max-width: 100%;
+}
+
 #container {
   text-align: center;
   position: absolute;
@@ -50,10 +55,10 @@ ion-modal {
 }
 
 ion-card {
-  width: 100%;
   display: flex;
   flex-direction: column;
   margin: 16px 16px;
+  width: 100%;
 }
 @media screen and (min-width: 500px) {
   ion-card {
@@ -187,28 +192,6 @@ ion-card-content ion-item {
 
 ion-card-subtitle {
   font-size: 0.7rem;
-}
-
-.pin {
-  position: absolute;
-  top: 0.6em;
-  right: 0.4em;
-  height: 1.5em;
-  width: 1.5em;
-  cursor: pointer;
-}
-
-.no_meals {
-  padding: 0 12px;
-  margin-top: 30px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.no_meals img {
-  width: 200px;
 }
 
 .disabled {
