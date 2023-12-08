@@ -1,10 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { AfterContentChecked, Component, Input, OnInit } from '@angular/core';
 import { Meal } from '../classes/meal';
-import { IonicModule, ModalController } from '@ionic/angular';
+import { IonicModule, ModalController, ViewWillEnter } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AppModalComponent } from '../app-modal/app-modal.component';
 import { StorageService } from '../services/storage.service';
+import { EventAggregatorService } from '../services/event-aggregator.service';
 
 @Component({
   selector: 'app-mealcard',
@@ -22,12 +23,18 @@ export class MealcardComponent implements OnInit {
   history: any | undefined;
   dateObject: Date | undefined;
 
-  constructor(private modalController: ModalController, private storageService: StorageService) {}
+  constructor(private modalController: ModalController, private storageService: StorageService, private eventAggregator: EventAggregatorService) {}
 
   async ngOnInit(): Promise<void> {
     this.dateObject = new Date(this.date!);
     this.kw = this.getWeek(this.dateObject);
     this.history = await this.storageService.getHistory();
+    this.eventAggregator.viewEnter.subscribe((value) => {
+      if (value) {
+        this.updateHistory().then((history) => (this.history = history));
+        this.eventAggregator.viewEnter.next(false);
+      }
+    });
   }
 
   openAllergensModal() {

@@ -53,6 +53,7 @@ export class HomePage implements OnInit {
   }
 
   async ionViewWillEnter(): Promise<void> {
+    this.eventAggregator.viewEnter.next(true);
     await this.updateHistory();
   }
 

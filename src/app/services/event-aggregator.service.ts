@@ -7,4 +7,5 @@ import { BehaviorSubject } from 'rxjs';
 export class EventAggregatorService {
   public appStarted = new BehaviorSubject<boolean>(false);
   public mealPlanInjected = new BehaviorSubject<boolean>(false);
+  public viewEnter = new BehaviorSubject<boolean>(false);
 }
