@@ -10,12 +10,6 @@
 
 ```
 
-#
-
-[![Lines of Code](https://sonar.envyz.de/api/project_badges/measure?project=biteguide&metric=ncloc&token=sqb_2388ef31025338933394026e1d89ae610afd14a5)](https://sonar.envyz.de/dashboard?id=biteguide)
-[![Quality Gate Status](https://sonar.envyz.de/api/project_badges/measure?project=biteguide&metric=alert_status&token=sqb_2388ef31025338933394026e1d89ae610afd14a5)](https://sonar.envyz.de/dashboard?id=biteguide)
-[![Reliability Rating](https://sonar.envyz.de/api/project_badges/measure?project=biteguide&metric=reliability_rating&token=sqb_2388ef31025338933394026e1d89ae610afd14a5)](https://sonar.envyz.de/dashboard?id=biteguide)
-[![Security Rating](https://sonar.envyz.de/api/project_badges/measure?project=biteguide&metric=security_rating&token=sqb_2388ef31025338933394026e1d89ae610afd14a5)](https://sonar.envyz.de/dashboard?id=biteguide)
 
 #
 

@@ -1,0 +1,14 @@
+name: "Deploy BiteGuide"
+
+on:
+  push:
+    branches:
+      - release/*
+
+jobs:
+  run-updater:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fire webhook to update
+        run: |
+          curl -X GET "https://webhooks.envyz.de/production"

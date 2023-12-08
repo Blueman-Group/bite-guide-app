@@ -1,44 +1,54 @@
 <ion-header translucent="true">
   <ion-toolbar>
-    <ion-title><img id="logo" alt="logo" height="25" src="assets/icon/BiteGuideFont.png" /></ion-title>
-
+    <ion-title>
+      <img id="logo" alt="logo" height="40" src="assets/icon/BiteGuideFont.png" />
+    </ion-title>
+    <app-navbar-header slot="end"></app-navbar-header>
   </ion-toolbar>
-  <slot name="navslot"></slot>
 </ion-header>
 
-<ion-content fullscreen="true">
+<ion-content [fullscreen]="true">
+  <ion-refresher id="refresher" slot="fixed" (ionRefresh)="this.handleRefresh($event)" *ngIf="this.platform.is('mobile')" [pullFactor]="0.5" [pullMin]="100" [pullMax]="200">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large"><img alt="logo" height="40" id="logo" src="assets/icon/BiteGuide.png" /></ion-title>
+      <ion-title size="large">
+        <img alt="logo" height="40" id="logo" src="assets/icon/BiteGuide.png" />
+      </ion-title>
     </ion-toolbar>
   </ion-header>
   <ion-list>
     <ion-item>
-      <ion-select aria-label="Fruit" interface="popover" placeholder="Selec cantine">
-        <ion-select-option value="apples">Central</ion-select-option>
-        <ion-select-option value="oranges">LB</ion-select-option>
-        <ion-select-option value="bananas">Vaihingen</ion-select-option>
+      <ion-select
+        label="Mensa"
+        labelPlacement="floating"
+        interface="popover"
+        placeholder="Mensa auswählen"
+        shape="round"
+        [interfaceOptions]="{ cssClass: 'canteenSelect' }"
+        [(ngModel)]="this.selectedCantine"
+        (ionChange)="this.onCanteenSelectChange()"
+      >
+        <ion-select-option *ngFor="let canteen of this.canteens" value="{{canteen._key}}">{{canteen.name.replace('MENSA', '')}}</ion-select-option>
       </ion-select>
     </ion-item>
+    <ion-item>
+      <ion-icon id="prevDay" name="chevron-back-outline" (click)="handleBack()" class="icon"></ion-icon>
+      <ion-label type="date" class="select">
+        <h2>{{this.formattedDate}} &nbsp;</h2>
+        <ion-button (click)="today()" id="today" fill="outline">Heute</ion-button>
+      </ion-label>
+      <ion-icon id="nextDay" class="button" name="chevron-forward-outline" (click)="handleNext()" class="icon"></ion-icon>
+    </ion-item>
   </ion-list>
-  <div class="menu-container">
-    <ion-card>
-      <img alt="Silhouette of mountains" src="assets/icon/Pommes.jpg" />
-      <ion-card-header>
-        <ion-card-title>Pommes</ion-card-title>
-        <ion-card-subtitle>Gericht</ion-card-subtitle>
-      </ion-card-header>
-
-      <ion-card-content> Allergene... </ion-card-content>
-    </ion-card>
-    <ion-card>
-      <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
-      <ion-card-header>
-        <ion-card-title>Pommes</ion-card-title>
-        <ion-card-subtitle>Gericht</ion-card-subtitle>
-      </ion-card-header>
-
-      <ion-card-content> Allergene... </ion-card-content>
-    </ion-card>
-  </div>
+  <ng-template [ngIf]="!this.loading" [ngIfElse]="showLoading">
+    <app-dynamic-content [component]="MealList" [data]="{menu: this.selectedCantineData?.menu, homePageInstance: this}"></app-dynamic-content>
+  </ng-template>
+  <ng-template #showLoading>
+    <div class="loading_data">
+      <span class="loader"></span>
+      <p>Mensaplan wird geladen...</p>
+    </div>
+  </ng-template>
 </ion-content>

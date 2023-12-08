@@ -1,0 +1,63 @@
+.ios .header {
+  height: 45px;
+}
+
+ion-footer {
+  box-shadow: none !important;
+}
+
+//dark button settings are in global.scss
+
+.btn {
+  background-color: var(--ion-text-color);
+  border-radius: 10em;
+  padding: 0 0.5em;
+  width: 7em;
+  height: 3em;
+
+  box-shadow: inset 0 8px 60px rgba(0, 0, 0, 0.1), inset 0 8px 8px rgba(0, 0, 0, 0.1), inset 0 -4px 4px rgba(0, 0, 0, 0.1);
+
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  cursor: pointer;
+}
+
+.btn_indicator {
+  background-color: var(--ion-color-step-100);
+  width: 3em;
+  height: 3em;
+  border-radius: 50%;
+
+  position: absolute;
+
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+
+  transition: transform 0.3s ease;
+}
+
+.btn-icon-container {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn_icon {
+  color: var(--light-icon-color);
+}
+
+/* -------------- ANIMATION ------------ */
+.btn_icon.animated {
+  animation: spin 0.5s;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

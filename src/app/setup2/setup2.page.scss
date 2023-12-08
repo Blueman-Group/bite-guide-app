@@ -13,11 +13,14 @@ body {
   overflow: hidden;
 }
 
+// Checkmark CSS & Animations
+
 #finish_anim {
   position: absolute;
   bottom: 0px;
   left: 0px;
   width: 50px;
+  z-index: 1;
   height: 50px;
 
   background-color: rgb(31, 150, 51);
@@ -31,17 +34,8 @@ body {
   }
 }
 
-@keyframes anim {
-  0% {
-    transform: scale(0);
-  }
-
-  100% {
-    transform: scale(40);
-  }
-}
-
 #checkmark p {
+  z-index: 10;
   font-size: 1.5rem;
   font-weight: bold;
   text-align: center;
@@ -52,13 +46,17 @@ body {
   transform: translate(-50%, -50%);
   width: 80%;
 }
+
 .checkmark_wrapper {
+  z-index: 1000;
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .checkmark__circle {
+  z-index: 2000;
   stroke-dasharray: 166;
   stroke-dashoffset: 166;
   stroke-width: 2;
@@ -67,7 +65,9 @@ body {
   fill: none;
   animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
 }
+
 .checkmark {
+  z-index: 2000;
   width: 56px;
   height: 56px;
   border-radius: 50%;
@@ -77,20 +77,23 @@ body {
   stroke-miterlimit: 10;
   margin: 10% auto;
   box-shadow: inset 0px 0px 0px #7ac142;
-  animation: fill 0.4s ease-in-out 0.4s forwards,
-    scale 0.3s ease-in-out 0.9s both;
+  animation: fill 0.4s ease-in-out 0.4s forwards, scale 0.3s ease-in-out 0.9s both;
 }
+
 .checkmark__check {
+  z-index: 2000;
   transform-origin: 50% 50%;
   stroke-dasharray: 48;
   stroke-dashoffset: 48;
   animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
 }
+
 @keyframes stroke {
   100% {
     stroke-dashoffset: 0;
   }
 }
+
 @keyframes scale {
   0%,
   100% {
@@ -100,6 +103,7 @@ body {
     transform: scale3d(1.1, 1.1, 1);
   }
 }
+
 @keyframes fill {
   100% {
     box-shadow: inset 0px 0px 0px 30px #7ac142;
@@ -108,6 +112,23 @@ body {
 
 .scene {
   display: flex;
+}
+
+@media screen and (min-width: 500px) {
+  #finish_anim {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+@keyframes anim {
+  0% {
+    transform: scale(0);
+  }
+
+  100% {
+    transform: scale(40);
+  }
 }
 
 /** Wizard CSS & Animations */

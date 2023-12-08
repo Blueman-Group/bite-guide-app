@@ -25,8 +25,47 @@
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
+@import "https://use.typekit.net/eim3rvv.css";
+
 * {
-  font-family: "sofia-pro", sans-serif;
+  font-family: "sofia-pro", sans-serif !important;
   font-weight: 300;
   font-style: normal;
+}
+
+.canteenSelect ion-select-popover {
+  max-height: 250px;
+}
+
+@media screen and (min-width: 650px) {
+  ion-tab-bar {
+    display: none !important;
+  }
+  .canteenSelect ion-select-popover {
+    max-height: auto;
+  }
+}
+
+ion-refresher.refresher-active {
+  z-index: 1;
+}
+
+//COLOR SWITCHING BUTTON
+
+body.dark .btn {
+  box-shadow: inset 0 8px 60px rgba(0, 0, 0, 0.3), inset 8px 0 8px rgba(0, 0, 0, 0.3), inset 0 -4px 4px rgba(0, 0, 0, 0.3);
+}
+
+body.dark .btn_indicator {
+  transform: translateX(3.1em);
+  background-color: var(--ion-color-step-100);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+}
+
+body.dark .btn_icon {
+  color: var(--ion-color-dark);
+}
+
+ion-modal {
+  --height: auto;
 }

@@ -1,0 +1,59 @@
+ion-card-title {
+  font-size: 1.5em;
+}
+card-title {
+  font-size: 1.3rem;
+}
+ion-card ion-item {
+  --ion-item-background: var(--ion-card-background);
+}
+
+ion-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.meal-img,
+.no-meal-img {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  object-fit: cover;
+  mask-image: linear-gradient(to bottom, rgba(30, 30, 30, 1), 90%, rgba(0, 0, 0, 0));
+  -webkit-mask-image: linear-gradient(to bottom, rgba(30, 30, 30, 1), 90%, rgba(0, 0, 0, 0));
+  height: 180px;
+}
+
+@media screen and (max-width: 856px) {
+  .no-meal-img {
+    display: none;
+    aspect-ratio: auto;
+  }
+}
+ion-card ion-grid {
+  padding: 0;
+}
+ion-card-content {
+  padding-top: 10px;
+  padding-bottom: 16px;
+}
+
+ion-card-header {
+  padding-bottom: 0px;
+}
+
+ion-card-content ion-item {
+  height: 38px;
+}
+
+ion-card-subtitle {
+  font-size: 0.7rem;
+}
+
+.pin {
+  position: absolute;
+  top: 0.6em;
+  right: 0.4em;
+  height: 1.5em;
+  width: 1.5em;
+  cursor: pointer;
+}
