@@ -28,7 +28,6 @@ export class MeallistComponent implements OnInit {
   constructor(private eventAggregator: EventAggregatorService) {}
 
   ngOnInit(): void {
-    console.log('meallist init');
     this.eventAggregator.mealPlanInjected.next(true);
   }
 }

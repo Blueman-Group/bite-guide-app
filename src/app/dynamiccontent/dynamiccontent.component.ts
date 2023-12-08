@@ -18,10 +18,8 @@ export class DynamicContentComponent implements OnInit, OnChanges {
   async ngOnInit() {
     this.viewContainerRef.clear();
     while (!this.data) {
-      console.log('waiting for data');
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
-    console.log(this.data);
     if (this.data.menu != null && this.changed) {
       this.changed = false;
       const componentRef = this.viewContainerRef.createComponent(this.component);
@@ -31,10 +29,8 @@ export class DynamicContentComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
     if (changes['data'] && changes['data'].currentValue != changes['data'].previousValue && changes['data'].previousValue != undefined) {
       if (changes['component'] == undefined) {
-        console.log('data changed');
         this.changed = true;
         this.ngOnInit();
       }

@@ -136,7 +136,6 @@ export class HomePage implements OnInit {
 
   // Update the canteen data for the selected canteen if the selected canteen changes
   async onCanteenSelectChange() {
-    console.log('change canteen');
     this.loading = true;
     await this.storageService.updateMenus(this.selectedCantine);
     this.select(this.selectedCantine, this.getActualDate());
@@ -147,10 +146,7 @@ export class HomePage implements OnInit {
     if (this.selectedCantineData?.canteen._key != canteenKey || refresh) {
       this.eventAggregator.mealPlanInjected.next(false);
       this.selectedCantineData = await this.storageService.getCanteen(canteenKey);
-      console.log(this.selectedCantineData);
-      console.log('set data');
       while (!this.eventAggregator.mealPlanInjected.getValue()) {
-        console.log('wait for change');
         await new Promise((resolve) => setTimeout(resolve, 300));
       }
       this.selectedCantine = canteenKey;
@@ -163,12 +159,10 @@ export class HomePage implements OnInit {
     await this.updateNextDayButtonState();
     await this.updatePrevDayButtonState();
     let indexOfTodaysMenu = this.selectedCantineData!.menu.findIndex((menu) => menu.date === this.getDateAsString(date));
-    console.log(indexOfTodaysMenu);
     let swiper = document.querySelector('swiper-container')?.swiper;
     if (swiper && swiper.activeIndex != indexOfTodaysMenu) {
       if (indexOfTodaysMenu != -1) {
         this.programSlide = true;
-        console.log('slide to ' + indexOfTodaysMenu);
         swiper.slideTo(indexOfTodaysMenu, 0);
       } else {
         swiper.slideTo(0, 0);
@@ -178,7 +172,6 @@ export class HomePage implements OnInit {
 
   // Update the canteen data for the selected date if the selected date changes
   async incrementDate() {
-    console.log('increment');
     document.getElementById('prevDay')?.classList.remove('disabled');
     let newDate;
     // if selected date is friday, increment by 3 days
@@ -202,7 +195,6 @@ export class HomePage implements OnInit {
   }
 
   async decrementDate() {
-    console.log('decrement');
     document.getElementById('nextDay')?.classList.remove('disabled');
     let newDate;
     if (this.selectedDate.getDay() == 1) {

@@ -286,7 +286,6 @@ export class StorageService {
    */
   public async reloadMenuesOfCanteenFromDb(canteenKey: string): Promise<boolean> {
     if (!(await this.databaseService.checkArangoConnection())) {
-      console.log('no db conn');
       return false;
     }
 

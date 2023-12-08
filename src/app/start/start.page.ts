@@ -49,7 +49,6 @@ export class StartPage implements OnInit {
   private async reload() {
     //if setup get favorite canteen, try to reload menus from db and go to home page
     let favoriteCanteen = await this.storageService.getFavoriteCanteen();
-    console.log('start update');
     let updatePromise = new Promise((resolve, reject) => {
       let timeout: NodeJS.Timeout | undefined = setTimeout(() => {
         timeout = undefined;
@@ -59,7 +58,6 @@ export class StartPage implements OnInit {
       this.storageService.reloadMenuesOfCanteenFromDb(favoriteCanteen.canteen._key).then(
         (result) => {
           if (timeout) {
-            console.log(result);
             clearTimeout(timeout);
             resolve(result);
           }
@@ -74,7 +72,6 @@ export class StartPage implements OnInit {
     });
 
     let updateResult = await updatePromise.catch((error) => {
-      console.log(error);
       return false;
     });
 
@@ -88,7 +85,6 @@ export class StartPage implements OnInit {
       });
       toast.present();
     }
-    console.log('updated');
     this.router.navigate(['home/main']);
   }
 
