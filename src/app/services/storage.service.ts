@@ -212,8 +212,15 @@ export class StorageService {
     await this._updateWeeks(storageCanteen, today);
   }
 
+  /**
+   * Updates the menu of a canteen on the current week and the next week
+   * @param storageCanteen StorageCanteen Object of which the menu should be updated
+   * @param today Date of today
+   */
   private async _updateWeeks(storageCanteen: StorageCanteen, today: Date) {
-    let itDate = new Date();
+    let updateDate = new Date();
+    setToWeekStart(updateDate);
+    let itDate = updateDate;
     let filteredCurrentWeek = storageCanteen.menu.filter((m: { date: string; meals: Meal[] }) => getWeek(new Date(m.date)) === getWeek(today));
     let menuOfCurrentWeekToUpdate = filteredCurrentWeek.find((m) => m.meals.length == 0);
     //if it cannot find menus for the current week or theyre not listed then update
@@ -239,7 +246,9 @@ export class StorageService {
     let weekDate: Date = new Date(startingDateOfWeek);
     let weekNumber = getWeek(startingDateOfWeek);
     do {
-      await this.getMenu(storageCanteen.canteen, weekDate);
+      if (weekDate.getDay() != 0 && weekDate.getDay() != 6) {
+        await this.getMenu(storageCanteen.canteen, weekDate);
+      }
       weekDate.setDate(weekDate.getDate() + 1);
     } while (weekNumber === getWeek(weekDate));
   }

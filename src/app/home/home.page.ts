@@ -90,6 +90,7 @@ export class HomePage implements OnInit {
     this.canteens = await this.storageService.getCanteens();
     if (this.canteens.length > 0) {
       let canteenKey = await this.storageService.getFavoriteCanteenKey();
+
       if (!canteenKey) {
         canteenKey = this.canteens[0]._key;
       }
@@ -146,6 +147,7 @@ export class HomePage implements OnInit {
     if (this.selectedCantineData?.canteen._key != canteenKey || refresh) {
       this.eventAggregator.mealPlanInjected.next(false);
       this.selectedCantineData = await this.storageService.getCanteen(canteenKey);
+      console.log(this.selectedCantineData);
       console.log('set data');
       while (!this.eventAggregator.mealPlanInjected.getValue()) {
         console.log('wait for change');
