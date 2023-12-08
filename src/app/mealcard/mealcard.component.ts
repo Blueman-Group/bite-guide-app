@@ -31,7 +31,7 @@ export class MealcardComponent implements OnInit {
     this.history = await this.storageService.getHistory();
     this.eventAggregator.viewEnter.subscribe((value) => {
       if (value) {
-        this.updateHistory().then((history) => (this.history = history));
+        this.updateHistory();
         this.eventAggregator.viewEnter.next(false);
       }
     });
