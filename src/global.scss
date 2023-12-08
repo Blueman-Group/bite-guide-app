@@ -1,0 +1,71 @@
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+/* Optional CSS utils that can be commented out */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+@import "https://use.typekit.net/eim3rvv.css";
+
+* {
+  font-family: "sofia-pro", sans-serif !important;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.canteenSelect ion-select-popover {
+  max-height: 250px;
+}
+
+@media screen and (min-width: 650px) {
+  ion-tab-bar {
+    display: none !important;
+  }
+  .canteenSelect ion-select-popover {
+    max-height: auto;
+  }
+}
+
+ion-refresher.refresher-active {
+  z-index: 1;
+}
+
+//COLOR SWITCHING BUTTON
+
+body.dark .btn {
+  box-shadow: inset 0 8px 60px rgba(0, 0, 0, 0.3), inset 8px 0 8px rgba(0, 0, 0, 0.3), inset 0 -4px 4px rgba(0, 0, 0, 0.3);
+}
+
+body.dark .btn_indicator {
+  transform: translateX(3.1em);
+  background-color: var(--ion-color-step-100);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+}
+
+body.dark .btn_icon {
+  color: var(--ion-color-dark);
+}
+
+ion-modal {
+  --height: auto;
+}

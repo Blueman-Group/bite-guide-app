@@ -1,0 +1,16 @@
+<swiper-container [slidesPerView]="1" [modules]="swiperModules" (swiperslidechange)="homePageInstance?.slideChanged()" #swiper>
+  <swiper-slide *ngFor="let menu of menus!">
+    <div class="menu-container" id="menu-container">
+      <ng-template [ngIf]="menu.meals.length === 0" [ngIfElse]="mealCard">
+        <div class="no_meals">
+          <p>Leider hat die Mensa an diesem Tag nichts für dich zu bieten...</p>
+          <img src="assets/hungry.png" alt="Kein Essen" />
+        </div>
+      </ng-template>
+
+      <ng-template #mealCard>
+        <app-mealcard [meal]="meal" [date]="menu.date" [canteenKey]="homePageInstance?.selectedCantine" *ngFor="let meal of menu.meals"></app-mealcard>
+      </ng-template>
+    </div>
+  </swiper-slide>
+</swiper-container>
