@@ -30,7 +30,7 @@
         [(ngModel)]="this.selectedCantine"
         (ionChange)="this.onCanteenSelectChange()"
       >
-        <ion-select-option *ngFor="let canteen of this.canteens" value="{{canteen._key}}">{{canteen.name.replace('MENSA ', '')}}</ion-select-option>
+        <ion-select-option *ngFor="let canteen of this.canteens" value="{{canteen._key}}">{{canteen.name.replace('MENSA', '')}}</ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item>
@@ -39,7 +39,7 @@
         <h2>{{this.formattedDate}} &nbsp;</h2>
         <ion-button (click)="today()" id="today" fill="outline">Heute</ion-button>
       </ion-label>
-      <ion-icon id="nextDay" class="button" name="chevron-forward-outline" (click)="incrementDate()" class="icon"></ion-icon>
+      <ion-icon id="nextDay" class="button" name="chevron-forward-outline" (click)="incrementDate()" class="icon"> </ion-icon>
     </ion-item>
   </ion-list>
   <div class="menu-container" id="menu-container">
@@ -56,6 +56,15 @@
           <img class="no-meal-img" alt="Kein Bild verfügbar" />
         </ng-template>
         <ion-card-header>
+          <div *ngIf="history?.[kw]?.[stringDate]?.[meal._key + '-' + selectedCantine]; else noHistory">
+            <!-- Content to show if the key is in the history -->
+            <img class="pin" src="assets/icon/bookmark_filled.svg" (click)="delMealInHistory(meal)" alt="Vorgemerkt" />
+          </div>
+          <ng-template #noHistory>
+            <!-- Content to show if the key is not in the history -->
+            <img class="pin" src="assets/icon/bookmark_clear.svg" (click)="addMealToHistory(meal)" alt="Nicht vorgemerkt" />
+          </ng-template>
+
           <ion-card-title size="small">{{meal.name}}</ion-card-title>
           <ion-card-subtitle>{{meal.mealCategory}}</ion-card-subtitle>
         </ion-card-header>

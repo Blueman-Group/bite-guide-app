@@ -20,15 +20,7 @@ export class Meal implements MealInterface {
   allergens: Allergen[];
   imageUrl: string;
 
-  constructor(
-    _key: string,
-    name: string,
-    mealCategory: string,
-    additives: Additive[],
-    allergens: Allergen[],
-    imageUrl: string,
-    mealInformation: MealInformation
-  ) {
+  constructor(_key: string, name: string, mealCategory: string, additives: Additive[], allergens: Allergen[], imageUrl: string, mealInformation: MealInformation) {
     this._key = _key;
     this.name = name;
     this.mealCategory = mealCategory;
