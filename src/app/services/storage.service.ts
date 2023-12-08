@@ -4,6 +4,7 @@ import { StorageCanteen } from '../interfaces/storage-canteen';
 import { Canteen } from '../interfaces/canteen';
 import { Meal } from '../classes/meal';
 import { DatabaseService } from './database.service';
+import { HistoryMeal } from '../classes/history-meal';
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +29,10 @@ export class StorageService {
     if ((await this._storage.get('readyTest')) === 'ready') {
       this._storageReady = true;
       await this._storage.remove('readyTest');
+      // check if history exists in storage, else create it
+      if (!(await this.checkHistory())) {
+        await this._storage?.set('history', {});
+      }
     }
   }
 
@@ -52,18 +57,31 @@ export class StorageService {
    * @returns true if canteen exists in storage
    */
   async checkCanteen(key: string): Promise<boolean> {
-    const canteen = await this._storage?.get(key);
-    return canteen;
+    return await this._storage?.get(key);
+  }
+
+  /**
+   * Check if history exists in storage
+   * @returns true if history exists in storage
+   */
+  async checkHistory(): Promise<boolean> {
+    return await this._storage?.get('history');
   }
 
   /**
    * Get canteen object from storage
    * @param key Canteen key
-   * @returns StorageCanteen object of canteen
+   * @returns StorageCanteen object of‚ canteen
    */
   async getCanteen(key: string): Promise<StorageCanteen> {
-    const canteen = await this._storage?.get(key);
-    return canteen;
+    return await this._storage?.get(key);
+  }
+
+  /** Get history object from storage
+   * @returns History object from storage
+   */
+  async getHistory() {
+    return await this._storage?.get('history');
   }
 
   /**
@@ -85,6 +103,7 @@ export class StorageService {
       if (key === 'setup') break;
       if (key === 'favorite') break;
       if (key === 'colormode') break;
+      if (key === 'history') break;
       const canteen = await this.getCanteen(key);
       if (canteen) canteens.push(canteen.canteen);
     }
@@ -97,6 +116,38 @@ export class StorageService {
    */
   async addCanteen(key: string, canteen: Canteen): Promise<void> {
     await this._storage?.set(key, { canteen, menu: [] });
+  }
+
+  async addMealToHistory(date: Date, meal: Meal, canteenKey: string) {
+    let dateString = date.toISOString().substring(0, 10);
+    let history = await this.getHistory();
+
+    let hMeal = new HistoryMeal(meal.name, meal.normalPrice, meal.studentPrice, meal.imageUrl, canteenKey);
+    let kw: number = getWeek(date);
+    if (history[kw] == undefined) {
+      history[kw] = {};
+    }
+    if (history[kw][dateString] == undefined) {
+      history[kw][dateString] = {};
+    }
+    //add hmeal to history with combined key (mealKey-canteenKey)
+    history[kw][dateString][meal._key + '-' + canteenKey] = hMeal;
+    await this._storage?.set('history', history);
+  }
+
+  async deleteMealInHistory(date: Date, historyMealKey: string) {
+    let history = await this.getHistory();
+    //delete meal from history using the date where you get the week from and key
+    let kw: number = getWeek(date);
+    let dateString = date.toISOString().substring(0, 10);
+    delete history[kw][dateString][historyMealKey];
+    await this._storage?.set('history', history);
+  }
+
+  async getWeekplan(week: number) {
+    const history = await this._storage?.get('history');
+    let kw = week;
+    return history[kw];
   }
 
   /**Add the menu of a canteen to storage

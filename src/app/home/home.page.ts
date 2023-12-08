@@ -26,9 +26,12 @@ export class HomePage implements OnInit {
   selectedCantineData: StorageCanteen | null = null;
   canteens: Canteen[] = [];
   canteenDataSelected = false;
+  history = undefined;
+  kw: string = this.getWeek(new Date());
   // if selected date is weekend set to monday if its a weekday set to today
   selectedDate: Date = this.getActualDate();
-  formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
+  stringDate: string = this.selectedDate.toISOString().substring(0, 10);
+  formattedDate: string = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
 
   loading = true;
   refreshing = false;
@@ -49,6 +52,10 @@ export class HomePage implements OnInit {
     return new Date().getDay() == 6 || new Date().getDay() == 0 ? new Date(new Date().getTime() + 24 * 60 * 60 * 1000) : new Date();
   }
 
+  async ionViewWillEnter(): Promise<void> {
+    await this.updateHistory();
+  }
+
   async ngOnInit(): Promise<void> {
     if (!this.eventAggregator.appStarted.getValue()) {
       this.router.navigate(['/'], { skipLocationChange: true });
@@ -63,7 +70,7 @@ export class HomePage implements OnInit {
     }
     await this.waitForStart().then(async () => {
       this.loading = true;
-      await this.initCanteenData();
+      await this.init();
       this.loading = false;
     });
   }
@@ -72,6 +79,11 @@ export class HomePage implements OnInit {
     while (!this.eventAggregator.appStarted.getValue()) {
       await new Promise((resolve) => setTimeout(resolve, 300));
     }
+  }
+
+  async init() {
+    this.history = await this.storageService.getHistory();
+    await this.initCanteenData();
   }
 
   async initCanteenData(): Promise<void> {
@@ -142,7 +154,10 @@ export class HomePage implements OnInit {
       this.selectedCantine = canteenKey;
     }
     this.selectedDate = date;
-    this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
+    this.stringDate = this.selectedDate.toISOString().substring(0, 10);
+    this.kw = this.getWeek(date);
+    this.history = await this.storageService.getHistory();
+
     await this.updateNextDayButtonState();
     await this.updatePrevDayButtonState();
     let indexOfTodaysMenu = this.selectedCantineData!.menu.findIndex((menu) => menu.date === this.getDateAsString(date));
@@ -175,6 +190,9 @@ export class HomePage implements OnInit {
       return;
     }
     this.selectedDate = newDate;
+    this.stringDate = this.selectedDate.toISOString().substring(0, 10);
+
+    this.kw = this.getWeek(this.selectedDate);
     await this.updateNextDayButtonState();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     if (this.selectedDate.toDateString() != new Date().toDateString()) document.getElementById('today')?.removeAttribute('fill');
@@ -195,6 +213,9 @@ export class HomePage implements OnInit {
       return;
     }
     this.selectedDate = newDate;
+    this.stringDate = this.selectedDate.toISOString().substring(0, 10);
+
+    this.kw = this.getWeek(this.selectedDate);
     await this.updatePrevDayButtonState();
     this.formattedDate = formatDate(this.selectedDate, 'EEE dd.MM.YY', 'de-DE');
     if (this.selectedDate.toDateString() != new Date().toDateString()) document.getElementById('today')?.removeAttribute('fill');
@@ -280,5 +301,41 @@ export class HomePage implements OnInit {
 
   public trackItem(index: number, item: { date: string; meals: Meal[] }) {
     return item.date + item.meals.length;
+  }
+
+  async addMealToHistory(meal: Meal) {
+    await this.storageService.addMealToHistory(this.selectedDate, meal, this.selectedCantine);
+    await this.updateHistory();
+  }
+
+  async delMealInHistory(meal: Meal) {
+    await this.storageService.deleteMealInHistory(this.selectedDate, meal._key + '-' + this.selectedCantine);
+    await this.updateHistory();
+  }
+  async updateHistory() {
+    this.history = await this.storageService.getHistory();
+  }
+
+  getWeek(date: Date): string {
+    let dowOffset = 1; //start week on monday
+    let newYear = new Date(date.getFullYear(), 0, 1);
+    let day = newYear.getDay() - dowOffset; //the day of week the year begins on
+    day = day >= 0 ? day : day + 7;
+    let daynum = Math.floor((date.getTime() - newYear.getTime() - (date.getTimezoneOffset() - newYear.getTimezoneOffset()) * 60000) / 86400000) + 1;
+    let weeknum;
+    //if the year starts before the middle of a week
+    if (day < 4) {
+      weeknum = Math.floor((daynum + day - 1) / 7) + 1;
+      if (weeknum > 52) {
+        let nYear = new Date(date.getFullYear() + 1, 0, 1);
+        let nday = nYear.getDay() - dowOffset;
+        nday = nday >= 0 ? nday : nday + 7;
+        //if the next year starts before the middle of the week, it is week #1 of that year
+        weeknum = nday < 4 ? 1 : 53;
+      }
+    } else {
+      weeknum = Math.floor((daynum + day - 1) / 7);
+    }
+    return weeknum.toString();
   }
 }
